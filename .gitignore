@@ -1,5 +1,4 @@
 build_ps1/
-build_loader/
 build/
 build_lsdde/
 out/
@@ -22,8 +21,6 @@ backups/
 Notes.txt
 tools/gdb/
 tools/run_and_log.ps1
-config/disk_loader.xml
 config/original_layout.xml
 config/test_layout.xml
-config/bootloader_minimal.xml
 config/license.bin

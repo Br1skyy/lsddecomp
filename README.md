@@ -26,7 +26,7 @@ That's the honest state of it.
 
 ## Build
 
-Two scripts, both PowerShell and portable (they derive paths from `$PSScriptRoot`, so they work from any checkout location on Windows/macOS/Linux with `pwsh`). The `mipsel-none-elf-gcc` cross-compiler must be on `PATH` (or in a standard location: `C:\mipsel-none-elf\bin`, `/usr/local/mipsel-none-elf/bin`, `/opt/mipsel-none-elf/bin`).
+The build script is PowerShell and portable (it derives paths from `$PSScriptRoot`, so it works from any checkout location on Windows/macOS/Linux with `pwsh`). The `mipsel-none-elf-gcc` cross-compiler must be on `PATH` (or in a standard location: `C:\mipsel-none-elf\bin`, `/usr/local/mipsel-none-elf/bin`, `/opt/mipsel-none-elf/bin`).
 
 **Prerequisites (once):**
 
@@ -50,22 +50,14 @@ Compiles the C reconstruction (`src/lsdde/`) plus the MIPS assembly (`asm/lsdde/
 pwsh ./build_ps1.ps1
 ```
 
-**`./build_loader.ps1` - the stage-1 bootloader.**
+The game used to boot through a two-stage loader (`build_loader.ps1` + `asm/loader/`) that read a GAME.BIN payload off the CD. That's retired: the whole image is now embedded in a single PS-EXE (`SLPS_015.56`), so `CdLoadStage2` just skips the CD read and finds the data already in RAM. One script, one binary.
 
-Builds the small hand-written loader (`asm/loader/loader.s` + `asm/loader/loader.ld`), synthesizes its PS-EXE header, links it with the main game's `SLPS_015.56` as payload (from `build_ps1/ps-exe/` or `disk/extract/`), and rebuilds the ISO via `disk/extract/extract.xml`. Run it after `build_ps1.ps1`. Output lands in `build_loader/` (`build_loader/lsddecomp.cue` + `.bin`).
-
-```bash
-pwsh ./build_loader.ps1
-```
-
-To run the result: load `build_ps1/lsddecomp.cue` (or the loader's `build_loader/lsddecomp.cue`) in DuckStation.
-
-Known state: the game boots and the logo plays, then it hangs on the licensing screen (current theory is the CD-ROM interrupt chain not dispatching after recompilation). That's the current job, not a build failure.
+Known state: the game boots, draws its own license screen, then hangs on it. Rendering and init are fine; the state machine never advances past the license. Current theory: the per-frame driver (the VSync callback / timer tick that steps the license pages) is stubbed out and never registered, so nothing advances the page each frame. That's the current job, not a build failure.
 
 ## Layout
 
 ```
-asm/                  # MIPS assembly: lsdde/ splits + loader/ stage-1 bootloader
+asm/                  # MIPS assembly: lsdde/ splits (incl. data/ + nonmatchings/)
 include/              # Headers (DreamSys.h, dat_globals.h, lsdde/) + asm macros
 src/lsdde/            # The C - 25 files, ~32k lines
   DreamSys.c          # dream state machine
@@ -78,8 +70,7 @@ src/lsdde/            # The C - 25 files, ~32k lines
 config/               # mkpsxiso config (disk.xml) + splat symbol maps
 disk/                 # your extracted CD data (gitignored; not committed) - made by tools/extract.ps1
 tools/                # mkpsxiso.exe + dumpsxiso.exe (bundled) + extract.ps1
-build_ps1.ps1         # main game build script
-build_loader.ps1      # stage-1 bootloader build script
+build_ps1.ps1         # the one build script (C -> ELF -> PS-EXE -> ISO)
 lsdde.ld              # linker script
 ```
 

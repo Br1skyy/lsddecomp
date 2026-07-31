@@ -213,7 +213,7 @@ SECTIONS
         main_BSS_END = .;
         main_BSS_SIZE = ABSOLUTE(main_BSS_END - main_BSS_START);
 
-        /* PS-EXE resident callback tables (must survive GAME.BIN overlay load) */
+        /* PS-EXE resident callback tables (full image embedded in the EXE) */
         . = ALIGN(., 16);
         CdCallbackTable = .;
         . += 16;  /* 4 callbacks * 4 bytes: data_ready, data_sync, ready, complete */

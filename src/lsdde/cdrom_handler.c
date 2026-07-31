@@ -314,7 +314,7 @@ __asm__(
     "     nop\n"
     ".end vsync_rel_handler\n"
 );
-/* Minimal CD callbacks for PS-EXE (before GAME.BIN overlay loads) */
+/* Minimal CD callbacks for the PS-EXE (full image is embedded; CD ops skipped) */
 volatile int cd_data_ready = 0;
 volatile int cd_ready_complete = 0;
 volatile int cd_sync_complete = 0;
@@ -485,9 +485,9 @@ void CdLoadStage2(void *dest, u32 lba, u32 count)
 {
     volatile u32 *D0 = (volatile u32 *)0x800BAFF0;
     volatile u32 *D1 = (volatile u32 *)0x800BAFF4;
-    /* PS-EXE now embeds all data beyond 256-sector limit. If the first
-       word of the destination is already non-zero, data was loaded by
-       the EXE loader and we skip CD operations entirely. */
+    /* Single full-payload PS-EXE: the BIOS loads everything at boot. If the
+       first word of the destination is already non-zero, data is in RAM and
+       we skip CD operations entirely. */
     if (*(volatile u32 *)dest != 0) {
         *D0 = 0xDD; *D1 = 1;  /* marker: data already loaded, skipping CdLoadStage2 */
         return;
