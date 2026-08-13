@@ -1,7 +1,7 @@
-param([switch]$IgnoreUnresolved)
+﻿param([switch]$IgnoreUnresolved)
 
 $ErrorActionPreference = "Stop"
-$root   = $PSScriptRoot
+$root   = Split-Path $PSScriptRoot -Parent
 $build  = Join-Path $root "build_ps1"
 $asmDir = Join-Path $root "asm/lsdde"
 $srcDir = Join-Path $root "src/lsdde"
@@ -25,7 +25,7 @@ $toolDir = Split-Path $toolPath -Parent
 
 # need the extracted disc for the ISO
 if (-not (Test-Path "$root\disk\extract\extract.xml")) {
-    throw "no disk/extract/extract.xml - run: pwsh tools/extract.ps1 -Image <your-lsd.cue-or-bin>"
+    throw "no disk/extract/extract.xml - run: pwsh scripts/extract.ps1 -Image <your-lsd.cue-or-bin>"
 }
 $cc      = Join-Path $toolDir "mipsel-none-elf-gcc"
 $ld      = Join-Path $toolDir "mipsel-none-elf-ld"
@@ -212,9 +212,13 @@ $exeBytes[0x11] = ($startVal -shr 8) -band 0xFF
 $exeBytes[0x12] = ($startVal -shr 16) -band 0xFF
 $exeBytes[0x13] = ($startVal -shr 24) -band 0xFF
 
-# Compute file size = total binary size - 2048 (header)
+# Compute file size = total binary size - 2048 (header).
+# Round UP to a 2048-byte sector boundary: the BIOS CD-ROM filesystem rejects
+# any size that is not a multiple of 2048, silently refusing to copy the
+# payload, which makes the BIOS jump into empty RAM.
 $fileSize = $exeBytes.Length - 2048
-Write-Host "  file size = 0x$($fileSize.ToString('X8')) ($fileSize bytes)"
+$fileSize = (($fileSize + 0x7FF) -shr 11) -shl 11
+Write-Host "  file size = 0x$($fileSize.ToString('X8')) ($fileSize bytes, sector-aligned)"
 
 # Patch file size at standard offset 0x1C (little-endian)
 $exeBytes[0x1C] = $fileSize -band 0xFF
@@ -384,6 +388,9 @@ Write-Host "=== second pass ==="
     $exeBytes2[0x12] = ($startVal2 -shr 16) -band 0xFF
     $exeBytes2[0x13] = ($startVal2 -shr 24) -band 0xFF
     $fileSize2 = $exeBytes2.Length - 2048
+    # Sector-align t_size2 (see comment above): the BIOS CD-ROM filesystem only
+    # reads payloads whose size is a multiple of 2048 bytes.
+    $fileSize2 = (($fileSize2 + 0x7FF) -shr 11) -shl 11
     $exeBytes2[0x1C] = $fileSize2 -band 0xFF
     $exeBytes2[0x1D] = ($fileSize2 -shr 8) -band 0xFF
     $exeBytes2[0x1E] = ($fileSize2 -shr 16) -band 0xFF

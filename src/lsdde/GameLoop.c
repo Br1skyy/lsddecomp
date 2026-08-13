@@ -991,21 +991,26 @@ cleanup:
 #ifdef trap
 #undef trap
 #endif
-/* PsyQ library wrappers — call the real PsyQ implementation */
-int  func_80018390 (int mode) { return CdReset(mode); }
-u_long  func_80036a54 (void *func) { return CdSyncCallback((void (*)())func); }
-u_long  func_8002cc28 (void *func) { return CdReadyCallback((void (*)())func); }
-u_long  func_80030404 (void *func) { return CdReadCallback((void (*)())func); }
-char * func_80030584 (char *dst, const char *src) { return strcpy(dst, src); }
-char * func_80026cfc (char *dst, const char *src) { return strcat(dst, src); }
-int  func_80026cac (u_char com, u_char *param, u_char *result) { return CdControl(com, param, result); }
-int  func_80026ce8 (u_char com, u_char *param) { return CdControlF(com, param); }
-CdlFILE * func_80026e0c (CdlFILE *f, char *name) { return CdSearchFile(f, name); }
-int  func_80026e38 (int mode, u_char *result) { return CdSync(mode, result); }
-int  func_80032368 (void *func) { return CdDataCallback((void (*)())func); }
-int  func_8005cbc8 (int mode, u_char *result) { return CdReady(mode, result); }
+/* PsyQ library wrappers - call the real PsyQ implementation */
+/* func_80018390 is the BasicClass vtable getter (retail 0x80018390); NOT CdReset */
+extern void *GetCoordSystemVtable(void);
+void *func_80018390(void) { return GetCoordSystemVtable(); }
+/* Original 0x80026cac = CdModePoll (game-side CD-mode vtable selector; NOT CdControl).
+   Original: if (D_8008A84C[gp+0x44] == 0x23) return FUN_8002c438()  -> &DAT_8006d9bc
+             else                             return NopSub_27e68() -> &DAT_8006d4e8
+   Intact asm callers do `jal func_80026cac` then `lw v0,0x8(v0); jalr v0`, i.e. they
+   dispatch through the returned vtable's +0x08 slot (0x80027228 PrimCdDa / 0x8002C3C0 Scene). */
+extern int D_8008A84C;
+int  func_8002C438(void);
+int  NopSub_27e68(void);
+int  func_80026cac (void)
+{
+    if (D_8008A84C == CD_MODE_STARTING)
+        return func_8002C438();
+    return NopSub_27e68();
+}
 extern int Sound_AdvanceDataPtrEx(int bank, int voiceIndex);
-/* SoundAdvanceDataPointer alias — ASM callers use short voiceIndex */
+/* SoundAdvanceDataPointer alias - ASM callers use short voiceIndex */
 int SoundAdvanceDataPointer(int bank, short voiceIndex)
 {
     return Sound_AdvanceDataPtrEx(bank, voiceIndex);

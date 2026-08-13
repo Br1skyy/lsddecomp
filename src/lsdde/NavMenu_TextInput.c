@@ -16,12 +16,12 @@ void  Font_EventProc (int obj,int arg2,int arg3)
 {
   int *piVar1;
   if (arg3 == 2) {
-    (**(code **)(**(int **)(obj + 0x10) + 0x44))();
+    (*(code *)(**(int **)(obj + 0x10) + 0x44))();
     piVar1 = *(int **)(*(int *)(obj + 0xc) + 4);
     /* vtable[17] */
-    (**(code **)(*piVar1 + 0x44))(piVar1);
+    (*(code *)(*piVar1 + 0x44))(piVar1);
     /* vtable[18] */
-    (**(code **)(*piVar1 + 0x48))(piVar1);
+    (*(code *)(*piVar1 + 0x48))(piVar1);
   }
 }
 /* Possible GS_101.OBJ/GsSetNearClip
@@ -185,24 +185,24 @@ void  Font_Init (int *obj,int *arg2,int arg3)
   obj[3] = (int)arg2;
   piVar2 = (int *)obj[6];
   /* vtable[4] */
-  (**(code **)(iVar3 + 0x10))(obj,*arg2);
+  (*(code *)(iVar3 + 0x10))(obj,*arg2);
   /* vtable[4] */
-  (**(code **)(iVar3 + 0x10))(obj,arg2[1]);
+  (*(code *)(iVar3 + 0x10))(obj,arg2[1]);
   /* vtable[4] */
-  (**(code **)(iVar3 + 0x10))(obj,obj[4]);
+  (*(code *)(iVar3 + 0x10))(obj,obj[4]);
   /* vtable[19] */
-  (**(code **)(iVar3 + 0x4c))(obj,0,0,0);
+  (*(code *)(iVar3 + 0x4c))(obj,0,0,0);
   obj[9] = arg3;
   if (arg3 == 0) {
     /* vtable[4] */
-    (**(code **)(*piVar2 + 0x10))(piVar2,*arg2);
+    (*(code *)(*piVar2 + 0x10))(piVar2,*arg2);
     /* vtable[4] */
-    (**(code **)(*piVar2 + 0x10))(piVar2,obj[4]);
-    (**(code **)(*(int *)obj[5] + 0x10))((int *)obj[5],obj[4]);
+    (*(code *)(*piVar2 + 0x10))(piVar2,obj[4]);
+    (*(code *)(*(int *)obj[5] + 0x10))((int *)obj[5],obj[4]);
     /* vtable[24] */
-    (**(code **)(iVar3 + 0x60))(obj,2);
+    (*(code *)(iVar3 + 0x60))(obj,2);
     /* vtable[18] */
-    (**(code **)(iVar3 + 0x48))(obj);
+    (*(code *)(iVar3 + 0x48))(obj);
   }
 }
 int select_max_param(int *v)
@@ -258,7 +258,7 @@ void  NavMenu_PagePrev (int *obj)
     iVar1 = *(int *)(obj[0x16] * 4 + obj[0x17]) + -1;
   }
   /* vtable[71] */
-  (**(code **)(*obj + 0x11c))(obj,iVar1,1);
+  (*(code *)(*obj + 0x11c))(obj,iVar1,1);
 }
 int len_param(int x)
 {
@@ -288,7 +288,7 @@ int  Spu_NewSeqTrack (int obj,int arg2,int arg3,int arg4)
   iVar2 = 0;
   if (iVar1 != 0) {
     iVar2 =  Spu_GetSeqTrackVtable ();
-    (**(code **)(iVar2 + 8))(iVar1,obj,arg2,arg3,arg4);
+    (*(code *)(iVar2 + 8))(iVar1,obj,arg2,arg3,arg4);
     iVar2 = iVar1;
   }
   return iVar2;
@@ -298,7 +298,7 @@ void  TextInput_SetChar (int obj,u8 arg2,int arg3)
   int *piVar1;
   piVar1 = *(int **)(arg3 * 4 + *(int *)(obj + 0xb4));
   /* vtable[49] */
-  (**(code **)(*piVar1 + 0xc4))(piVar1,arg2);
+  (*(code *)(*piVar1 + 0xc4))(piVar1,arg2);
 }
 void  ChunkDataObj_RemoveChild (int obj,int *arg2)
 {
@@ -312,7 +312,7 @@ void  ChunkDataObj_RemoveChild (int obj,int *arg2)
   }
   iVar1 =  GetCoordSystemVtable ();
   /* vtable[5] */
-  (**(code **)(iVar1 + 0x14))(obj,arg2);
+  (*(code *)(iVar1 + 0x14))(obj,arg2);
 }
 int * TextInput_GetVtable (void)
 {
@@ -351,7 +351,7 @@ int  NavMenu_Check (int *obj)
   }
   if (iVar1 != 0) {
     /* vtable[24] */
-    (**(code **)(*obj + 0x60))(obj,5);
+    (*(code *)(*obj + 0x60))(obj,5);
   }
   return iVar1;
 }
@@ -359,11 +359,11 @@ void  Font_Construct (int *obj)
 {
   int iVar1;
   iVar1 =  GetCoordSystemVtable ();
-  (**(code **)(iVar1 + 8))(obj);
+  (*(code *)(iVar1 + 8))(obj);
   iVar1 =  Font_GetDataPtr ();
   *obj = iVar1;
   /* vtable[16] */
-  (**(code **)(iVar1 + 0x40))(obj);
+  (*(code *)(iVar1 + 0x40))(obj);
 }
 void  TextInput_Draw (int obj,int arg2,int *arg3)
 {
@@ -375,7 +375,7 @@ void  TextInput_Draw (int obj,int arg2,int *arg3)
   if (*(int *)(obj + 0xc) == 0) {
     iVar1 =  Label_GetVtable ();
     /* vtable[19] */
-    (**(code **)(iVar1 + 0x4c))(obj,arg2,arg3);
+    (*(code *)(iVar1 + 0x4c))(obj,arg2,arg3);
     local_18 = *arg3;
     local_14 = arg3[1];
     uVar2 = (uint)*(byte *)(obj + 0xac);
@@ -385,7 +385,7 @@ void  TextInput_Draw (int obj,int arg2,int *arg3)
         if ((*(byte *)(obj + 0xaa) != 0) && (uVar2 == *(byte *)(obj + 0xaa))) {
           local_18 = local_18 + 0x10;
         }
-        (**(code **)(*(int *)*puVar3 + 0x4c))((int *)*puVar3,obj,&local_18);
+        (*(code *)(*(int *)*puVar3 + 0x4c))((int *)*puVar3,obj,&local_18);
         local_18 = local_18 + *(int *)(obj + 0xb0);
         uVar2 = uVar2 + 1;
         puVar3 = puVar3 + 1;
@@ -411,12 +411,12 @@ void  NavMenu_Update (int obj)
   int *piVar1;
   piVar1 = *(int **)(obj + 0x18);
   /* vtable[36] */
-  (**(code **)(*piVar1 + 0x90))(piVar1);
+  (*(code *)(*piVar1 + 0x90))(piVar1);
   /* vtable[29] */
-  (**(code **)(*piVar1 + 0x74))(piVar1);
-  (**(code **)(**(int **)(obj + 0x78) + 0x50))();
+  (*(code *)(*piVar1 + 0x74))(piVar1);
+  (*(code *)(**(int **)(obj + 0x78) + 0x50))();
   if (*(int *)(obj + 0x34) != 0) {
-    (**(code **)(*(int *)**(int **)(obj + 0xc) + 0x78))
+    (*(code *)(*(int *)**(int **)(obj + 0xc) + 0x78))
               ((int *)**(int **)(obj + 0xc),obj + 0x93,0);
   }
 }
@@ -435,12 +435,12 @@ void  NavMenu_SetPosition (int *obj,int arg2)
     iVar1 = 0;
     if (0 < obj[0x14]) {
       do {
-        (**(code **)(*(int *)*puVar2 + 0xb8))((int *)*puVar2,arg2);
+        (*(code *)(*(int *)*puVar2 + 0xb8))((int *)*puVar2,arg2);
         puVar2 = puVar2 + 1;
         if (*(int *)(iVar1 * 4 + *(int *)(obj[0x13] + 0x24)) != 0) {
           obj[0x16] = iVar1;
           /* vtable[65] */
-          (**(code **)(*obj + 0x104))(obj,arg2);
+          (*(code *)(*obj + 0x104))(obj,arg2);
         }
         iVar1 = iVar1 + 1;
       } while (iVar1 < obj[0x14]);
@@ -459,23 +459,23 @@ void  Spu_SetSeqTrackPitch (int obj,int val)
 void  TextInput_Activate (int *obj,int arg2)
 {
   /* vtable[53] */
-  (**(code **)(*obj + 0xd4))(obj,7);
+  (*(code *)(*obj + 0xd4))(obj,7);
   /* vtable[51] */
-  (**(code **)(*obj + 0xcc))(obj,arg2);
+  (*(code *)(*obj + 0xcc))(obj,arg2);
 }
 void  Spu_UpdateSeqTrack (int *obj)
 {
   int iVar1;
   iVar1 =  NavMenu_GetDataPtr ();
   /* vtable[19] */
-  (**(code **)(iVar1 + 0x4c))(obj);
+  (*(code *)(iVar1 + 0x4c))(obj);
   obj[0x29] = 0;
-  (**(code **)(*(int *)obj[0x2d] + 0x6c))((int *)obj[0x2d],obj[0x30]);
-  iVar1 = (**(code **)(*(int *)obj[0x2d] + 0x40))
+  (*(code *)(*(int *)obj[0x2d] + 0x6c))((int *)obj[0x2d],obj[0x30]);
+  iVar1 = (*(code *)(*(int *)obj[0x2d] + 0x40))
                     (obj[0x2d],obj[0x2e],obj[0x2f],obj[0x31],obj[0x32]);
   if (iVar1 != 0) {
     /* vtable[27] */
-    (**(code **)(*obj + 0x6c))(obj,0);
+    (*(code *)(*obj + 0x6c))(obj,0);
   }
 }
 char * Sjis_EncodeFromAscii (u8 *obj,byte *arg2)
@@ -514,7 +514,7 @@ void  TextInput_PrintString (int obj,char *arg2)
     while (cVar1 != '\0') {
       cVar1 = *arg2;
       arg2 = arg2 + 1;
-      (**(code **)(*(int *)*puVar2 + 0xc4))((int *)*puVar2,cVar1);
+      (*(code *)(*(int *)*puVar2 + 0xc4))((int *)*puVar2,cVar1);
       puVar2 = puVar2 + 1;
       cVar1 = *arg2;
     }
@@ -614,16 +614,16 @@ void  ChunkDataObj_Reset (int obj)
   *(int *)(obj + 0xc) = 0;
   iVar1 =  GetCoordSystemVtable ();
   /* vtable[6] */
-  (**(code **)(iVar1 + 0x18))(obj);
+  (*(code *)(iVar1 + 0x18))(obj);
 }
 void  Entity_StateEnter (int *obj)
 {
   int iVar1;
   if (obj[0x1b] == 0) {
     /* vtable[55] */
-    iVar1 = (**(code **)(*obj + 0xdc))();
+    iVar1 = (*(code *)(*obj + 0xdc))();
     /* vtable[46] */
-    (**(code **)(*obj + 0xb8))(obj,1,&UNK_8006ea90 + iVar1 * 3);
+    (*(code *)(*obj + 0xb8))(obj,1,&UNK_8006ea90 + iVar1 * 3);
     obj[0x1b] = 1;
     obj[0x1d] = -obj[0x1d];
   }
@@ -655,7 +655,7 @@ void  NavMenu_SetItemState (int *obj,int arg2)
   iVar3 = *obj;
   iVar1 =  Font_GetDataPtr ();
   /* vtable[24] */
-  (**(code **)(iVar1 + 0x60))(obj,arg2);
+  (*(code *)(iVar1 + 0x60))(obj,arg2);
   switch(arg2) {
   case 4:
   case 7:
@@ -664,9 +664,9 @@ void  NavMenu_SetItemState (int *obj,int arg2)
     break;
   case 5:
     /* vtable[57] */
-    (**(code **)(iVar3 + 0xe4))(obj,obj[0x13] + 0x10);
+    (*(code *)(iVar3 + 0xe4))(obj,obj[0x13] + 0x10);
     /* vtable[60] */
-    (**(code **)(iVar3 + 0xf0))(obj,*(int *)(obj[0x13] + 8),0);
+    (*(code *)(iVar3 + 0xf0))(obj,*(int *)(obj[0x13] + 8),0);
     obj[7] = 0;
     obj[0xf] = 1;
     break;
@@ -717,20 +717,20 @@ void  NavMenu_Destroy (int *obj)
   piVar1 = (int *)obj[0x13];
   if (piVar1 != NULL) {
     if (*piVar1 != 0) {
-      (**(code **)(*(int *)piVar1[1] + 4))();
+      (*(code *)(*(int *)piVar1[1] + 4))();
     }
     iVar2 = 0;
-    (**(code **)(*(int *)obj[0x1a] + 4))();
+    (*(code *)(*(int *)obj[0x1a] + 4))();
     puVar3 = (int *)obj[0x15];
     if (0 < obj[0x14]) {
       do {
         if (*(int *)(iVar2 * 4 + *(int *)(obj[0x13] + 0x24)) != 0) {
           obj[0x16] = iVar2;
           /* vtable[63] */
-          (**(code **)(*obj + 0xfc))(obj);
+          (*(code *)(*obj + 0xfc))(obj);
         }
         iVar2 = iVar2 + 1;
-        (**(code **)(*(int *)*puVar3 + 4))();
+        (*(code *)(*(int *)*puVar3 + 4))();
         puVar3 = puVar3 + 1;
       } while (iVar2 < obj[0x14]);
     }
@@ -748,7 +748,7 @@ int  Particle_New (int obj,int arg2,int arg3)
   iVar2 = 0;
   if (iVar1 != 0) {
     iVar2 =  Primitive_GetVtable ();
-    (**(code **)(iVar2 + 8))(iVar1,obj,arg2,arg3);
+    (*(code *)(iVar2 + 8))(iVar1,obj,arg2,arg3);
     iVar2 = iVar1;
   }
   return iVar2;
@@ -757,12 +757,12 @@ void  RenderView_SetBackground (int obj,int *val)
 {
   if (*(int *)(obj + 0x10) == 0) {
     if (*(int **)(obj + 0xb0) != NULL) {
-      (**(code **)(**(int **)(obj + 0xb0) + 4))();
+      (*(code *)(**(int **)(obj + 0xb0) + 4))();
     }
     *(int **)(obj + 0xb0) = val;
     if (val != NULL) {
       /* vtable[19] */
-      (**(code **)(*val + 0x4c))(val,*(int *)(obj + 0xac),&Sys_UnknownA904);
+      (*(code *)(*val + 0x4c))(val,*(int *)(obj + 0xac),&Sys_UnknownA904);
     }
   }
 }
@@ -773,16 +773,16 @@ void  RenderView_InitProjection (int *obj,int arg2,int arg3,int arg4,
   iVar1 = *obj;
   if (obj[4] == 0) {
     /* vtable[4] */
-    (**(code **)(iVar1 + 0x10))();
+    (*(code *)(iVar1 + 0x10))();
     /* vtable[30] */
-    (**(code **)(iVar1 + 0x78))(obj,arg3);
+    (*(code *)(iVar1 + 0x78))(obj,arg3);
     /* vtable[31] */
-    (**(code **)(iVar1 + 0x7c))(obj,arg4);
+    (*(code *)(iVar1 + 0x7c))(obj,arg4);
     if (arg5 == NULL) {
       arg5 = &Sys_RegParam2;
     }
     /* vtable[32] */
-    (**(code **)(iVar1 + 0x80))(obj,arg5);
+    (*(code *)(iVar1 + 0x80))(obj,arg5);
     GsSetRefView2((GsRVIEW2 *)(obj + 5));
   }
 }
@@ -792,31 +792,31 @@ void  Font_Destroy (int *obj)
   int iVar2;
   iVar2 = *obj;
   /* vtable[20] */
-  (**(code **)(iVar2 + 0x50))();
+  (*(code *)(iVar2 + 0x50))();
   piVar1 = (int *)obj[6];
   if (obj[9] == 0) {
-    (**(code **)(*(int *)obj[5] + 0x14))((int *)obj[5],obj[4]);
+    (*(code *)(*(int *)obj[5] + 0x14))((int *)obj[5],obj[4]);
     /* vtable[5] */
-    (**(code **)(*piVar1 + 0x14))(piVar1,obj[4]);
+    (*(code *)(*piVar1 + 0x14))(piVar1,obj[4]);
     /* vtable[5] */
-    (**(code **)(*piVar1 + 0x14))(piVar1,*(int *)obj[3]);
+    (*(code *)(*piVar1 + 0x14))(piVar1,*(int *)obj[3]);
   }
   /* vtable[5] */
-  (**(code **)(iVar2 + 0x14))(obj,obj[4]);
+  (*(code *)(iVar2 + 0x14))(obj,obj[4]);
   /* vtable[5] */
-  (**(code **)(iVar2 + 0x14))(obj,*(int *)(obj[3] + 4));
+  (*(code *)(iVar2 + 0x14))(obj,*(int *)(obj[3] + 4));
   /* vtable[5] */
-  (**(code **)(iVar2 + 0x14))(obj,*(int *)obj[3]);
+  (*(code *)(iVar2 + 0x14))(obj,*(int *)obj[3]);
   if (*(int **)(obj[3] + 0x10) != piVar1) {
-    iVar2 = (**(code **)(*piVar1 + 4))(piVar1);
+    iVar2 = (*(code *)(*piVar1 + 4))(piVar1);
     obj[6] = iVar2;
   }
   if (*(int **)(obj[3] + 0xc) != (int *)obj[5]) {
-    iVar2 = (**(code **)(*(int *)obj[5] + 4))();
+    iVar2 = (*(code *)(*(int *)obj[5] + 4))();
     obj[5] = iVar2;
   }
   if (*(int **)(obj[3] + 8) != (int *)obj[4]) {
-    iVar2 = (**(code **)(*(int *)obj[4] + 4))();
+    iVar2 = (*(code *)(*(int *)obj[4] + 4))();
     obj[4] = iVar2;
   }
 }
@@ -825,7 +825,7 @@ void  ChunkDataObj_Construct (int *obj)
   int iVar1;
   int *piVar2;
   iVar1 =  GetCoordSystemVtable ();
-  (**(code **)(iVar1 + 8))(obj);
+  (*(code *)(iVar1 + 8))(obj);
   iVar1 =  ChunkData_GetDataPtr ();
   *obj = iVar1;
   obj[3] = 0;
@@ -835,9 +835,9 @@ void  ChunkDataObj_Construct (int *obj)
   piVar2 = (int *) EntityAllocLarge (&Sys_UnknownA90C,0,0);
   obj[0x2c] = (int)piVar2;
   /* vtable[19] */
-  (**(code **)(*piVar2 + 0x4c))(piVar2,obj[0x2b],&Sys_UnknownA904);
+  (*(code *)(*piVar2 + 0x4c))(piVar2,obj[0x2b],&Sys_UnknownA904);
   /* vtable[16] */
-  (**(code **)(*obj + 0x40))(obj);
+  (*(code *)(*obj + 0x40))(obj);
 }
 void  NavMenu_ChangePage (int *obj)
 {
@@ -921,20 +921,20 @@ void  ChunkDataObj_Destroy (int *obj)
 {
   int iVar1;
   /* vtable[36] */
-  (**(code **)(*obj + 0x90))();
+  (*(code *)(*obj + 0x90))();
   /* vtable[29] */
-  (**(code **)(*obj + 0x74))(obj);
-  (**(code **)(*(int *)obj[0x2b] + 4))();
+  (*(code *)(*obj + 0x74))(obj);
+  (*(code *)(*(int *)obj[0x2b] + 4))();
   /* vtable[42] */
-  (**(code **)(*obj + 0xa8))(obj,0);
+  (*(code *)(*obj + 0xa8))(obj,0);
   iVar1 =  GetCoordSystemVtable ();
   /* vtable[3] */
-  (**(code **)(iVar1 + 0xc))(obj);
+  (*(code *)(iVar1 + 0xc))(obj);
 }
 void  Font_Stop (int obj)
 {
   *(int *)(obj + 0x1c) = 0;
-  (**(code **)(*(int *)**(int **)(obj + 0xc) + 0x48))();
+  (*(code *)(*(int *)**(int **)(obj + 0xc) + 0x48))();
 }
 int * TypeEntry1_GetDataPtr (void)
 {
@@ -963,9 +963,9 @@ void  NavMenu_ConfirmState (int *obj)
     iVar1 = 0;
     if (0 < iVar5) {
       do {
-        (**(code **)(*(int *)*puVar3 + 0x60))((int *)*puVar3,0);
+        (*(code *)(*(int *)*puVar3 + 0x60))((int *)*puVar3,0);
         iVar1 = iVar1 + 1;
-        (**(code **)(*(int *)*puVar3 + 0xbc))((int *)*puVar3,&local_30);
+        (*(code *)(*(int *)*puVar3 + 0xbc))((int *)*puVar3,&local_30);
         local_2c = local_2c + 10;
         puVar3 = puVar3 + 1;
       } while (iVar1 < iVar5);
@@ -973,14 +973,14 @@ void  NavMenu_ConfirmState (int *obj)
     iVar7 = iVar7 * 4;
     piVar4 = *(int **)(iVar6 * 4 + *(int *)(iVar7 + obj[0x19]));
     /* vtable[24] */
-    (**(code **)(*piVar4 + 0x60))(piVar4,1);
+    (*(code *)(*piVar4 + 0x60))(piVar4,1);
     /* vtable[46] */
-    (**(code **)(*piVar4 + 0xb8))(piVar4,obj[0x13] + 0x10);
+    (*(code *)(*piVar4 + 0xb8))(piVar4,obj[0x13] + 0x10);
     *(int *)(*(int *)(iVar7 + *(int *)(obj[0x13] + 0x24)) + 4) = iVar6;
-    (**(code **)(*(int *)obj[0x1a] + 0x50))();
+    (*(code *)(*(int *)obj[0x1a] + 0x50))();
     obj[0xf] = 1;
     /* vtable[24] */
-    (**(code **)(*obj + 0x60))(obj,0x10);
+    (*(code *)(*obj + 0x60))(obj,0x10);
   }
 }
 void  TextInput_Nop (void)
@@ -1014,19 +1014,19 @@ void  NavMenu_CancelState (int *obj)
     iVar3 = obj[0x16] * 4;
     iVar2 = *(int *)(iVar3 + obj[0x18]);
     /* vtable[64] */
-    (**(code **)(*obj + 0x100))(obj,obj[5],0);
+    (*(code *)(*obj + 0x100))(obj,obj[5],0);
     iVar4 = *(int *)(iVar3 + obj[0x19]);
     piVar1 = *(int **)(iVar2 * 4 + iVar4);
     /* vtable[46] */
-    (**(code **)(*piVar1 + 0xb8))(piVar1,obj[0x13] + 0x10);
+    (*(code *)(*piVar1 + 0xb8))(piVar1,obj[0x13] + 0x10);
     iVar2 = *(int *)(*(int *)(iVar3 + *(int *)(obj[0x13] + 0x24)) + 4);
     *(int *)(iVar3 + obj[0x18]) = iVar2;
     piVar1 = *(int **)(iVar2 * 4 + iVar4);
     /* vtable[24] */
-    (**(code **)(*piVar1 + 0x60))(piVar1,1);
+    (*(code *)(*piVar1 + 0x60))(piVar1,1);
     obj[0xf] = 1;
     /* vtable[24] */
-    (**(code **)(*obj + 0x60))(obj,0x11);
+    (*(code *)(*obj + 0x60))(obj,0x11);
   }
 }
 int  NavMenu_NewPage (int obj,int arg2,int arg3)
@@ -1037,7 +1037,7 @@ int  NavMenu_NewPage (int obj,int arg2,int arg3)
   iVar2 = 0;
   if (iVar1 != 0) {
     iVar2 =  NavMenu_GetDataPtr ();
-    (**(code **)(iVar2 + 8))(iVar1,obj,arg2,arg3);
+    (*(code *)(iVar2 + 8))(iVar1,obj,arg2,arg3);
     iVar2 = iVar1;
   }
   return iVar2;

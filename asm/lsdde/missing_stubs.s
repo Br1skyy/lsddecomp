@@ -184,20 +184,9 @@ ApplyRawMatrixToVectors:
     j _stub_ret
     nop
 
-.globl Cinema_FreeEntity
-Cinema_FreeEntity:
-    j _stub_ret
-    nop
-
-.globl Cinema_SetState
-Cinema_SetState:
-    j _stub_ret
-    nop
-
-.globl Cinema_TriggerSfx
-Cinema_TriggerSfx:
-    j _stub_ret
-    nop
+/* REMOVED (C): Cinema_FreeEntity implemented in cdrom_handler.c */
+/* REMOVED (C): Cinema_SetState  implemented in cdrom_handler.c */
+/* REMOVED (C): Cinema_TriggerSfx implemented in cdrom_handler.c */
 
 /* REMOVED (PSYQ): close provided by PsyQ library */
 
@@ -607,41 +596,9 @@ Font_GetCharData:
 
 /* REMOVED: func_80025e9c replaced by implementation in Sound.c */
 /* REMOVED: func_80026f34 replaced by implementation in Sound.c */
-
-.globl func_80048cfc
-/* REMOVED: func_80048cfc: */
-    j _stub_ret
-    nop
-
-.globl func_800490f4
-/* REMOVED: func_800490f4: */
-    j _stub_ret
-    nop
-
-.globl func_8004913c
-/* REMOVED: func_8004913c: */
-    j _stub_ret
-    nop
-
-.globl func_800491FC
-/* REMOVED: func_800491FC: */
-    j _stub_ret
-    nop
-
-.globl func_80049334
-/* REMOVED: func_80049334: */
-    j _stub_ret
-    nop
-
-.globl func_800493c8
-/* REMOVED: func_800493c8: */
-    j _stub_ret
-    nop
-
-.globl func_800493E4
-/* REMOVED: func_800493E4: */
-    j _stub_ret
-    nop
+/* REMOVED: func_80048cfc, func_800490f4, func_8004913c, func_800491FC,
+           func_80049334, func_800493c8, func_800493E4 implemented in
+           asm/lsdde/psyq_memset.s (real ROM code) */
 
 .globl func_8005c714
 func_8005c714:
@@ -830,11 +787,7 @@ main_SBSS_START:
 /* REMOVED (DATA): j _stub_ret */
 /* REMOVED (DATA): nop */
 
-.globl NavMenu_GetDataPtr
-/* REMOVED: NavMenu_GetDataPtr: */
-    j _stub_ret
-    nop
-
+/* REMOVED (C): NavMenu_GetDataPtr implemented in NavMenu_Spu.c */
 .globl NavMenu_NewList
 NavMenu_NewList:
     j _stub_ret
@@ -3528,7 +3481,7 @@ Other_EntityListIter:
 Other_GlobalPtr:
     .word 0
 
-/* Other_MemHeapPtr removed — override.s sets it via .set alias to D_8008A818 (SDATA) */
+/* Other_MemHeapPtr removed - override.s sets it via .set alias to D_8008A818 (SDATA) */
 .globl Other_MemLockValue
 Other_MemLockValue:
     .word 0

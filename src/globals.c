@@ -1,5 +1,6 @@
 // Auto-generated globals and external function stubs
 // Placeholder definitions for non-byte-matching builds
+#include "types.h"
 u32 Memory_AudioTypeVtable = 0;
 u32 Memory_ObjType24Vtable = 0;
 u32 Memory_SoundEffectOffsetTbl = 0;

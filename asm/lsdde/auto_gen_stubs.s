@@ -54,7 +54,6 @@ datastub  D_80032A9C
 datastub  D_80032AD0
 datastub  D_80033738
 datastub  D_800879C4
-datastub  D_80088D16
 datastub  D_80088F4A
 datastub  D_8008ACB4
 datastub  D_8008B21C

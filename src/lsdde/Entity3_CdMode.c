@@ -13,9 +13,9 @@ int CdModeDispatch(int *obj)
     int vtab;
     *(short *)&obj[8] = 0;
     vtab = *obj;
-    (**(code **)(vtab + 0x0C))();
+    (*(code *)(vtab + 0x0C))();
     vtab = GetCoordSystemVtable();
-    (**(code **)(vtab + 0x0C))(obj);
+    (*(code *)(vtab + 0x0C))(obj);
     MemFreeImpl(obj);
     return 0;
 }
@@ -24,7 +24,7 @@ int CdModeSubA(int *obj)
     int vtab;
     int tmp;
     vtab = GetCoordSystemVtable();
-    tmp = (**(code **)(vtab + 0x08))(obj);
+    tmp = (*(code *)(vtab + 0x08))(obj);
     obj[0] = tmp;
     CdModeUnknown();
     obj[3] = 0;
@@ -41,9 +41,9 @@ void CdModeSubB(int *obj)
 {
     int vtab;
     vtab = *obj;
-    (**(code **)(vtab + 0x48))();
+    (*(code *)(vtab + 0x48))();
     vtab = *obj;
-    (**(code **)(vtab + 0x5C))(obj);
+    (*(code *)(vtab + 0x5C))(obj);
 }
 int CdModeSubC(int *obj)
 {
@@ -56,18 +56,18 @@ int CdModeSubC(int *obj)
     oldArg = obj[3];
     obj[3] = 0;
     vtab = *obj;
-    (**(code **)(vtab + 0x44))(obj, 0, 1, 0);
+    (*(code *)(vtab + 0x44))(obj, 0, 1, 0);
     vtab = *obj;
-    type = (**(code **)(vtab + 0x4C))(obj, 0, 2);
+    type = (*(code *)(vtab + 0x4C))(obj, 0, 2);
     child = MemAlloc(type);
     if (child != 0)
     {
         vtab = *obj;
-        (**(code **)(vtab + 0x4C))(obj, 0, 0);
+        (*(code *)(vtab + 0x4C))(obj, 0, 0);
         vtab = *obj;
-        (**(code **)(vtab + 0x54))(obj, child, type);
+        (*(code *)(vtab + 0x54))(obj, child, type);
         vtab = *obj;
-        (**(code **)(vtab + 0x48))(obj);
+        (*(code *)(vtab + 0x48))(obj);
         obj[4] = (int)child;
         obj[5] = type;
         obj[3] = oldArg;
@@ -76,7 +76,7 @@ int CdModeSubC(int *obj)
     {
         MemFreeImpl(0);
         vtab = *obj;
-        (**(code **)(vtab + 0x48))(obj);
+        (*(code *)(vtab + 0x48))(obj);
     }
     return 0;
 }
@@ -99,7 +99,7 @@ int CdModeSetFlag9(int *obj)
 }
 int *CdModeUnknown(void)
 {
-    return D_8006D430;
+    return (int *)&D_8006D430;
 }
 void CdModePoll(void)
 {
@@ -125,13 +125,13 @@ void CdModeRunTask(int mode)
     else
         i = func_8002C438();
     base = CdModeUnknown();
-    pp = (int **)D_8006D4AC;
+    pp = (int **)&D_8006D4AC;
     for (;;)
     {
         CdModeSubD(i, base);
         if (!*pp)
             break;
-        (**(code **)(*pp))(i);
+        (*(code)(*pp))(i);
         pp++;
     }
 }
@@ -267,7 +267,7 @@ int EntityAllocSmall(int type)
     obj = MemAllocImpl(0x2c);
     if (obj != 0) {
         vtab = (int)NopSub_269e0();
-        (**(code **)(vtab + 8))(obj, type);
+        (*(code *)(vtab + 8))(obj, type);
     }
     return obj;
 }
@@ -278,7 +278,7 @@ void CdModeInitDream(int *obj, int *src)
     int local_20;
     char *local_1c;
     iVar1 = (int)func_8003b20c();
-    (**(code **)(iVar1 + 8))(obj, *src);
+    (*(code *)(iVar1 + 8))(obj, *src);
     iVar1 = (int)NopSub_269e0();
     *obj = iVar1;
     obj[8] = (int)src;
@@ -290,8 +290,8 @@ void CdModeInitDream(int *obj, int *src)
     iVar1 = New_DreamSys(uVar2, 0, 0);
     obj[10] = iVar1;
     obj[9] = 0;
-    (**(code **)(*(int *)obj[10] + 0x228))(obj[10], src[5]);
-    (**(code **)(*obj + 0x40))(obj);
+    (*(code *)(*(int *)obj[10] + 0x228))(obj[10], src[5]);
+    (*(code *)(*obj + 0x40))(obj);
 }
 void NopSub_260a4(void)
 {
@@ -302,7 +302,7 @@ void NopSub_26108(int obj, int arg2, int arg3)
     int iVar1;
     if (*(int *)(obj + 0x18) == 0) {
         iVar1 = (int)func_8003b20c();
-        (**(code **)(iVar1 + 0x44))(obj, arg2, arg3, 0);
+        (*(code *)(iVar1 + 0x44))(obj, arg2, arg3, 0);
     }
 }
 void NopSub_26170(int obj)

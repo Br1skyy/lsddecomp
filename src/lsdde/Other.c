@@ -356,7 +356,7 @@ void ListIterateNext(void **iterator, int *remaining)
 void InitObjectArrayByVtable(u32 **objArray, int count)
 {
     for (; 0 < count; count--) {
-        *objArray = (u32 *)((**(code **)((int)*objArray + 4))());
+        *objArray = (u32 *)((*(code *)((int)*objArray + 4))());
         objArray++;
     }
 }
@@ -1438,7 +1438,7 @@ int CreateSoundEffect(void)
     vtable = 0;
     if (obj != 0) {
         vtable = GetSoundEffectVtablePtr();
-        int initResult = (**(code **)(vtable + 8))(obj);
+        int initResult = (*(code *)(vtable + 8))(obj);
         if (initResult == 0) {
             MemFree((int)obj, 0);
             vtable = 0;
@@ -1566,7 +1566,7 @@ void *GetVtable_SoundEffect2(void)
 void WorldToLocalCoord(int *obj, int *outPos, short *worldPos)
 {
     MATRIX mtx;
-    (**(code **)(*obj + 0x84))(obj, &mtx, 0);
+    (*(code *)(*obj + 0x84))(obj, &mtx, 0);
     outPos[0] = (int)worldPos[0];
     outPos[1] = (int)worldPos[1];
     outPos[2] = (int)worldPos[2];
@@ -1578,7 +1578,7 @@ void WorldToLocalWithOffset(int *obj, int *outPos, u32 worldPos)
 {
     MATRIX mtx;
     int *offset;
-    (**(code **)(*obj + 0x84))(obj, &mtx, 0);
+    (*(code *)(*obj + 0x84))(obj, &mtx, 0);
     ApplyMatrixLV(&mtx, (VECTOR *)outPos, (VECTOR *)worldPos);
     if (obj[3] != 0) {
         offset = (int *)(obj[5] + 0x38);
@@ -1669,7 +1669,7 @@ SKIP_OFFSET_UPDATE:
     localPos[0] = *targetPos - *worldPos;
     localPos[1] = targetPos[2] - worldPos[2];
     localPos[2] = targetPos[4] - worldPos[4];
-    (**(code **)(*(int *)entity + 0xa4))(entity, 0, rot, localPos, 1);
+    (*(code *)(*(int *)entity + 0xa4))(entity, 0, rot, localPos, 1);
     localPos[0] = rot[0];
     localPos[2] = rot[2];
     localPos[1] = rot[1] - DEGREES_90;
@@ -1745,9 +1745,9 @@ void RotateToTarget(EntityObj *entity, int targetObj, int useXZ, int useY, int e
     if (useY == 0) {
         yawToSet = yawToSet + 0xb4;
     }
-    (**(code **)(*(int *)entity + 0x44))(entity, 1, &rotX);
+    (*(code *)(*(int *)entity + 0x44))(entity, 1, &rotX);
     if (extraRot != 0) {
-        (**(code **)(*(int *)entity + 0x44))(entity, 0, extraRot);
+        (*(code *)(*(int *)entity + 0x44))(entity, 0, extraRot);
     }
 }
 /* Fixed point modulo division returning packed Q12 value */
@@ -1867,7 +1867,7 @@ TRIGGER:
 void AdvanceEntityList(void)
 {
     if (Other_EntityListIter != 0) {
-        Other_EntityListIter = (void *)(**(code **)(*(u32 *)Other_EntityListIter + 4))();
+        Other_EntityListIter = (void *)(*(code *)(*(u32 *)Other_EntityListIter + 4))();
     }
 }
 /* Try to spawn an ambient sound entity at given position */
@@ -1918,7 +1918,7 @@ u32 LookupSoundType(short *param)
 int ApplySoundEffectOffset(int soundId, int baseOffset)
 {
     if ((Other_DreamStateNum == 4) && (baseOffset == 0x10)) {
-        int state = (**(code **)(*(u32 *)Other_DreamSysStatePtr + 0x200))();
+        int state = (*(code *)(*(u32 *)Other_DreamSysStatePtr + 0x200))();
         if (state == 4) {
             soundId += 0x1e;
         }
@@ -1955,7 +1955,7 @@ u32 ExecSoundScript(u32 soundId, u32 typeData, int *actionDef, EntityObj *entity
     if (result != 0) {
         char *params = (char *)(actionDef + 4);
         TriggerScreenShake(*(char *)(actionDef + 3));
-        int val = (**(code **)(*(int *)entity + 0x88))(entity, (int)*(char *)(actionDef + 2));
+        int val = (*(code *)(*(int *)entity + 0x88))(entity, (int)*(char *)(actionDef + 2));
         if (val == 0) {
             if (*(char *)(actionDef + 3) == 2) {
                 return ExecSoundAction(soundId, params, actionDef + 0x38, entity);
@@ -2036,7 +2036,7 @@ TRIGGER_OK:
 bool CheckSoundInDreamState(int op)
 {
     char expected = (&Other_DreamStateMap)[op];
-    int state = (**(code **)(*(u32 *)Other_DreamSysStatePtr + 0x200))(Other_DreamSysStatePtr);
+    int state = (*(code *)(*(u32 *)Other_DreamSysStatePtr + 0x200))(Other_DreamSysStatePtr);
     return expected == state;
 }
 /* Check sound ID against month/dream phase */
@@ -2067,9 +2067,9 @@ bool CreateSoundEntity(u32 soundId, u32 entityType, u32 *positionData, int sound
         rot[0] = (char)(&Other_SoundRotTbl)[soundDirIdx];
         rot[1] = *(u16 *)((int)&Other_RotationData + rotScale);
         dir[2] = rot[1];
-        (**(code **)(*(u32 *)Other_CurrentEntityPtr + 0xe8))(Other_CurrentEntityPtr, (int *)rot, dir);
-        (**(code **)(*(int *)entity + 0x44))(entity, 1, &Unk_DreamBufF18 + (char)(&Other_SoundRotScaleTbl)[soundDirIdx] * 0xc);
-        (**(code **)(*(int *)entity + 0x4c))(entity, Other_DreamSysStatePtr, Other_SoundEntityParam2, Other_CurrentEntityPtr, rot);
+        (*(code *)(*(u32 *)Other_CurrentEntityPtr + 0xe8))(Other_CurrentEntityPtr, (int *)rot, dir);
+        (*(code *)(*(int *)entity + 0x44))(entity, 1, &Unk_DreamBufF18 + (char)(&Other_SoundRotScaleTbl)[soundDirIdx] * 0xc);
+        (*(code *)(*(int *)entity + 0x4c))(entity, Other_DreamSysStatePtr, Other_SoundEntityParam2, Other_CurrentEntityPtr, rot);
     }
     return entity == NULL;
 }
@@ -2078,9 +2078,9 @@ void PlayAmbientEvent(int eventData)
 {
     MATRIX mtx;
     if (*(int **)(eventData + 4) != NULL) {
-        (**(code **)(**(int **)(eventData + 4) + 0x50))();
+        (*(code *)(**(int **)(eventData + 4) + 0x50))();
         ApplyMatrixLV(&mtx, (VECTOR *)eventData + 8, (VECTOR *)eventData + 8);
-        (**(code **)(**(int **)(eventData + 4) + 0x4c))
+        (*(code *)(**(int **)(eventData + 4) + 0x4c))
                   (*(u32 *)(eventData + 4), Other_DreamSysStatePtr, Other_SoundEntityParam2, Other_CurrentEntityPtr, &mtx);
         RotateToTarget(*(int **)(eventData + 4), Other_DreamSysStatePtr, 1, 0, 0);
     }
@@ -2102,16 +2102,16 @@ u32 EntityStateMachine(EntityObj *entity, int targetObj)
         EntityListCallEach(entity);
         return 1;
     }
-    return (**(code **)(*(int *)entity + 0x100))(entity);
+    return (*(code *)(*(int *)entity + 0x100))(entity);
 }
 /* Advance to next entity in linked list via vtable */
 void MoveToNextEntity(EntityObj *entity)
 {
-    (**(code **)(*(int *)entity + 0x104))();
+    (*(code *)(*(int *)entity + 0x104))();
     if (entity->nField_60 == 0) {
         entity->nField_5c = 0;
     } else {
-        entity->nField_5c = (**(code **)(*(int *)entity->nField_5c + 4))();
+        entity->nField_5c = (*(code *)(*(int *)entity->nField_5c + 4))();
     }
 }
 /* Find a character in a string buffer */
@@ -2137,7 +2137,7 @@ u32 InitCharLookupTable(int obj)
     int charBuf;
     int *intPtr;
     int i;
-    tableSize = (**(code **)(**(int **)(obj + 0x5c) + 0x80))(*(int **)(obj + 0x5c), 0, &intBuf);
+    tableSize = (*(code *)(**(int **)(obj + 0x5c) + 0x80))(*(int **)(obj + 0x5c), 0, &intBuf);
     tableSize &= 0xff;
     intBuf = MemAlloc(tableSize << 2, 0);
     *(int *)(obj + 0x70) = intBuf;
@@ -2145,7 +2145,7 @@ u32 InitCharLookupTable(int obj)
         charBuf = MemAlloc(tableSize, 0);
         *(int *)(obj + 0x74) = charBuf;
         if (charBuf != 0) {
-            (**(code **)(**(int **)(obj + 0x5c) + 0x80))(*(int **)(obj + 0x5c), charBuf, &intBuf);
+            (*(code *)(**(int **)(obj + 0x5c) + 0x80))(*(int **)(obj + 0x5c), charBuf, &intBuf);
             intPtr = *(int **)(obj + 0x70);
             int entryCount = 0;
             *(u32 *)(obj + 0x6c) = 0;
@@ -2177,7 +2177,7 @@ void DestroyCharLookupTable(int obj)
         while (count > 0) {
             EntityObj *entity = (int *)*intBuf;
             intBuf++;
-            (**(code **)(*(int *)entity + 4))();
+            (*(code *)(*(int *)entity + 4))();
             count = *(int *)(obj + 0x6c);
         }
         *(u32 *)(obj + 0x68) = 0;

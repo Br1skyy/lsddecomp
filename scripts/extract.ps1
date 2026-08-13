@@ -5,10 +5,17 @@ param(
 $ErrorActionPreference = "Stop"
 $root = Split-Path $PSScriptRoot -Parent
 
-# find dumpsxiso
-$dx = Join-Path $root "tools/dumpsxiso.exe"
-if (-not (Test-Path $dx)) { $dx = (Get-Command "dumpsxiso" -ErrorAction SilentlyContinue).Source }
-if (-not $dx) { throw "dumpsxiso.exe not found" }
+# find dumpsxiso (cross-platform)
+$isWindows = $PSVersionTable.Platform -eq "Win32NT" -or $null -eq $PSVersionTable.Platform
+$dx = Join-Path $root "tools/dumpsxiso"
+if ($isWindows) {
+    $dx = $dx + ".exe"
+}
+
+if (-not (Test-Path $dx)) { 
+    $dx = (Get-Command "dumpsxiso" -ErrorAction SilentlyContinue).Source 
+}
+if (-not $dx) { throw "dumpsxiso not found" }
 
 # no image given, look in disk/
 if (-not $Image) {
@@ -17,7 +24,7 @@ if (-not $Image) {
     $found += Get-ChildItem (Join-Path $root "disk") -Filter "*.bin" -File -ErrorAction SilentlyContinue
     $found = $found | Sort-Object Length -Descending
     if ($found.Count -eq 0) {
-        throw "no .cue/.bin in disk/. pass one: pwsh tools/extract.ps1 -Image path\to\LSD.cue"
+        throw "no .cue/.bin in disk/. pass one: pwsh scripts/extract.ps1 -Image path/to/LSD.cue"
     }
     $Image = $found[0].FullName
 }
@@ -38,4 +45,4 @@ foreach ($p in @("extract.xml","SLPS_015.56","SYSTEM.CNF","CDI")) {
 if ($missing.Count -gt 0) { throw "extraction missing: $($missing -join ', ') - wrong image?" }
 
 Write-Host "done. extract.xml, SLPS_015.56, CDI/ in disk/extract/"
-Write-Host "next: pwsh ./build_ps1.ps1"
+Write-Host "next: pwsh scripts/build_ps1.ps1"

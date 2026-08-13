@@ -41,7 +41,7 @@ extern u32 PTR_StageSecondaryEntityTablePtr;
    ----------------------------------------------------------------------- */
 /* -----------------------------------------------------------------------
    73 functions across 2,810 lines of decompiler output.
-   Vtable dispatch: (**(code**)(vtable + offset))(obj, ...) calls virtual
+   Vtable dispatch: (*(code*)(vtable + offset))(obj, ...) calls virtual
    method at vtable[offset/4].
    ----------------------------------------------------------------------- */
 /***********************************************************************
@@ -87,7 +87,7 @@ int New_Entity2(int type, int arg)
     vtable = 0;
     if (obj != 0) {
         vtable = (int)Get_vtable_Entity3();
-        (**(code**)(vtable + 8))(obj, type, arg); /* vtable[2] */
+        (*(code*)(vtable + 8))(obj, type, arg); /* vtable[2] */
         vtable = obj;
     }
     return vtable;
@@ -101,7 +101,7 @@ int New_Entity_Big(int type, int arg1, int arg2, int arg3, int arg4)
     vtable = 0;
     if (obj != 0) {
         vtable = (int)Get_vtable_Entity4();
-        (**(code**)(vtable + 8))(obj, type, arg1, arg2, arg3, arg4); /* vtable[2] */
+        (*(code*)(vtable + 8))(obj, type, arg1, arg2, arg3, arg4); /* vtable[2] */
         vtable = obj;
     }
     return vtable;
@@ -115,7 +115,7 @@ int New_DreamParticleObject(int type, int *velTbl, int sysPtr, int tickPtr)
     obj = (int)MemAlloc(SIZEOF_ENTITY_TYPE2);
     if (obj != 0) {
         vtable = (int)Get_vtable_DreamParticle();
-        result = (**(code**)(vtable + 8))(obj, type, velTbl, sysPtr, tickPtr); /* vtable[2] */
+        result = (*(code*)(vtable + 8))(obj, type, velTbl, sysPtr, tickPtr); /* vtable[2] */
         if (result == 0) {
             MemFree(obj);
             return 0;
@@ -131,7 +131,7 @@ int New_EntitySubObject(void)
     obj = (int)MemAlloc(SIZEOF_SUBOBJECT);
     if (obj != 0) {
         vtable = (int)Get_vtable_EntitySubObject();
-        if ((**(code**)(vtable + 8))(obj) == 0) { /* vtable[2] */
+        if ((*(code*)(vtable + 8))(obj) == 0) { /* vtable[2] */
             MemFree(obj);
             obj = 0;
         }
@@ -146,7 +146,7 @@ int New_EntitySubObject2(int arg1, int arg2, int allocator)
     obj = (int)MemAlloc(SIZEOF_SUBOBJECT2);
     if (obj != 0) {
         vtable = (int)Get_vtable_EntitySubObject2();
-        (**(code**)(vtable + 8))(obj, arg1, arg2, allocator); /* vtable[2] */
+        (*(code*)(vtable + 8))(obj, arg1, arg2, allocator); /* vtable[2] */
     }
     return obj;
 }
@@ -169,7 +169,7 @@ int *entity_SetFields_20_28(int *entity, int val1, int val2, int val3, int trigg
     *(int*)(entity + 0x28) = val3;
     if (trigger != 0) {
         piVar1 = *(int**)((val3 - val1) * 4 + entity + 0x40);
-        (**(code**)(*piVar1 + 0xb8))(piVar1, &EntityFieldSetupData); /* vtable[0x2e] */
+        (*(code*)(*piVar1 + 0xb8))(piVar1, &EntityFieldSetupData); /* vtable[0x2e] */
     }
 }
 /* Copy a name from a string table into 0x1a-byte buffer with space padding */
@@ -199,22 +199,22 @@ void AddVec3(int *dst, int *a, int *b)
 /* Set entity render state via vtable methods */
 void Setup_EntityState(int *entity, int state, int *pos, int colour, int other)
 {
-    (**(code**)(entity + 0x4c))(); /* vtable[0x13] */
-    (**(code**)(entity + 0x44))(entity, 1, colour); /* vtable[0x11] */
-    (**(code**)(entity + 0x48))(entity, 1, other); /* vtable[0x12] */
+    (*(code*)(entity + 0x4c))(); /* vtable[0x13] */
+    (*(code*)(entity + 0x44))(entity, 1, colour); /* vtable[0x11] */
+    (*(code*)(entity + 0x48))(entity, 1, other); /* vtable[0x12] */
 }
 /* Release an array of objects by calling vtable[4] on each */
 void ReleaseObjectArray(int *array, int count)
 {
     for (; 0 < count; count = count - 1) {
-        *array = (**(code**)(*(int*)*array + 4))(); /* vtable[1] */
+        *array = (*(code*)(*(int*)*array + 4))(); /* vtable[1] */
         array = array + 1;
     }
 }
 /***********************************************************************
  * ENTITY UPDATE / DESTROY STATE MACHINES
  ***********************************************************************/
-/* Entity state update â€“ destroys secondary entity when needed */
+/* Entity state update - destroys secondary entity when needed */
 int *entity_Update_DestroyState(int *entity, int *secondaryEnt)
 {
     int iVar1;
@@ -227,33 +227,33 @@ int *entity_Update_DestroyState(int *entity, int *secondaryEnt)
                     uVar2 = *(int*)(iVar1 + 0xc);
                 else
                     uVar2 = *(int*)(iVar1 + 0x18);
-                (**(code**)(*secondaryEnt + 0x7c))(secondaryEnt, uVar2); /* vtable[0x1f] */
-                (**(code**)(*secondaryEnt + 4))(secondaryEnt); /* vtable[1] */
+                (*(code*)(*secondaryEnt + 0x7c))(secondaryEnt, uVar2); /* vtable[0x1f] */
+                (*(code*)(*secondaryEnt + 4))(secondaryEnt); /* vtable[1] */
                 ((EntityObj *)entity)->nField_60 = 0;
-                (**(code**)(entity + 0x80))(entity); /* vtable[0x20] */
+                (*(code*)(entity + 0x80))(entity); /* vtable[0x20] */
             }
         } else {
-            (**(code**)(*secondaryEnt + 4))(secondaryEnt); /* vtable[1] */
+            (*(code*)(*secondaryEnt + 4))(secondaryEnt); /* vtable[1] */
             ((EntityObj *)entity)->nField_60 = 0;
-            (**(code**)(entity + 0x80))(entity); /* vtable[0x20] */
-            iVar1 = (**(code**)(*(int*)entity[0xf] + 0x108))(); /* vtable[0x42] */
-            (**(code**)(*(int*)entity[0xf] + 0x104))((int*)entity[0xf], iVar1 + 0x1e); /* vtable[0x41] */
+            (*(code*)(entity + 0x80))(entity); /* vtable[0x20] */
+            iVar1 = (*(code*)(*(int*)entity[0xf] + 0x108))(); /* vtable[0x42] */
+            (*(code*)(*(int*)entity[0xf] + 0x104))((int*)entity[0xf], iVar1 + 0x1e); /* vtable[0x41] */
         }
         if (((EntityObj *)entity)->nField_60 != 0) return;
     }
     if ((*(short*)(((EntityObj *)entity)->pData + 0x1b4) == 0) && (((EntityObj *)entity)->nObjState == 0)) {
         ((EntityObj *)entity)->nField_64 = 1;
-        (**(code**)(entity + 0x88))(entity); /* vtable[0x22] */
+        (*(code*)(entity + 0x88))(entity); /* vtable[0x22] */
     }
 }
 /* Notify entity of position/orientation change */
 int *entity_NotifyPosition(int *entity, int posX, int posY, int callbackObj, int trigger)
 {
     int *world;
-    world = (int*)(**(code**)(*(int*)((EntityObj *)entity)->pWorld + 0xac))(); /* vtable[0x2b] */
-    if (callbackObj != 0) (**(code**)(*world + 0xd0))(world, callbackObj); /* vtable[0x34] */
-    if (trigger != 0) (**(code**)(entity + 0x10))(entity, world); /* vtable[4] */
-    (**(code**)(*world + 0xd8))(world, ((EntityObj *)entity)->nDist, posX, posY); /* vtable[0x36] */
+    world = (int*)(*(code*)(*(int*)((EntityObj *)entity)->pWorld + 0xac))(); /* vtable[0x2b] */
+    if (callbackObj != 0) (*(code*)(*world + 0xd0))(world, callbackObj); /* vtable[0x34] */
+    if (trigger != 0) (*(code*)(entity + 0x10))(entity, world); /* vtable[4] */
+    (*(code*)(*world + 0xd8))(world, ((EntityObj *)entity)->nDist, posX, posY); /* vtable[0x36] */
 }
 /***********************************************************************
  * ENTITY SUBTYPE SPAWN / ANIM / DESTROY
@@ -276,17 +276,17 @@ void Create_EntitySubType0(int *entity, int recreateFlag)
                 local_2c = local_2c + *(int*)(&SubType0OffsetTable + iVar4 * 4);
             if (recreateFlag == 0) {
                 *puVar2 = New_EntitySubObject();
-                (**(code**)(*(int*)*puVar2 + 0x4c))((int*)*puVar2, entity, 0); /* vtable[0x13] */
-                (**(code**)(*(int*)*puVar2 + 0xb8))((int*)*puVar2, *(int*)(entity + 0x74)); /* vtable[0x2e] */
+                (*(code*)(*(int*)*puVar2 + 0x4c))((int*)*puVar2, entity, 0); /* vtable[0x13] */
+                (*(code*)(*(int*)*puVar2 + 0xb8))((int*)*puVar2, *(int*)(entity + 0x74)); /* vtable[0x2e] */
             } else {
-                (**(code**)(*(int*)*puVar2 + 0xb8))((int*)*puVar2, &local_30); /* vtable[0x2e] */
+                (*(code*)(*(int*)*puVar2 + 0xb8))((int*)*puVar2, &local_30); /* vtable[0x2e] */
             }
             iVar3 = iVar3 + 1;
             puVar2 = puVar2 + 1;
         } while (iVar3 < 2);
     }
 }
-/* Animate subtype-0 â€“ periodic child-object swap when timer ((EntityObj *)entity)->nTimer > 500 */
+/* Animate subtype-0 - periodic child-object swap when timer ((EntityObj *)entity)->nTimer > 500 */
 void Anim_EntitySubType0(int *entity)
 {
     int iVar3, iVar4, iVar5;
@@ -295,13 +295,13 @@ void Anim_EntitySubType0(int *entity)
     iVar5 = ((EntityObj *)entity)->nChildCount;
     if (((((EntityObj *)entity)->nSubTypeCount != 0) && (*(int*)(&SubType0AnimFrameTable + iVar5 * 4) != 0)) && (500 < (u32)((EntityObj *)entity)->nTimer)) {
         iVar4 = 0; iVar3 = 0;
-        (**(code**)(entity + 0x44))(entity, 0, &SubType0ColourSetting); /* vtable[0x11] */
+        (*(code*)(entity + 0x44))(entity, 0, &SubType0ColourSetting); /* vtable[0x11] */
     do {
         local_30 = 0; local_2c = 0;
         local_28 = iVar3 + *(int*)(&SubType0AnimFrameTable + iVar5 * 4);
         iVar3 = iVar3 + 3;
-        (**(code**)(*(int*)((EntityObj *)entity)->pSubObj + 0xbc))((int*)((EntityObj *)entity)->pSubObj, &local_30); /* vtable[0x2f] */
-        (**(code**)(*(int*)((EntityObj *)entity)->pSubObj + 0x44))((int*)((EntityObj *)entity)->pSubObj, 0, &SubType0ColourSetting); /* vtable[0x11] */
+        (*(code*)(*(int*)((EntityObj *)entity)->pSubObj + 0xbc))((int*)((EntityObj *)entity)->pSubObj, &local_30); /* vtable[0x2f] */
+        (*(code*)(*(int*)((EntityObj *)entity)->pSubObj + 0x44))((int*)((EntityObj *)entity)->pSubObj, 0, &SubType0ColourSetting); /* vtable[0x11] */
             iVar4 = iVar4 + 1;
         } while (iVar4 < 2);
         uVar6 = PARTICLE_GRAVITY / *(int*)(&SubType0AnimFrameTable + iVar5 * 4);
@@ -329,21 +329,21 @@ void Create_EntitySubType2(int *entity, int unused)
     Spawn_EntitySubObjectPool(entity, 0, 0, colourPtr);
     child = *(int**)(entity + 0x88);
     if (*(int*)(entity + 0x70) < 2) {
-        (**(code**)(*child + 100))(child, 1); /* vtable[0x19] */
-        (**(code**)(*child + 0x68))(child, 0); /* vtable[0x1a] */
+        (*(code*)(*child + 100))(child, 1); /* vtable[0x19] */
+        (*(code*)(*child + 0x68))(child, 0); /* vtable[0x1a] */
         if (rnd % 2 != 0)
             colourPtr = (int*)&SubType2Colour1;
         else
             colourPtr = (int*)&SubType2Colour2;
-        (**(code**)(*child + 0x48))(child, 1, colourPtr); /* vtable[0x12] */
+        (*(code*)(*child + 0x48))(child, 1, colourPtr); /* vtable[0x12] */
     } else {
         SubType2TempState = *(int*)(&SubType2StateArray + *(int*)(entity + 0x70) * 4);
         SoundOffsetAdd(child, 0);
         rnd = *(int*)(entity + 0x78);
         if (rnd == 0) rnd = *(int*)(entity + 0x74);
-        (**(code**)(*child + 0xb8))(child, rnd); /* vtable[0x2e] */
+        (*(code*)(*child + 0xb8))(child, rnd); /* vtable[0x2e] */
     }
-    (**(code**)(**(int**)(entity + 0x8c) + 0x60))(*(int**)(entity + 0x8c), 0); /* vtable[0x18] */
+    (*(code*)(**(int**)(entity + 0x8c) + 0x60))(*(int**)(entity + 0x8c), 0); /* vtable[0x18] */
 }
 /* Allocate 5 sub-objects linked to parent; each 0xa8 bytes */
 void Spawn_EntitySubObjectPool(int *entity, int unused1, int unused2, int *colour)
@@ -354,11 +354,11 @@ void Spawn_EntitySubObjectPool(int *entity, int unused1, int unused2, int *colou
     iVar3 = 0;
     do {
         *puVar2 = New_EntitySubObject2(unused2, 0, ParticleSpawnAllocator);
-        (**(code**)(*(int*)*puVar2 + 0x4c))((int*)*puVar2, entity, 0); /* vtable[0x13] */
-        (**(code**)(*(int*)*puVar2 + 0xb8))((int*)*puVar2, *(int*)(entity + 0x74)); /* vtable[0x2e] */
+        (*(code*)(*(int*)*puVar2 + 0x4c))((int*)*puVar2, entity, 0); /* vtable[0x13] */
+        (*(code*)(*(int*)*puVar2 + 0xb8))((int*)*puVar2, *(int*)(entity + 0x74)); /* vtable[0x2e] */
         iVar3 = iVar3 + 1;
         if (colour != 0)
-            (**(code**)(*(int*)*puVar2 + 0x48))((int*)*puVar2, 1, colour); /* vtable[0x12] */
+            (*(code*)(*(int*)*puVar2 + 0x48))((int*)*puVar2, 1, colour); /* vtable[0x12] */
         puVar2 = puVar2 + 1;
     } while (iVar3 < 5);
 }
@@ -371,17 +371,17 @@ void Destroy_EntitySubType2_Pool(int *entity)
 {
     ReleaseObjectArray(entity + 0x84, 5);
 }
-/* Init subtype-3 â€“ delegates to pool spawner (original:  func_8002cc84 ) */
+/* Init subtype-3 - delegates to pool spawner (original:  func_8002cc84 ) */
 void Init_EntitySubType3(int *entity, int unused)
 {
     Spawn_EntitySubObjectPool(entity, 0, 0, 0);
 }
-/* Init subtype-2 â€“ delegates to pool spawner (original:  func_8002cd08 ) */
+/* Init subtype-2 - delegates to pool spawner (original:  func_8002cd08 ) */
 void Init_EntitySubType2(int *entity)
 {
     Create_EntitySubType2(entity, 0);
 }
-/* Animate subtype-3 â€“ random colour cycling */
+/* Animate subtype-3 - random colour cycling */
 void Anim_EntitySubType3(int *entity)
 {
     u32 uVar1;
@@ -392,7 +392,7 @@ void Anim_EntitySubType3(int *entity)
     do {
         iVar4 = iVar4 + 1;
         uVar1 = rand();
-        (**(code**)(*(int*)*piVar3 + 0x48))((int*)*piVar3, 1, (int)&Unk_EntityBuf8C + (uVar1 % 6) * 0xc); /* vtable[0x12] */
+        (*(code*)(*(int*)*piVar3 + 0x48))((int*)*piVar3, 1, (int)&Unk_EntityBuf8C + (uVar1 % 6) * 0xc); /* vtable[0x12] */
         iVar2 = rand();
         *(int*)(*piVar3 + 0x84) = (iVar2 % ANGLE_DIV_360) * FIXED_12;
         piVar3 = piVar3 + 1;
@@ -413,7 +413,7 @@ void Init_EntityRenderState(int *entity, int state, int *pos)
     Setup_EntityState((int*)entity, state, auStack_20, *(int*)(entity + 100), *(int*)(entity + 0x68));
     iVar2 = *(int*)(entity + 0x54);
     if (iVar2 < 2) {
-        int uVar1 = (**(code**)(*(u32 *)ParticleStageObject + 0x80))(ParticleStageObject, (&StageChildObjects)[iVar2]); /* vtable[0x20] */
+        int uVar1 = (*(code*)(*(u32 *)ParticleStageObject + 0x80))(ParticleStageObject, (&StageChildObjects)[iVar2]); /* vtable[0x20] */
         LinkObjectToParent(entity, uVar1);
         iVar2 = *(int*)(entity + 0x54);
     }
@@ -427,7 +427,7 @@ void Anim_EntityStateUpdate(int *entity, int *pos)
     int iVar1;
     int auStack_20[4];
     AddVec3(auStack_20, (int*)pos, entity + 0x16);
-    (**(code**)(entity + 0xb8))(entity, auStack_20); /* vtable[0x2e] */
+    (*(code*)(entity + 0xb8))(entity, auStack_20); /* vtable[0x2e] */
     iVar1 = ((EntityObj *)entity)->nSoundId;
     if (iVar1 == 2)      Anim_EntitySubType2_Stub();
     else if (iVar1 == 0) Anim_EntitySubType0(entity);
@@ -468,9 +468,9 @@ void SetEntityVisualState(int *entity, short *valueOut, short value, int trigger
 {
     *valueOut = value;
     *(short*)(entity + 0x12) = value;
-    (**(code**)(entity + 0xc0))(entity, &EntityVisualColourSet); /* vtable[0x30] */
+    (*(code*)(entity + 0xc0))(entity, &EntityVisualColourSet); /* vtable[0x30] */
     *valueOut = 0;
-    if (trigger != 0) (**(code**)(entity + 0x88))(entity, cbArg); /* vtable[0x22] */
+    if (trigger != 0) (*(code*)(entity + 0x88))(entity, cbArg); /* vtable[0x22] */
 }
 /* Call a render callback; if it sets entity+0x28 == 0, call fallback */
 int *entity_RenderOrReject(int *entity, void (*cb)(int, int, int), int arg1, int arg2)
@@ -480,7 +480,7 @@ int *entity_RenderOrReject(int *entity, void (*cb)(int, int, int), int arg1, int
     if (*(int*)(entity + 0x28) == 0)
         entity_VisibleRender(entity);
 }
-/* Chunk/sector tile walk â€” returns 1 if renderable */
+/* Chunk/sector tile walk - returns 1 if renderable */
 int Entity_ShouldRender(int *entity)
 {
     short auStack_68[24];
@@ -492,17 +492,17 @@ int Entity_ShouldRender(int *entity)
     piVar4 = (int*)((EntityObj *)entity)->pObject;
     if (piVar4 != 0) {
         iVar2 = ((EntityObj *)entity)->pData;
-        iVar3 = (**(code**)(*piVar4 + 0x110))(piVar4, auStack_98, iVar2 + 0x18); /* vtable[0x44] */
+        iVar3 = (*(code*)(*piVar4 + 0x110))(piVar4, auStack_98, iVar2 + 0x18); /* vtable[0x44] */
         if (iVar3 == 0) return 0;
         iVar2 = Render_EntityChunkWalk(entity, auStack_68, auStack_38, auStack_98, 1);
         iVar3 = Render_EntityCheckSectors(entity, auStack_28, iVar2 + 0x18, iVar2, auStack_68, auStack_38);
         ((EntityObj *)entity)->nConfig = iVar3;
         if (iVar3 == 0) {
-            (**(code**)(entity + 0x88))(entity, 0xfffffffe); /* vtable[0x22] */
+            (*(code*)(entity + 0x88))(entity, 0xfffffffe); /* vtable[0x22] */
             return 0;
         }
-        (**(code**)(entity + 0xbc))(entity, auStack_28); /* vtable[0x2f] */
-        (**(code**)(entity + 0x88))(entity, 0xffffffff); /* vtable[0x22] */
+        (*(code*)(entity + 0xbc))(entity, auStack_28); /* vtable[0x2f] */
+        (*(code*)(entity + 0x88))(entity, 0xffffffff); /* vtable[0x22] */
         return 1;
     }
     return 0;
@@ -531,14 +531,14 @@ int Render_EntityChunkWalk(int *entity, short *out, int *tileList, int chunk, u3
             iVar3 = 1;
             if (iVar10 + 1 < (int)*(short*)(piVar12[0x1a] + 2)) {
                 iVar3 = 2;
-                iVar4 = (**(code**)(*piVar12 + 0x118))(piVar12); /* vtable[0x46] */
+                iVar4 = (*(code*)(*piVar12 + 0x118))(piVar12); /* vtable[0x46] */
                 tileList[1] = iVar4;
                 *(int*)(out + 6) = *(int*)out;
                 *(int*)(out + 8) = *(int*)(out + 2);
                 *(int*)(out + 10) = *(int*)(out + 4);
             }
             if (-1 < iVar10 - 1) {
-                iVar10 = (**(code**)(*piVar12 + 0x118))(piVar12); /* vtable[0x46] */
+                iVar10 = (*(code*)(*piVar12 + 0x118))(piVar12); /* vtable[0x46] */
                 tileList[iVar3] = iVar10;
                 psVar5 = out + iVar3 * 6;
                 *(int*)psVar5 = *(int*)out;
@@ -612,7 +612,7 @@ int CheckTileRenderState(int tile)
     return tile;
 }
 /***********************************************************************
- * DREAM PARTICLE SYSTEM â€“ GLOBALS
+ * DREAM PARTICLE SYSTEM - GLOBALS
  *
  * ParticleSysEntityPtr  = primary entity/system pointer
  * ParticleStageIndex  = dream stage index
@@ -638,7 +638,7 @@ int CheckTileRenderState(int tile)
  *   ParticleSecondarySlots[2]    = secondary entity slots
  *   StageChildObjects[2]    = stage object children
  ***********************************************************************/
-/* Phase 1 â€” set globals and call into phase 2 */
+/* Phase 1 - set globals and call into phase 2 */
 int Init_DreamParticleSystem(int mainPtr, int stage, int worldPtr, int effectIdx, int configParam)
 {
     int cnt;
@@ -656,7 +656,7 @@ int Init_DreamParticleSystem(int mainPtr, int stage, int worldPtr, int effectIdx
     do { *p = 0; cnt = cnt - 1; p = p - 1; } while (-1 < cnt);
     return Init_DreamParticleSystem_Phase2();
 }
-/* Phase 2 â€” select definition table */
+/* Phase 2 - select definition table */
 void **Init_DreamParticleSystem_Phase2(void)
 {
     int def;
@@ -675,7 +675,7 @@ void Init_ParticleVtableTable(int *table, char *raw)
     *(int*)(table + 0x1c) = *(int*)(&ParticleDefVtableArray + raw[1] * 4);
     *(int*)(table + 0x14) = (int)*raw;
 }
-/* Phase 3 â€” select record and set mode tier */
+/* Phase 3 - select record and set mode tier */
 void *Init_DreamParticleSystem_Phase3(void)
 {
     u32 idx;
@@ -706,17 +706,17 @@ void Spawn_DreamParticleEffect(void)
 {
     if (ParticleEffectVtable != 0) {
         ParticleEffectObject = (int*)Create_ObjectType1(&ParticleEffectObjectType, ParticleEffectVtable, 0);
-        (**(code**)(*(u32 *)ParticleEffectObject + 100))(ParticleEffectObject, 1); /* vtable[0x19] */
-        (**(code**)(*(u32 *)ParticleEffectObject + 0x68))(ParticleEffectObject, 0); /* vtable[0x1a] */
-        int uVar1 = (**(code**)(**(int**)(ParticleWorldPtr + 0xc) + 0xac))(); /* vtable[0x2b] */
-        (**(code**)(*(u32 *)ParticleEffectObject + 0x4c))(ParticleEffectObject, uVar1, &ParticleEffectParam2); /* vtable[0x13] */
+        (*(code*)(*(u32 *)ParticleEffectObject + 100))(ParticleEffectObject, 1); /* vtable[0x19] */
+        (*(code*)(*(u32 *)ParticleEffectObject + 0x68))(ParticleEffectObject, 0); /* vtable[0x1a] */
+        int uVar1 = (*(code*)(**(int**)(ParticleWorldPtr + 0xc) + 0xac))(); /* vtable[0x2b] */
+        (*(code*)(*(u32 *)ParticleEffectObject + 0x4c))(ParticleEffectObject, uVar1, &ParticleEffectParam2); /* vtable[0x13] */
     }
 }
 /* Destroy active effect */
 void Destroy_DreamParticleEffect(void)
 {
     if (ParticleEffectVtable != 0) {
-        (**(code**)(*(u32 *)ParticleEffectObject + 4))(); /* vtable[1] */
+        (*(code*)(*(u32 *)ParticleEffectObject + 4))(); /* vtable[1] */
         ParticleEffectVtable = 0;
     }
 }
@@ -731,14 +731,14 @@ void Init_DreamParticleEnv(int mode, int *stageObj, int allocPtr, int tickObj)
     ParticleSpawnAllocator = (int*)allocPtr;
     ParticleTickTimer = tickObj;
     do {
-        *p = (int)(**(code**)(*stageObj + 0x80))(stageObj, *p); /* vtable[0x20] */
+        *p = (int)(*(code*)(*stageObj + 0x80))(stageObj, *p); /* vtable[0x20] */
         SetObjectTransform(*p, &StageChildTransform);
         i = i + 1;
         p = p + 1;
     } while (i < 2);
 }
 /***********************************************************************
- * PARTICLE GRID â€“ 0x12 tiles
+ * PARTICLE GRID - 0x12 tiles
  ***********************************************************************/
 /* Allocate 18 particle entries in a moving grid pattern */
 void Alloc_DreamParticles_Grid(void)
@@ -764,12 +764,12 @@ void Alloc_DreamParticles_Grid(void)
             piVar1 = (int*)Create_ObjectType1(&local_20, iVar4 + ParticleChunkPalette, PARTICLE_FALL_MAX);
             *puVar3 = piVar1;
             iVar4 = iVar4 + 3;
-            (**(code**)(*piVar1 + 0x4c))(piVar1, ParticleGridEntries, &local_28); /* vtable[0x13] */
+            (*(code*)(*piVar1 + 0x4c))(piVar1, ParticleGridEntries, &local_28); /* vtable[0x13] */
             local_24 = local_24 + 3;
             local_1c = local_1c - 7;
         } while (iVar5 < 0x12);
-        uVar2 = (**(code**)(**(int**)(ParticleWorldPtr + 0xc) + 0xac))(); /* vtable[0x2b] */
-        (**(code**)(*(u32 *)ParticleGridEntries + 0x4c))(ParticleGridEntries, uVar2, &local_28); /* vtable[0x13] */
+        uVar2 = (*(code*)(**(int**)(ParticleWorldPtr + 0xc) + 0xac))(); /* vtable[0x2b] */
+        (*(code*)(*(u32 *)ParticleGridEntries + 0x4c))(ParticleGridEntries, uVar2, &local_28); /* vtable[0x13] */
     }
 }
 /* Update grid positions from world animation params */
@@ -793,15 +793,15 @@ void Update_DreamParticles_Anim(void)
             local_1c = iVar2 * 9 + local_1c;
             do {
                 Calc_ParticleOffset_3((char*)auStack_28, (char*)(iVar4 + ParticleChunkPalette), (char)iVar1);
-                (**(code**)(*(int*)*puVar3 + 0xb8))((int*)*puVar3, 1, auStack_28); /* vtable[0x2e] */
+                (*(code*)(*(int*)*puVar3 + 0xb8))((int*)*puVar3, 1, auStack_28); /* vtable[0x2e] */
                 iVar5 = iVar5 + 1;
                 iVar4 = iVar4 + 3;
-                (**(code**)(*(int*)*puVar3 + 0xbc))((int*)*puVar3, &local_20); /* vtable[0x2f] */
+                (*(code*)(*(int*)*puVar3 + 0xbc))((int*)*puVar3, &local_20); /* vtable[0x2f] */
                 local_1c = local_1c + 3;
                 puVar3 = puVar3 + 1;
             } while (iVar5 < 0x12);
             Calc_ParticleOffset_3((char*)auStack_28, (char*)ParticleExtraChunkPtr, (char)iVar1);
-            (**(code**)(*piVar6 + 100))(piVar6, auStack_28); /* vtable[0x19] */
+            (*(code*)(*piVar6 + 100))(piVar6, auStack_28); /* vtable[0x19] */
         }
     }
 }
@@ -821,7 +821,7 @@ void Free_DreamParticles_Grid(void)
     }
 }
 /********************************************************************
- * PARTICLE INSTANCES â€“ randomised per-frame spawning
+ * PARTICLE INSTANCES - randomised per-frame spawning
  ********************************************************************/
 /* Spawn particle instances based on current mode */
 void Spawn_DreamParticles_Instances(int *tickPtr)
@@ -855,7 +855,7 @@ void Update_ParticleFrame(int *tick)
     if ((-1 < ParticleMode) && (0 < ParticleActiveCount)) {
         p = &ParticleInstanceArray;
         for (i = 0; i < ParticleActiveCount; i = i + 1, p = p + 1)
-            (**(code**)(*(int*)*p + 0xec))((int*)*p, tick); /* vtable[0x3b] */
+            (*(code*)(*(int*)*p + 0xec))((int*)*p, tick); /* vtable[0x3b] */
     }
 }
 /* Free active particle instance array */
@@ -881,7 +881,7 @@ void Shutdown_DreamParticleSystem(void)
     } while (i < 2);
     if (ParticleSysEntityPtr != 0) ParticleSysEntityPtr = 0;
 }
-/* Main frame tick â€” init on frame 0, then update & manage 2 entity slots */
+/* Main frame tick - init on frame 0, then update & manage 2 entity slots */
 int Tick_DreamParticleSystem(int tick, int state, int local)
 {
     int iVar2, iVar3, iVar5;
@@ -889,7 +889,7 @@ int Tick_DreamParticleSystem(int tick, int state, int local)
     int local_res8;
     local_res8 = local;
     if (tick != 0)
-        (**(code**)(*(int*)ParticleSysEntityPtr + 0xe8))(ParticleSysEntityPtr, &local_res8, tick); /* vtable[0x3a] */
+        (*(code*)(*(int*)ParticleSysEntityPtr + 0xe8))(ParticleSysEntityPtr, &local_res8, tick); /* vtable[0x3a] */
     iVar2 = ParticleFrameCounter + 1;
     if (ParticleFrameCounter == 0) {
         ParticleFrameCounter = iVar2;
@@ -960,7 +960,7 @@ int *Init_ParticleSpawn_Default(int *list, int count, int *tickPtr)
     }
     return list;
 }
-/* Extra spawner â€” fixed vertical velocity */
+/* Extra spawner - fixed vertical velocity */
 int *Init_ParticleSpawn_Extra(int *out, int count, int *tickPtr)
 {
     int i;
@@ -972,7 +972,7 @@ int *Init_ParticleSpawn_Extra(int *out, int count, int *tickPtr)
     }
     return out;
 }
-/* Type-0 spawner â€” ground/underground mode */
+/* Type-0 spawner - ground/underground mode */
 int *Init_ParticleSpawn_Type0(int *out, int *tickPtr)
 {
     u32 r;
@@ -992,7 +992,7 @@ int *Init_ParticleSpawn_Type0(int *out, int *tickPtr)
     *out = New_DreamParticleObject(3, &ParticleVelX, ParticleSysEntityPtr, tickPtr);
     return out + 1;
 }
-/* Type-2 spawner â€” colour cycling */
+/* Type-2 spawner - colour cycling */
 int *Init_ParticleSpawn_Type2(int *out, int *tickPtr)
 {
     u32 r;
@@ -1050,7 +1050,7 @@ void Spawn_ParticleFall(int tickPtr, int colour)
     ParticleSpawnSelector = i % 5;
 }
 /********************************************************************
- * SECONDARY ENTITIES â€“ spawn + management
+ * SECONDARY ENTITIES - spawn + management
  ********************************************************************/
 /* Find & create a secondary entity from spawn table */
 int *Spawn_SecondaryEntity(int *out, int *pos, int *pos3, int *state)
@@ -1079,7 +1079,7 @@ void *Find_SecondaryEntitySlot(int *distOut, int *idxOut, int *pos3)
         for (i = 0; i < count; i = i + 1) {
             ParticleEntityScanIndex = ParticleEntityScanIndex + 1;
             if (0 < *(char*)(scan + 6)) {
-                (**(code**)(*(int*)ParticleSysEntityPtr + 0xe8))(ParticleSysEntityPtr, distOut, scan); /* vtable[0x3a] */
+                (*(code*)(*(int*)ParticleSysEntityPtr + 0xe8))(ParticleSysEntityPtr, distOut, scan); /* vtable[0x3a] */
                 distX = *distOut - *pos3;
                 if (distX < 0) distX = ~distX + 1;
                 distY = distOut[2] - pos3[2];
@@ -1093,14 +1093,14 @@ void *Find_SecondaryEntitySlot(int *distOut, int *idxOut, int *pos3)
     }
     return 0;
 }
-/* Release secondary entity â€” delist + flip used flag */
+/* Release secondary entity - delist + flip used flag */
 int Release_SecondaryEntity(int *entity)
 {
      AnimReset(*(int*)ParticleWorldPtr, entity + 5);
     *(char*)(entity + 6) = -*(char*)(entity + 6);
     return 0;
 }
-/* Proximity check â€” refresh layer if entity is close enough */
+/* Proximity check - refresh layer if entity is close enough */
 int CheckSecondaryEntityProximity(int *entity, void *ptr, int extra)
 {
     (void)extra;
@@ -1194,6 +1194,22 @@ void BasicClass__func_17f98(void) { }
 void BasicClass__func_17ff0(void) { }
 void BasicClass__func_18040(void) { }
 void BasicClass__func_18358(void) { }
+/* === BasicClass ctor: stores CoordSystem vtable, zeroes +4/+8 (retail 0x80017ef8) === */
+extern void *GetCoordSystemVtable(void);
+void *BasicClass__BasicClass(void *o) {
+    void *vtab = GetCoordSystemVtable();
+    *(void **)o = vtab;
+    *(int *)((char *)o + 8) = 0;
+    *(int *)((char *)o + 4) = 0;
+    return vtab;
+}
+/* === BasicClass dispatch: vtab[0x30](o,1), vtab[0x18](o), vtab[0x28](o) (retail 0x80017f2c) === */
+void BasicClass__func_17f2c(void *o) {
+    void *vtab = *(void **)o;
+    ((void (*)(void *, int))((void **)vtab)[0x30 / 4])(o, 1);
+    ((void (*)(void *))((void **)vtab)[0x18 / 4])(o);
+    ((void (*)(void *))((void **)vtab)[0x28 / 4])(o);
+}
 /* === migrated from stubs.c: class_65650__Constructor === */
 int *class_65650__Constructor(void *o, int a, int b) { (void)a; (void)b; (void)o; return 0; }
 
@@ -1297,7 +1313,7 @@ int EntityAllocSmall(int type)
     int obj = (int)MemAllocImpl(0x2c);
     if (obj != 0) {
         int vtab = (int)NopSub_269e0();
-        (**(code **)(vtab + 8))(obj, type);
+        (*(code *)(vtab + 8))(obj, type);
     }
     return obj;
 }

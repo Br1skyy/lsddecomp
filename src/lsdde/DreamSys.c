@@ -162,7 +162,7 @@ int New_DreamSys(void *manager, void *subsysRef, void *subsysRef2) {
     result = 0;
     if (alloc != 0) {
         result = (int)Get_vtable_DreamSys();
-        (**(code **)(result + 8))(alloc, manager, subsysRef, subsysRef2);
+        (*(code *)(result + 8))(alloc, manager, subsysRef, subsysRef2);
         result = alloc;
     }
     return result;
@@ -173,24 +173,24 @@ void DreamSys__DreamSys(DreamSys *this, void *manager, int objPtr, int objPtr2) 
     void *uVar2;
     gm = GetGameManager();
     // god I hate this vtable dispatch pattern
-    (**(code **)(gm + 8))(this);
+    (*(code *)(gm + 8))(this);
     this->vt = Get_vtable_DreamSys();
     SET_INT(this, 0x58, objPtr);
     SET_INT(this, 0x5c, objPtr2);
     SET_INT(this, 0x64, 0);
     SET_INT(this, 0x60, (int)manager);
-    uVar2 = (**(code **)(*(int *)manager + 0x80))(manager, 0);
-    (**(code **)((int)this->vt + 0x10))(this, uVar2);
-    (**(code **)((int)this->vt + 0x104))(this, -1);
+    uVar2 = (*(code *)(*(int *)manager + 0x80))(manager, 0);
+    (*(code *)((int)this->vt + 0x10))(this, uVar2);
+    (*(code *)((int)this->vt + 0x104))(this, -1);
     SET_INT(this, 0x70, 1);
     SET_INT(this, 0x6c, 0);
     SET_INT(this, 0x878, 1);
-    (**(code **)((int)this->vt + 0x198))(this);
-    (**(code **)((int)this->vt + 0x40))(this);
+    (*(code *)((int)this->vt + 0x198))(this);
+    (*(code *)((int)this->vt + 0x40))(this);
 }
 void DreamSys__InitFields(DreamSys *this) {
-    (**(code **)((int)this->vt + 0x60))(this, 0);
-    (**(code **)((int)this->vt + 0x44))(this, 1, (int *)&DreamDefaultVisual);
+    (*(code *)((int)this->vt + 0x60))(this, 0);
+    (*(code *)((int)this->vt + 0x44))(this, 1, (int *)&DreamDefaultVisual);
     SET_INT(this, 0x80, 0);
     SET_INT(this, 0x98, 0);
     SET_INT(this, 0xcc, 0);
@@ -204,37 +204,37 @@ void DreamSys__InitFields(DreamSys *this) {
 void DreamSys__SetupFromManager(DreamSys *this, void *manager) {
     int gm;
     s8 buffer[16];
-    (**(code **)(*(int *)manager + 0xe4))(manager, buffer, this, &this->linkCoordinates);
+    (*(code *)(*(int *)manager + 0xe4))(manager, buffer, this, &this->linkCoordinates);
     gm = GetGameManager();
-    (**(code **)(gm + 0x4c))(this, manager, buffer);
-    (**(code **)((int)this->vt + 0x10))(this, manager);
+    (*(code *)(gm + 0x4c))(this, manager, buffer);
+    (*(code *)((int)this->vt + 0x10))(this, manager);
     if (this->unknwon_int_0x44 == 0xe) {
         int idx = GET_INT(this, 0x87c);
-        (**(code **)((int)this->vt + 0x44))(this, 1, (int)this + idx * 0x24 + 0x47e);
-        (**(code **)((int)this->vt + 0x104))(this, *(s16 *)((int)this + idx * 0x24 + 0x48a) + 4);
+        (*(code *)((int)this->vt + 0x44))(this, 1, (int)this + idx * 0x24 + 0x47e);
+        (*(code *)((int)this->vt + 0x104))(this, *(s16 *)((int)this + idx * 0x24 + 0x48a) + 4);
         SET_INT(this, 0x87c, idx + 1);
     }
     if ((GET_INT(this, 0x6c) != 0) && (GET_INT(this, 0x888) != 0)) {
-        (**(code **)((int)this->vt + 0x44))(this, 1);
+        (*(code *)((int)this->vt + 0x44))(this, 1);
     }
 }
 void DreamSys__Shutdown(DreamSys *this) {
     int gm;
-    (**(code **)(**(int **)GET_PTR(this, 0x4c) + 0xf0))();
-    (**(code **)((int)this->vt + 0x14))(this, GET_PTR(this, 0x4c));
+    (*(code *)(**(int **)GET_PTR(this, 0x4c) + 0xf0))();
+    (*(code *)((int)this->vt + 0x14))(this, GET_PTR(this, 0x4c));
     gm = GetGameManager();
-    (**(code **)(gm + 0x50))(this);
+    (*(code *)(gm + 0x50))(this);
 }
 // -2 = dynamic, -1 = normal link, others = direct transition.
 void DreamSys__HandleLinkTransition(DreamSys *this, int linkType) {
     int gm;
     gm = GetGameManager();
-    (**(code **)(gm + 0x88))(this, linkType);
+    (*(code *)(gm + 0x88))(this, linkType);
     if (linkType == -2) {
         int *entity = (int *)GET_PTR(this, 0x4c);
-        int result = (**(code **)(*entity + 0x11c))(entity, GET_INT(this, 0x14) + 0x18);
+        int result = (*(code *)(*entity + 0x11c))(entity, GET_INT(this, 0x14) + 0x18);
         if (*(s16 *)(*(int *)(result + 4) + 0x2c) != 2) {
-            (**(code **)((int)this->vt + 0x1d4))(this);
+            (*(code *)((int)this->vt + 0x1d4))(this);
             return;
         }
     } else if (linkType == -1) {
@@ -252,8 +252,8 @@ void DreamSys__HandleLinkTransition(DreamSys *this, int linkType) {
     } else {
         return;
     }
-    void *spawnData = (**(code **)(**(int **)GET_PTR(this, 0x4c) + 0x10c))(GET_PTR(this, 0x4c), 0, 0);
-    (**(code **)((int)this->vt + 0x1c4))(this, spawnData);
+    void *spawnData = (*(code *)(**(int **)GET_PTR(this, 0x4c) + 0x10c))(GET_PTR(this, 0x4c), 0, 0);
+    (*(code *)((int)this->vt + 0x1c4))(this, spawnData);
 }
 void DreamSys__HandleInstanceEffect(DreamSys *this, void *unused, int effect) {
     if ((GET_INT(this, 0x6c) == 0) && (GET_INT(this, 0x70) == 0) && (GET_INT(this, 0x908) == 0)) {
@@ -265,7 +265,7 @@ void DreamSys__HandleInstanceEffect(DreamSys *this, void *unused, int effect) {
         case 6:  SET_INT(this, 0x88, 1); break;
         case 7:
             if (GET_INT(this, 0xa0) == 1) {
-                (**(code **)((int)this->vt + 0x184))(this, 4);
+                (*(code *)((int)this->vt + 0x184))(this, 4);
             }
             break;
         case 8:  SET_INT(this, 0x88, 2); break;
@@ -275,7 +275,7 @@ void DreamSys__HandleInstanceEffect(DreamSys *this, void *unused, int effect) {
         case 0x10: SET_INT(this, 0xa0, 3); break;
         case 0x19: SET_INT(this, 0x74, 1); break;
         case 0x22:
-            (**(code **)((int)this->vt + 0x188))();
+            (*(code *)((int)this->vt + 0x188))();
         }
     }
 }
@@ -286,17 +286,17 @@ void DreamSys__TimerTick(DreamSys *this, void *unused, int tickType) {
         timer = this->dreamTimer;
         this->dreamTimer = timer + 1;
         if (timer < (u32)this->dreamTimeLimit) {
-            (**(code **)((int)this->vt + 0x118))(this);
-            (**(code **)((int)this->vt + 0x11c))(this);
+            (*(code *)((int)this->vt + 0x118))(this);
+            (*(code *)((int)this->vt + 0x11c))(this);
         } else {
             if (GET_INT(this, 0x68) == 0) {
-                (**(code **)((int)this->vt + 0x218))(this, 0, 0x10);
+                (*(code *)((int)this->vt + 0x218))(this, 0, 0x10);
             } else if ((this->unknwon_int_0x44 != 0) ||
-                       (s32)(**(code **)((int)this->vt + 0x1cc))(this, 0) != 0) {
+                       (s32)(*(code *)((int)this->vt + 0x1cc))(this, 0) != 0) {
                 this->dreamTimer = 0;
                 return;
             }
-            (**(code **)((int)this->vt + 0x30))(this, 10);
+            (*(code *)((int)this->vt + 0x30))(this, 10);
             this->dreamTimer = 0;
         }
     }
@@ -304,31 +304,31 @@ void DreamSys__TimerTick(DreamSys *this, void *unused, int tickType) {
 void DreamSys__ProcessAreaLink(DreamSys *this, void *linkData, void *entity) {
     int gm;
     gm = GetGameManager();
-    (**(code **)(gm + 0x9c))(this, linkData, entity);
+    (*(code *)(gm + 0x9c))(this, linkData, entity);
     if ((*(u32 *)linkData & 0xfff) == 0x114) {
-        (**(code **)((int)this->vt + 0x1e4))(this, linkData, entity);
+        (*(code *)((int)this->vt + 0x1e4))(this, linkData, entity);
     }
 }
 void DreamSys__ProcessEntityLink(DreamSys *this, void *linkData, void *entity) {
     int gm;
     gm = GetGameManager();
-    (**(code **)(gm + 0xdc))(this, linkData, entity);
+    (*(code *)(gm + 0xdc))(this, linkData, entity);
     if ((*(u32 *)linkData & 0xfffff) == 0x1f234) {
-        (**(code **)((int)this->vt + 0x1e8))(this, linkData, entity);
+        (*(code *)((int)this->vt + 0x1e8))(this, linkData, entity);
     }
 }
 // Player hit a wall. Checks static link, falls back to dynamic.
 void DreamSys__WallLink(DreamSys *this, void *entity, int linkDirection) {
     int gm;
     gm = GetGameManager();
-    (**(code **)(gm + 0xe0))(this, entity, linkDirection);
+    (*(code *)(gm + 0xe0))(this, entity, linkDirection);
     if ((linkDirection == 4) && (this->unknwon_int_0x44 == 0)) {
         int *piVar7 = (int *)GET_PTR(this, 0x4c);
         // TODO: what the actual fuck is this. unaligned read from a u64 returned by a vtable call,
         // then used as bit offsets for manual byte packing. Ghidra went insane here.
         // this is probably a Vec3 or a struct-of-three-shorts that got flattened into a u64
         // and then unpacked onto the linkCoordinates struct. rewrite this.
-        u64 uVar9 = (**(code **)(*piVar7 + 0xd4))(piVar7, entity);
+        u64 uVar9 = (*(code *)(*piVar7 + 0xd4))(piVar7, entity);
         u32 uVar5 = (u32)uVar9;
         u32 uVar2 = uVar5 + 3 & 3;
         u32 uVar8 = uVar5 & 3;
@@ -352,12 +352,12 @@ void DreamSys__WallLink(DreamSys *this, void *entity, int linkDirection) {
         uVar2 = (u32)(&this->linkCoordinates + 4) & 3;
         *(u32 *)((int)(&this->linkCoordinates + 4) - uVar2) = *(u32 *)((int)(&this->linkCoordinates + 4) - uVar2) & 0xffffffffU >> (4 - uVar2) * 8 | uVar8 << uVar2 * 8;
         *(u16 *)((int)&this->linkCoordinates + 10) = uVar1;
-        int linkResult = (**(code **)((int)this->vt + 0x1c8))(this, &this->linkCoordinates);
+        int linkResult = (*(code *)((int)this->vt + 0x1c8))(this, &this->linkCoordinates);
         if ((linkResult == 0) && (GET_INT(this, 0x124) != 0)) {
-            (**(code **)((int)this->vt + 0x1c4))(this);
+            (*(code *)((int)this->vt + 0x1c4))(this);
         }
-        (**(code **)((int)this->vt + 0x1d4))(this);
-        (**(code **)((int)this->vt + 0xe8))(this);
+        (*(code *)((int)this->vt + 0x1d4))(this);
+        (*(code *)((int)this->vt + 0xe8))(this);
     }
 }
 // why does this exist
@@ -377,9 +377,9 @@ s32 DreamSys__GetSetDreamColor(DreamSys *this, s32 *color, s32 value) {
 void DreamSys__SetFlashbackMode(DreamSys *this, int mode) {
     SET_INT(this, 0x6c, mode);
     if (mode != 0) {
-        (**(code **)((int)this->vt + 0x180))(this, 1);
+        (*(code *)((int)this->vt + 0x180))(this, 1);
         if (GET_INT(this, 0x884) != 0) {
-            (**(code **)((int)this->vt + 0x44))(this, 1);
+            (*(code *)((int)this->vt + 0x44))(this, 1);
         }
     }
 }
@@ -387,10 +387,10 @@ void DreamSys__SetFlashbackMode(DreamSys *this, int mode) {
 void DreamSys__ResetDayState(DreamSys *this, int mode, void *spawnData) {
     s8 buffer[8];
     s16 val16[2];
-    (**(code **)((int)this->vt + 0x1f4))(this, &this->linkCoordinates);
-    (**(code **)((int)this->vt + 0x138))(this, 1);
-    (**(code **)((int)this->vt + 0x13c))(this, 1);
-    (**(code **)((int)this->vt + 0x180))(this, mode);
+    (*(code *)((int)this->vt + 0x1f4))(this, &this->linkCoordinates);
+    (*(code *)((int)this->vt + 0x138))(this, 1);
+    (*(code *)((int)this->vt + 0x13c))(this, 1);
+    (*(code *)((int)this->vt + 0x180))(this, mode);
     SET_INT(this, 0xbc, -1);
     SET_INT(this, 0xb4, 0);
     SET_INT(this, 0xb8, 0);
@@ -400,8 +400,8 @@ void DreamSys__ResetDayState(DreamSys *this, int mode, void *spawnData) {
     SET_INT(this, 0x90, 0);
     SET_INT(this, 0x8c, 0);
     SET_INT(this, 0x94, 0);
-    (**(code **)((int)this->vt + 0x18c))(this, 0, 1, 1, 1);
-    (**(code **)((int)this->vt + 0x190))(this, spawnData);
+    (*(code *)((int)this->vt + 0x18c))(this, 0, 1, 1, 1);
+    (*(code *)((int)this->vt + 0x190))(this, spawnData);
     *(u16 *)((int)this + 0x16a) = 0xffff;
     SET_INT(this, 0x70, 0);
     this->unknwon_int_0x44 = 0;
@@ -413,7 +413,7 @@ void DreamSys__ResetDayState(DreamSys *this, int mode, void *spawnData) {
     ReadDreamSysVector(this, buffer);
     val16[0] = 0;
     val16[1] = 1;
-    (**(code **)((int)this->vt + 0x44))(this, 1, buffer);
+    (*(code *)((int)this->vt + 0x44))(this, 1, buffer);
 }
 void DreamSys__SetFlag70(DreamSys *this) {
     SET_INT(this, 0x70, 1);
@@ -465,10 +465,10 @@ void DreamSys__CheckTimerModulo(DreamSys *this) {
 // Fires two stored callback pointers.
 void DreamSys__CallCallbacks(DreamSys *this) {
     if (*(code **)((int)this + 0x80) != NULL) {
-        (**(code **)((int)this + 0x80))();
+        (*(code *)((int)this + 0x80))();
     }
     if (*(code **)((int)this + 0x98) != NULL) {
-        (**(code **)((int)this + 0x98))(this);
+        (*(code *)((int)this + 0x98))(this);
     }
 }
 // Score via interpolation + range comparison.
@@ -533,14 +533,14 @@ s32 DreamSys__AlwaysZero(void) {
     return 0;
 }
 void DreamSys__DisableEffects(DreamSys *this, int flag) {
-    (**(code **)((int)this->vt + 0x13c))(this, 0);
+    (*(code *)((int)this->vt + 0x13c))(this, 0);
     if (flag != 0) {
-        (**(code **)((int)this->vt + 0x138))(this, 0);
+        (*(code *)((int)this->vt + 0x138))(this, 0);
     }
 }
 void DreamSys__SetEffects(DreamSys *this, void *unused, int flag) {
-    (**(code **)((int)this->vt + 0x13c))();
-    (**(code **)((int)this->vt + 0x138))(this, flag);
+    (*(code *)((int)this->vt + 0x13c))();
+    (*(code *)((int)this->vt + 0x138))(this, flag);
 }
 // Sets type + looks up handler in vtable.
 void DreamSys__SetLinkType(DreamSys *this, int linkType) {
@@ -561,7 +561,7 @@ void DreamSys__SetLinkType(DreamSys *this, int linkType) {
 void DreamSys__SetDerailState(DreamSys *this, int state) {
     int vt = (int)this->vt;
     if (GET_INT(this, 0x9c) == 2) {
-        (**(code **)(vt + 0x17c))(this, 0);
+        (*(code *)(vt + 0x17c))(this, 0);
     }
     SET_INT(this, 0x9c, state);
     if (state == 1) {
@@ -578,8 +578,8 @@ void DreamSys__SetDerailState(DreamSys *this, int state) {
     }
 }
 void DreamSys__UpdateFlashbackState(DreamSys *this) {
-    (**(code **)((int)this->vt + 0x144))();
-    (**(code **)((int)this->vt + 0x148))(this);
+    (*(code *)((int)this->vt + 0x144))();
+    (*(code *)((int)this->vt + 0x148))(this);
 }
 // Camera sway oscillation.
 void DreamSys__ApplyCameraSway(DreamSys *this) {
@@ -625,7 +625,7 @@ void DreamSys__UpdateCameraMotion(DreamSys *this) {
             step = 0x2d;
         }
         DreamCamMotionStepVal = (s16)step;
-        (**(code **)((int)this->vt + 0x44))(this, 0, &DreamColourEffectData);
+        (*(code *)((int)this->vt + 0x44))(this, 0, &DreamColourEffectData);
         SET_INT(this, 0x94, step + GET_INT(this, 0x94));
         goto applyStep;
     }
@@ -638,7 +638,7 @@ void DreamSys__UpdateCameraMotion(DreamSys *this) {
         goto applyStep;
     }
     DreamCamMotionStepVal = (s16)*(s32 *)((int)&DreamCamMotionStep + step);
-    (**(code **)((int)this->vt + 0x44))(this, 0, &DreamColourEffectData);
+    (*(code *)((int)this->vt + 0x44))(this, 0, &DreamColourEffectData);
     SET_INT(this, 0x94, offset);
 resetMotion:
     SET_INT(this, 0x90, 0);
@@ -662,7 +662,7 @@ void DreamSys__Empty3(void) {}
 void DreamSys__DispatchByMode(DreamSys *this) {
     code handler;
     if (GET_INT(this, 0x6c) == 0) {
-        (**(code **)((int)this->vt + 0x174))();
+        (*(code *)((int)this->vt + 0x174))();
         handler = *(code *)((int)this->vt + 0x158);
     } else if (GET_INT(this, 0x6c) == 2) {
         handler = *(code *)((int)this->vt + 0x160);
@@ -673,17 +673,17 @@ void DreamSys__DispatchByMode(DreamSys *this) {
 }
 void DreamSys__UpdateFlashbackTimer(DreamSys *this) {
     if (GET_INT(this, 0x70) == 0) {
-        void *result = (**(code **)((int)this->vt + 0x164))(this, 1);
-        (**(code **)((int)this->vt + 0x170))(this, result);
+        void *result = (*(code *)((int)this->vt + 0x164))(this, 1);
+        (*(code *)((int)this->vt + 0x170))(this, result);
     }
 }
 void DreamSys__StartFlashbackTimer(DreamSys *this) {
     SET_INT(this, 0xa0, 1);
     if (GET_INT(this, 0x70) == 0) {
-        void *result = (**(code **)((int)this->vt + 0x164))(this, 1);
-        (**(code **)((int)this->vt + 0x170))(this, result);
+        void *result = (*(code *)((int)this->vt + 0x164))(this, 1);
+        (*(code *)((int)this->vt + 0x170))(this, result);
     } else {
-        (**(code **)((int)this->vt + 0x164))(this, 0);
+        (*(code *)((int)this->vt + 0x164))(this, 0);
     }
 }
 void DreamSys__SetFlashbackSequenceFlag(DreamSys *this) {
@@ -708,7 +708,7 @@ int DreamSys__HandleFlashbackEffect(DreamSys *this, int applyPlayerOffset) {
             effectDone = true;
         }
         if (effectDone) {
-            (**(code **)((int)this->vt + 0x168))(this);
+            (*(code *)((int)this->vt + 0x168))(this);
         }
         result = GET_INT(this, 0x5c);
         if (((result != 0) && (GET_INT(this, 0x678) != 0)) && (applyPlayerOffset != 0)) {
@@ -725,7 +725,7 @@ int DreamSys__HandleFlashbackEffect(DreamSys *this, int applyPlayerOffset) {
         }
     }
     if (!effectDone) {
-        (**(code **)((int)this->vt + 0x16c))(this);
+        (*(code *)((int)this->vt + 0x16c))(this);
     }
     return result;
 }
@@ -736,24 +736,24 @@ void DreamSys__PlayLinkSound(DreamSys *this) {
     if (soundId != 0) {
         s8 bank = DreamLinkSoundBank[soundId];
         s8 offset = DreamLinkSoundOffset[soundId];
-        (**(code **)(*(int *)someObj + 0x9c))(someObj, offset);
-        void *result = (**(code **)(*(int *)someObj + 0x80))(someObj, bank << 4, 0x6e, 0x6e);
+        (*(code *)(*(int *)someObj + 0x9c))(someObj, offset);
+        void *result = (*(code *)(*(int *)someObj + 0x80))(someObj, bank << 4, 0x6e, 0x6e);
         SET_INT(this, 0xbc, result);
         if (soundId != 0x16) {
             SET_INT(this, 0xbc, -1);
         }
         if (soundId == 0xb) {
-            (**(code **)(*(int *)someObj + 0x9c))(someObj, 1);
-            (**(code **)(*(int *)someObj + 0x80))(someObj, bank << 4, 0x6e, 0x6e);
-            (**(code **)(*(int *)someObj + 0x9c))(someObj, 2);
-            (**(code **)(*(int *)someObj + 0x80))(someObj, 0x90, 0x6e, 0x6e);
+            (*(code *)(*(int *)someObj + 0x9c))(someObj, 1);
+            (*(code *)(*(int *)someObj + 0x80))(someObj, bank << 4, 0x6e, 0x6e);
+            (*(code *)(*(int *)someObj + 0x9c))(someObj, 2);
+            (*(code *)(*(int *)someObj + 0x80))(someObj, 0x90, 0x6e, 0x6e);
         }
     }
 }
 // Stops the link transition sound.
 void DreamSys__StopLinkSound(DreamSys *this) {
     if (GET_INT(this, 0xbc) >= 0) {
-        (**(code **)(**(int **)GET_PTR(this, 0x58) + 0x84))();
+        (*(code *)(**(int **)GET_PTR(this, 0x58) + 0x84))();
         SET_INT(this, 0xbc, -1);
     }
 }
@@ -761,18 +761,18 @@ void DreamSys__PerformLinkAction(DreamSys *this, int action) {
     if (action != 0) {
         s8 scale = DreamLinkActionScale[action];
         int magnitude = *(s32 *)((int)&DreamCamMotionAmp + GET_INT(this, 0xac) * 4);
-        (**(code **)((int)this->vt + 0x12c))();
-        void *spawnData = (**(code **)(**(int **)GET_PTR(this, 0x4c) + 0x10c))(GET_PTR(this, 0x4c), 0, 0);
-        int linkResult1 = (**(code **)((int)this->vt + 0x1c4))(this, spawnData);
-        int linkResult2 = (**(code **)((int)this->vt + 0x1c8))(this, spawnData);
-        int linkResult3 = (**(code **)((int)this->vt + 0x1cc))(this, spawnData);
+        (*(code *)((int)this->vt + 0x12c))();
+        void *spawnData = (*(code *)(**(int **)GET_PTR(this, 0x4c) + 0x10c))(GET_PTR(this, 0x4c), 0, 0);
+        int linkResult1 = (*(code *)((int)this->vt + 0x1c4))(this, spawnData);
+        int linkResult2 = (*(code *)((int)this->vt + 0x1c8))(this, spawnData);
+        int linkResult3 = (*(code *)((int)this->vt + 0x1cc))(this, spawnData);
         if ((linkResult1 == 0) && (linkResult2 == 0) && (linkResult3 == 0)) {
-            (**(code **)((int)this->vt + 0x1d4))(this);
+            (*(code *)((int)this->vt + 0x1d4))(this);
             ((void (*)(DreamSys *, int, int))(&DreamLinkActionFuncs + action * 4))(this, scale * magnitude, GET_INT(this, 0x90c) == 0);
             if ((this->currentStage == 0) &&
                 (GET_INT(GET_INT(this, 0x14), 0x1c) < -2000) &&
                 (-500 < GET_INT(GET_INT(this, 0x14), 0x18))) {
-                (**(code **)(this->vt->unknown_functions_0xe4[0]))(this, this, 4);
+                (*(code *)(this->vt->unknown_functions_0xe4[0]))(this, this, 4);
             }
         }
         *(s32 *)GET_INT(this, 0x14) = 0;
@@ -781,14 +781,14 @@ void DreamSys__PerformLinkAction(DreamSys *this, int action) {
 // Resets all dream color / tint effects.
 void DreamSys__ClearColorEffects(DreamSys *this) {
     if (GET_INT(this, 0xa4) != 0) {
-        (**(code **)((int)this->vt + 0x44))(this, 0, (int)&DreamColourEffectData + GET_INT(this, 0xa4) * 0xc);
+        (*(code *)((int)this->vt + 0x44))(this, 0, (int)&DreamColourEffectData + GET_INT(this, 0xa4) * 0xc);
         SET_INT(this, 0xa4, 0);
     }
 }
 // Removes overlay + reverb.
 void DreamSys__ClearFlashbackEffects(DreamSys *this) {
     if (GET_INT(this, 0xc4) != 0) {
-        (**(code **)((int)this->vt + 0xbc))(this, &DreamFlashbackReverb);
+        (*(code *)((int)this->vt + 0xbc))(this, &DreamFlashbackReverb);
         SET_INT(GET_INT(this, 0x5c), 0x24, GET_INT(GET_INT(this, 0x5c), 0x24) + -600);
     }
     if (GET_INT(this, 0xc8) != 0) {
@@ -959,7 +959,7 @@ bool DreamSys__LoadNextFlashback(DreamSys *this, bool unknown) {
         this->unknwon_int_0x44 = 0xe;
         entry = &this->storedFlasbacks[this->currentFlashbackIndex];
         if (unknown == 0) {
-            (**(code **)(*(int *)this + 0x30))(this, 0xe);
+            (*(code *)(*(int *)this + 0x30))(this, 0xe);
         }
         this->currentDay = entry->day;
         this->currentStage = entry->stageID;
@@ -1015,14 +1015,14 @@ int DreamSys__TryInstantTeleport(DreamSys *this, void *linkData) {
         linkIdx = ExecuteLink(this, linkIdx, 0x11, 0);
         if (linkIdx != 0) {
             this->unknwon_int_0x44 = 0;
-            (**(code **)(**(int **)GET_PTR(this, 0x4c) + 0xe8))(GET_PTR(this, 0x4c), buffer, &this->linkCoordinates);
-            (**(code **)((int)this->vt + 0xb8))(this, buffer);
+            (*(code *)(**(int **)GET_PTR(this, 0x4c) + 0xe8))(GET_PTR(this, 0x4c), buffer, &this->linkCoordinates);
+            (*(code *)((int)this->vt + 0xb8))(this, buffer);
             if (shift == 0) {
                 return 1;
             }
             if (GET_INT(this, 0x68) == 0) {
-                int extra = (**(code **)((int)this->vt + 0x108))(this);
-                (**(code **)((int)this->vt + 0x104))(this, extra + shift);
+                int extra = (*(code *)((int)this->vt + 0x108))(this);
+                (*(code *)((int)this->vt + 0x104))(this, extra + shift);
             }
         }
         return 1;
@@ -1031,14 +1031,14 @@ int DreamSys__TryInstantTeleport(DreamSys *this, void *linkData) {
 }
 bool ExecuteLink(DreamSys *this, int stage, int linkType, int playSound) {
     this->unknwon_int_0x44 = linkType;
-    (**(code **)(*(int *)this + 0x30))();
+    (*(code *)(*(int *)this + 0x30))();
     if (this->unknwon_int_0x44 != 0) {
         this->currentStage = stage;
         if (this->isFlashbackSession != 0) {
             this->dreamTimer = 0;
         }
         if (playSound != 0) {
-            (**(code **)(*(int *)this->vt + 0x80))(this, 0x90, 0x6e, 0x6e);
+            (*(code *)(*(int *)this->vt + 0x80))(this, 0x90, 0x6e, 0x6e);
         }
         return 1;
     }
@@ -1057,7 +1057,7 @@ int DreamSys__TryStaircaseLink(DreamSys *this, u32 nodePtr) {
             SET_INT(this, 0x910, 0);
             SET_INT(this, 0x90c, 0);
             if (GET_INT(this, 0xac) == 4) {
-                (**(code **)((int)this->vt + 0x188))(this);
+                (*(code *)((int)this->vt + 0x188))(this);
             }
         }
         return 0;
@@ -1085,7 +1085,7 @@ int DreamSys__TryStaircaseLink(DreamSys *this, u32 nodePtr) {
             SET_INT(this, 0x914, 0);
             int stairType = GetStaircaseType();
             SET_INT(this, 0x910, (int)PTR_func_8005AB2C_80087eec[stairType]);
-            (**(code **)((int)this->vt + 0x44))(this, 1, GET_PTR(this, 0x884));
+            (*(code *)((int)this->vt + 0x44))(this, 1, GET_PTR(this, 0x884));
             (*(s32(*)(DreamSys *))GET_INT(this, 0x910))(this);
         }
     }
@@ -1100,7 +1100,7 @@ s32 DreamSys__StaircaseAnimA(DreamSys *this) {
         frame = GET_INT(this, 0x914);
         if (frame > 0x12) return 1;
         if ((frame - 8U < 2) || (frame - 0xdU < 2)) {
-            (**(code **)((int)this->vt + 0x44))(this, 0, &DreamStaircaseColourAC);
+            (*(code *)((int)this->vt + 0x44))(this, 0, &DreamStaircaseColourAC);
         }
     } else {
         frame = GET_INT(this, 0x914);
@@ -1122,7 +1122,7 @@ s32 DreamSys__StaircaseAnimB(DreamSys *this) {
         frame = GET_INT(this, 0x914);
         if (frame > 0x18) return 1;
         if ((frame - 6U < 2) || (frame - 0xbU < 2) || (frame - 0x14U < 2)) {
-            (**(code **)((int)this->vt + 0x44))(this, 0, &DreamStaircaseColourBD);
+            (*(code *)((int)this->vt + 0x44))(this, 0, &DreamStaircaseColourBD);
         }
         if (GET_UINT(this, 0x914) - 3U < 0xe) {
             SET_INT(this, 0x88, 2);
@@ -1150,7 +1150,7 @@ s32 DreamSys__StaircaseAnimC(DreamSys *this) {
         frame = GET_INT(this, 0x914);
         if (frame > 0xe) return 1;
         if (frame - 8U < 2) {
-            (**(code **)((int)this->vt + 0x44))(this, 0, &DreamStaircaseColourAC);
+            (*(code *)((int)this->vt + 0x44))(this, 0, &DreamStaircaseColourAC);
         }
     } else {
         frame = GET_INT(this, 0x914);
@@ -1172,7 +1172,7 @@ s32 DreamSys__StaircaseAnimD(DreamSys *this) {
         frame = GET_INT(this, 0x914);
         if (frame > 0x12) return 1;
         if ((frame - 6U < 2) || (frame - 0xfU < 2)) {
-            (**(code **)((int)this->vt + 0x44))(this, 0, &DreamStaircaseColourBD);
+            (*(code *)((int)this->vt + 0x44))(this, 0, &DreamStaircaseColourBD);
         }
         if (GET_UINT(this, 0x914) < 9) {
             SET_INT(this, 0x88, 2);
@@ -1197,38 +1197,38 @@ void DreamSys__SetStaircaseDirection(DreamSys *this, s16 *target, s16 *current) 
     diff[0] = (int)*target - (int)*current;
     diff[1] = 0;
     diff[2] = (int)target[2] - (int)current[2];
-    (**(code **)((int)this->vt + 0xbc))(this, diff);
+    (*(code *)((int)this->vt + 0xbc))(this, diff);
 }
 s32 DreamSys__GetCurrentStage(DreamSys *this) {
     return this->currentStage;
 }
 void DreamSys__ProcessChunkChange(DreamSys *this, void *entity, int changeType) {
     if (changeType == 5) {
-        void *result = (**(code **)(*(int *)entity + 0x10c))(entity, 0, 0);
-        (**(code **)((int)this->vt + 0x1f4))(this, result);
+        void *result = (*(code *)(*(int *)entity + 0x10c))(entity, 0, 0);
+        (*(code *)((int)this->vt + 0x1f4))(this, result);
     }
 }
 void DreamSys__InstanceEffectsOnJournal(DreamSys *this, void *entity, int effect) {
     if (this->unknwon_int_0x44 == 0) {
         switch (effect) {
         case 4:
-            (**(code **)(*(int *)entity + 0x38))(entity, this);
+            (*(code *)(*(int *)entity + 0x38))(entity, this);
             break;
         case 9:
             if (GET_INT(this, 0x68) == 0) {
-                void *result = (**(code **)(*(int *)entity + 0x14c))(entity);
-                (**(code **)((int)this->vt + 0x1f8))(this, result);
-                int value = (**(code **)(*(int *)entity + 0x150))(entity);
+                void *result = (*(code *)(*(int *)entity + 0x14c))(entity);
+                (*(code *)((int)this->vt + 0x1f8))(this, result);
+                int value = (*(code *)(*(int *)entity + 0x150))(entity);
                 SET_INT(this, 0x18c, value + GET_INT(this, 0x18c));
-                (**(code **)((int)this->vt + 0x218))(this, 0, 0x10);
+                (*(code *)((int)this->vt + 0x218))(this, 0, 0x10);
             }
             break;
         case 10:
             {
                 int oldStage = this->currentStage;
-                int stageDelta = (**(code **)(*(int *)entity + 0x154))(entity);
+                int stageDelta = (*(code *)(*(int *)entity + 0x154))(entity);
                 this->currentStage = -stageDelta;
-                (**(code **)((int)this->vt + 0x1c4))(this);
+                (*(code *)((int)this->vt + 0x1c4))(this);
                 if (this->currentStage < 0) {
                     this->currentStage = oldStage;
                 }
@@ -1238,7 +1238,7 @@ void DreamSys__InstanceEffectsOnJournal(DreamSys *this, void *entity, int effect
             if (GET_INT(this, 0x68) == 0) {
                 *(u16 *)((int)this + 0x168) = 0xffff;
                 this->dreamTimer = this->dreamTimeLimit;
-                s16 tmp = (**(code **)(*(int *)entity + 0x158))(entity);
+                s16 tmp = (*(code *)(*(int *)entity + 0x158))(entity);
                 *(u16 *)((int)this + 0x16a) = tmp;
             }
             break;
@@ -1398,9 +1398,9 @@ void DreamSys__FlashbackSaving(DreamSys *this, void *unused, void *unused2) {
     int rnd;
     s8 buffer[16];
     if ((GET_PTR(this, 0x4c) != NULL) && (rnd = rand(), rnd == (rnd / 3) * 3)) {
-        void *spawnData = (**(code **)(**(int **)GET_PTR(this, 0x4c) + 0x10c))(GET_PTR(this, 0x4c), 0, 0);
+        void *spawnData = (*(code *)(**(int **)GET_PTR(this, 0x4c) + 0x10c))(GET_PTR(this, 0x4c), 0, 0);
         ReadDreamSysVector(this, buffer);
-        (**(code **)((int)this->vt + 0x214))(this, this->currentStage, spawnData, buffer, unused, unused2, GET_PTR(this, 0x180));
+        (*(code *)((int)this->vt + 0x214))(this, this->currentStage, spawnData, buffer, unused, unused2, GET_PTR(this, 0x180));
     }
 }
 void DreamSys__ResetFlashbackList(DreamSys *this) {
@@ -1709,7 +1709,7 @@ int DreamSys__TraverseStates(int soundId, int entity, int actionDef, int *obj)
     if (ret != 0) {
         pc = (char *)(actionDef + 4);
          func_8005c714 (*(char *)(actionDef + 3));
-        local_24 = (**(code **)(*obj + 0x88))(obj, (int)*(char *)(actionDef + 2));
+        local_24 = (*(code *)(*obj + 0x88))(obj, (int)*(char *)(actionDef + 2));
         if (local_24 == 0) {
 no_action:
             result = 0;
@@ -1733,9 +1733,9 @@ void DreamSys__CinemaDispatch(int eventData)
 {
     char localBuf[16];
     if (*(int **)(eventData + 4) != NULL) {
-        (**(code **)(**(int **)(eventData + 4) + 0x50))();
+        (*(code *)(**(int **)(eventData + 4) + 0x50))();
          func_8001e600 (DreamSys_CinemaState, localBuf, eventData + 8, 0);
-        (**(code **)(**(int **)(eventData + 4) + 0x4c))
+        (*(code *)(**(int **)(eventData + 4) + 0x4c))
             (*(int *)(eventData + 4), DreamSys_CinemaState, DreamSys_CinemaState_08, DreamSys_CinemaState_04, localBuf);
          func_8001eacc (*(int *)(eventData + 4), DreamSys_CinemaState, 1, 0, 0);
     }

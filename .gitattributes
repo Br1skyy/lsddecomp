@@ -1,0 +1,40 @@
+# Auto-detect text files and normalize line endings to LF
+* text=auto
+
+# Source files
+*.c text
+*.h text
+*.s text
+*.inc text
+*.py text
+*.ps1 text
+*.sh text
+*.md text
+*.txt text
+*.xml text
+*.yaml text
+*.yml text
+
+# Make shell scripts executable on Unix systems
+*.sh text eol=lf
+
+# Make Python scripts executable on Unix systems
+*.py text eol=lf
+
+# Keep PowerShell scripts with CRLF for Windows compatibility
+*.ps1 text eol=crlf
+
+# Binary files
+*.exe binary
+*.bin binary
+*.cue binary
+*.o binary
+*.elf binary
+
+# Build artifacts
+build_ps1/ binary
+psyq/ binary
+disk/ binary
+
+# Git large files (if needed)
+*.iso binary

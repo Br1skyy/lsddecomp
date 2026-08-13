@@ -2,81 +2,207 @@
 
 This project is reverse-engineering LSD: Dream Emulator (1998, PS1) and rewriting it as C.
 
-Lets be honest about what this is and what it is not, because the word decomp is thrown around a TON.
+**Important Note**: This is NOT a byte-matching decomp. I am not trying to rebuild the original binary bit for bit. What I want is the game's logic back in C that a person can read, study, and eventually mod or port if they wish sort of a documentation-grade reconstruction, built on top of the Ghidra output.
 
-This is NOT a byte-matching decomp. I am not trying to rebuild the original binary bit for bit honestly it's not achievable for me, and I don't have a `% matched` number. I don't care about that at all. What I want is the game's logic back in C that a person can read, study, and eventually mod or port which I would love to do! a documentation-grade reconstruction, built on top of the Ghidra output.
+If you came here expecting a matching project like the Crash or Spyro decomps this is not it. You will be dissapointed.
 
-If you came here expecting a matching project like the Crash or Spyro decomps this is not it.
+## Documentation
 
-## Where it stands
+This project has documentation across several files:
 
-The build works.  It hangs on the licensing screen, I am not sure why yet but I want to get this build out since we have lost progress from data corruption. Expect the hang after licensing! Ok?
+- **Project Structure** - Overview of the repository layout and module organization
+- **Game Overview** - High-level game mechanics, structure, and hardware/engine documentation  
+- **Data Formats** - Overview of file formats used throughout the repository
+- **Reverse Engineering Guide** - Guidelines and documentation on reverse-engineering, analyzing, or decompiling the codebase
+- **Code Style** - Style guide, formatting rules, and code standards for the project
+- **Boot Debug** - The current boot blocker (Reserved Instruction crash) and the investigation so far
 
-That boot issue is the current job and the one thing blocking everything else, because without a booting baseline I can't test any of the C restructuring without risking a totally silent break.
+All docs live in `docs/`.
 
-## The freakish parts
+## Project Status
 
-Since this is a reconstruction, the code quality is the product I want to sell you on. Right now it's not good at all, and I'd rather say so than dress it up:
+**Honest status: the game does not boot yet. The build crashes early in boot and the root cause is currently unknown.**
 
-- **Most of the C is still raw Ghidra output.** Thousands of `iVar`/`uVar` variables, a thousand-plus `(**(code **)(ptr + 0xNN))` vtable calls, and hundreds of `(int *)` casts standing in for struct fields. Structifying and naming all of it is the actual project. The `Rendering_*.c` files in particular are ~90% blank lines from the decompiler export - readable-ish but bloated.
-- **The build leans on linker hacks to get anything to boot**: `--allow-multiple-definition`, `--unresolved-symbols=ignore-all`, and generated stub assembly for symbols I haven't written real C for yet. These are scaffolding, not the destination.
-- **74 functions sit in `asm/lsdde/nonmatchings/`** - moved out because I stopped working on them, kept because they're still useful notes.
+What works:
+- The C + asm reconstruction compiles, links, and produces a PS-EXE/ISO.
+- Boot reaches the CD-ROM init warm-up (`CdInitRom`) past the IRQ2 storm that
+  previously starved `main()` (fixed 2026-08-12 by using 32-bit `sw` for the
+  I_STAT ack in cdrom_handler.c instead of 16-bit `sh`).
 
-That's the honest state of it.
+What breaks:
+- The game crashes with a Reserved Instruction (RI) exception storm shortly
+  after CD init. The CPU ends up executing the `D_80066828` data block at
+  `0x8007D864` as code (the word at `0x8007D86C` decodes to funct 1, a
+  reserved instruction). Observed execution chain: `main` -> `CdInitRom` ->
+  `EntityAllocSmall` -> `CdModeInitDream` -> `func_8003af8c` -> `CdModeRunTask`
+  (mode 0x13) -> a call into the entity template.
+- The exact control-transfer that lands execution in that data block has not
+  been found. This is the current blocker; work on it is stuck.
 
-## Build
+The earlier "hangs on the licensing screen" diagnosis (in older docs and
+Notes.txt) was wrong and is retired.
 
-The build script is PowerShell and portable (it derives paths from `$PSScriptRoot`, so it works from any checkout location on Windows/macOS/Linux with `pwsh`). The `mipsel-none-elf-gcc` cross-compiler must be on `PATH` (or in a standard location: `C:\mipsel-none-elf\bin`, `/usr/local/mipsel-none-elf/bin`, `/opt/mipsel-none-elf/bin`).
+## Code Quality Warning
 
-**Prerequisites (once):**
+Since this is a reconstruction, the code quality is still rough:
 
-1. PsyQ SDK - gitignored, provide your own. Drop it in `psyq/` (headers and libraries both come from your copy; the C sources include `libgpu.h`/`libcd.h`/etc. which resolve against `psyq/include`).
-2. Extract the disc once with `tools/extract.ps1`. It runs the bundled `tools/dumpsxiso.exe`, fills `disk/extract/` (the game's CD data + `extract.xml`), and checks the output. It auto-detects a `.cue`/`.bin` dropped in `disk/`, or you can point it at one:
-   ```bash
-   pwsh tools/extract.ps1 -Image <your-lsd.cue-or-bin>
-   ```
-   (You need the game disc - it's copyrighted and not in this repo. `disk/extract/` is gitignored.)
+- **Most of the C is still raw Ghidra output.** Thousands of iVar/uVar variables, many indirect vtable calls, and hundreds of pointer casts standing in for struct fields. Structifying and naming all of it is the actual project. We'll get there eventualy.
+- **The build leans on linker hacks**: --allow-multiple-definition, --unresolved-symbols=ignore-all, and generated stub assembly for symbols not yet written in C. If it links, it ships. That is the operating principle here.
+- **Assembly stubs**: Many functions remain as assembly stubs in asm/lsdde/ for functions not yet written in C.
 
-**`./build_ps1.ps1` - the main game build.**
+## Build Instructions
 
-Compiles the C reconstruction (`src/lsdde/`) plus the MIPS assembly (`asm/lsdde/`), links with `lsdde.ld`, and runs `tools/mkpsxiso.exe` with `config/disk.xml` to produce the ISO. Assembles everything under `build_ps1/`:
+This project supports cross-platform building on Windows, Linux, and macOS.
 
-- `build_ps1/lsddecomp.cue` + `build_ps1/lsddecomp.bin` - load the `.cue` in DuckStation or on a real console
-- `build_ps1/ps-exe/lsddecomp.elf` - the ELF
-- `build_ps1/ps-exe/SLPS_015.56` - the PS-EXE the ISO boots
-- `build_ps1/lbas.txt` - LBA table, regenerated each run and turned into `include/lba_table.inc`/`.h`
+### Prerequisites
+
+**Common requirements:**
+- **PowerShell Core (pwsh)** - Required for all platforms (for some tools). This is a separate install, not bundled with Windows.
+  - Windows: winget install Microsoft.PowerShell (or from the GitHub releases)
+  - Linux: sudo apt install powershell (Debian/Ubuntu) or sudo yum install powershell (RHEL/CentOS)
+  - macOS: brew install powershell
+- **mipsel-none-elf-gcc** cross-compiler must be on PATH
+- **PsyQ SDK** - The build expects it in psyq/ (gitignored). Run scripts/fetch_psyq.ps1 to pull PSY-Q SDK 4.7 from the psx.arthus.net mirror into psyq/ (build.sh auto-runs it if psyq/ is missing). Or drop your own copy in psyq/ (include/ + lib/).
+
+**Platform-specific requirements:**
+- **Windows**: Native tools work out of the box
+- **Linux/macOS**: May need Wine for Windows-only binary tools (see tools/README.md)
+
+### Initial Setup
+
+**1. Extract the game disc:**
+
+Windows (PowerShell):
+```bash
+pwsh scripts/extract.ps1 -Image <your-lsd.cue-or-bin>
+```
+
+Linux/macOS (Bash):
+```bash
+./scripts/extract.sh <your-lsd.cue-or-bin>
+```
+
+*(You need the game disc it is copyrighted and not in this repo you should definitleyy buy a real copy and dump it!)*
+
+**2. Make shell scripts executable (Linux/macOS only):**
+```bash
+chmod +x scripts/*.sh
+```
+
+### Main Build
+
+**Windows (PowerShell):**
+```bash
+pwsh scripts/build_ps1.ps1
+```
+
+**Linux/macOS (Bash):**
+```bash
+./scripts/build.sh
+```
+
+*(Or use PowerShell on any platform: pwsh scripts/build_ps1.ps1)*
+
+This compiles C reconstruction (src/lsdde/) plus MIPS assembly (asm/lsdde/), links with lsdde.ld, and runs tools/mkpsxiso to produce the ISO under build_ps1/:
+- build_ps1/lsddecomp.cue + build_ps1/lsddecomp.bin - load in a PS1 emulator or real console
+- build_ps1/ps-exe/lsddecomp.elf - the ELF
+- build_ps1/ps-exe/SLPS_015.56 - the PS-EXE the ISO boots
+
+### Build Products (reference sizes)
+
+| File | Size | Notes |
+|------|------|-------|
+| build_ps1/ps-exe/SLPS_015.56 | 668,472 B | PS-EXE the ISO boots; full payload embedded (no GAME.BIN split) |
+| build_ps1/ps-exe/lsddecomp.elf | 964,172 B | linked ELF (with debug info) |
+| build_ps1/lsddecomp.bin | 648,277,056 B | ISO image (data track) |
+| build_ps1/lsddecomp.cue | 75 B | cue sheet for the ISO |
+
+The disc carries no GAME.BIN/ZZGAME.BIN. The full game image is embedded in the single PS-EXE, so the BIOS loads it at boot and CdLoadStage2's skip-check skips CD reads. In other words, the disc is one big PS-EXE stamped onto a CD.
+
+## Project Structure
+
+### Root Level
+
+```
+lsddecomp-main/
+├── asm/              # MIPS assembly source code
+├── build_ps1/       # Build output directory (gitignored)
+├── config/          # Build configuration files
+├── docs/            # Project documentation
+├── include/         # Header files and assembly macros
+├── psyq/            # PsyQ SDK (gitignored; fetched by scripts/fetch_psyq.ps1, auto-runs in build.sh)
+├── scripts/         # Build and utility scripts
+├── src/             # C reconstruction source code
+├── tools/           # Build tools
+└── disk/            # Extracted game data (gitignored)
+```
+
+### Key Directories
+
+**asm/lsdde/**: MIPS assembly source code
+- **data/**: Assembly data sections (.rodata, .data, .sdata, .sbss)
+- *.s: Assembly implementation files
+
+**include/**: Header files and assembly macros
+- **lsdde/**: Project-specific headers (ghidra_compat.h, magic_numbers.h, psx_types.h, structs.h)
+- *.inc: Assembly macro files
+- *.h: C header files
+
+**src/lsdde/**: C reconstruction source code (25 files)
+- DreamSys.c: Dream state machine
+- System.c: GS library wrappers
+- Sound.c / SpuInit.c: Audio system
+- GameLoop.c: Frame loop
+- Rendering_*.c: Rendering system (split 7 ways: Chunk, Entity, NavMemCard, RenderUtils, Stage, UI, World)
+- Entity2.c / Entity3_*.c: Entity system and behaviors (5 Entity3 files)
+- NavMenu_*.c: Menu/UI system (2 files)
+- Other.c: Miscellaneous functionality
+
+**scripts/**: Build and utility scripts
+- build_ps1.ps1: Main build script (Windows/PowerShell)
+- build.sh: Main build script (Linux/macOS/Bash)
+- extract.ps1: Disc extraction script (PowerShell)
+- extract.sh: Disc extraction script (Bash)
+- fetch_psyq.ps1: PsyQ SDK download script
+- track_progress.py: Progress tracking utility
+
+**tools/**: Build tools
+- mkpsxiso.exe: ISO generation tool (Windows)
+- dumpsxiso.exe: Disc extraction tool (Windows)
+
+**config/**: Build configuration files
+- disk.xml: ISO generation config
+- splat.slps01556.lsdde.yaml: Symbol map config
+- symbols.slps01556.lsdde.txt: Symbol mappings
+
+### Root Configuration Files
+
+- **lsdde.ld**: Linker script
+- **lsdde_defsyms.ld**: Additional symbol definitions
+- **docs/**: Project documentation (Project Structure, Game Overview, Data Formats, Reverse Engineering Guide, Code Style, Boot Debug)
+- **LICENSE**: MIT license for the reconstruction code
+- **.gitattributes**: Git configuration for proper line ending handling
+
+## Progress Tracking
+
+Run the progress tracker to see current completion status:
 
 ```bash
-pwsh ./build_ps1.ps1
+python scripts/track_progress.py
 ```
 
-The game used to boot through a two-stage loader (`build_loader.ps1` + `asm/loader/`) that read a GAME.BIN payload off the CD. That's retired: the whole image is now embedded in a single PS-EXE (`SLPS_015.56`), so `CdLoadStage2` just skips the CD read and finds the data already in RAM. One script, one binary.
+This generates detailed metrics including:
+- Overall completion percentage
+- Stub function count
+- Raw Ghidra variable count
+- Linker hack removal status
+- Boot status assessment
 
-Known state: the game boots, draws its own license screen, then hangs on it. Rendering and init are fine; the state machine never advances past the license. Current theory: the per-frame driver (the VSync callback / timer tick that steps the license pages) is stubbed out and never registered, so nothing advances the page each frame. That's the current job, not a build failure.
+## Style Guide
 
-## Layout
+Named things get PascalCase with a __ system prefix (DreamSys__AdvanceDay), locals are camelCase. The goal is to eliminate every undefined4, DAT_800, and param_1 from the codebase.
 
-```
-asm/                  # MIPS assembly: lsdde/ splits (incl. data/ + nonmatchings/)
-include/              # Headers (DreamSys.h, dat_globals.h, lsdde/) + asm macros
-src/lsdde/            # The C - 25 files, ~32k lines
-  DreamSys.c          # dream state machine
-  System.c            # GS library wrappers
-  Sound.c / GameLoop.c# audio + frame loop
-  Rendering_*.c       # rendering, split 7 ways
-  Entity2.c / Entity3_*.c  # entities & behaviors
-  NavMenu_*.c         # menu/UI
-  Other.c             # everything that didn't fit elsewhere
-config/               # mkpsxiso config (disk.xml) + splat symbol maps
-disk/                 # your extracted CD data (gitignored; not committed) - made by tools/extract.ps1
-tools/                # mkpsxiso.exe + dumpsxiso.exe (bundled) + extract.ps1
-build_ps1.ps1         # the one build script (C -> ELF -> PS-EXE -> ISO)
-lsdde.ld              # linker script
-```
-
-## Style
-
-Named things get PascalCase with a `__` system prefix (`DreamSys__AdvanceDay`), locals are camelCase, and I'm trying to kill every `undefined4`, `DAT_800`, and `param_1` left in the tree. There are still plenty. That's the work.
+See Code Style for detailed formatting rules and code standards.
 
 ## Credit
 
@@ -87,4 +213,4 @@ Named things get PascalCase with a `__` system prefix (`DreamSys__AdvanceDay`), 
 
 ## License
 
-MIT for my code. The game itself belongs to Asmik Ace (and everyone else with a stake in it), and the ROM is not in this repo bring your own. The PsyQ SDK headers/libraries are not bundled either; provide your own copy I don't know how you'll get it!
+MIT for my code. The game itself belongs to Asmik Ace (and everyone else with a stake in it), and the ROM is not in this repo bring your own. The PsyQ SDK headers/libraries are not bundled either; provide your own copy!

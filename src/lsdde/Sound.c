@@ -1222,6 +1222,66 @@ done:
     *cmd = 1;
     return 1;
 }
+/* SoundChannelMatch - original 0x8005cbc8 (NOT CdReady). Gate used by
+   DreamSys__TraverseStates (DreamSys.c) to test whether the current sound
+   channel matches the action's condition descriptor param_2 (actionDef):
+   param_2[0]=negation flag and result output, param_2[1]=condition code. */
+extern uint ParticleIsModeOff(void);
+extern u32  Other_DreamSysStatePtr;
+extern char D_80088D16[];
+static int func_8005cda8(int param_1, int param_2);
+static int func_8005cd58(int param);
+
+static int func_8005cda8(int param_1, int param_2)
+{
+    int i = 0;
+    int v = (param_1 - 1) / 16 + 1;
+    do {
+        if (v == param_2) return 1;
+        i++;
+        param_2 += 3;
+    } while (i < 4);
+    return 0;
+}
+
+static int func_8005cd58(int param)
+{
+    char b = D_80088D16[param];
+    int obj = (int)Other_DreamSysStatePtr;
+    int (*getter)(int) = *(int (**)(int))(*(int *)obj + 0x200);
+    return b == getter(obj);
+}
+
+int func_8005cbc8(uint param_1, char *param_2)
+{
+    int op = param_2[1];
+    if (op == 1) goto done;
+    if (op < 0) {
+        if (param_2[0] != '\0') return 0;
+        op = -op;
+    }
+    if ((uint)(op - 2) < 0x14) {
+        switch (op) {
+        case 2: case 3: case 4:
+            param_1 = func_8005cda8(param_1, op - 1); break;
+        case 5: if ((int)param_1 != (int)param_1 / 3 * 3) return 0; goto done;
+        case 6: if ((int)param_1 == (int)param_1 / 3 * 3) return 0; goto done;
+        case 7: param_1 = ParticleIsModeOff(); break;
+        case 8: case 9: if ((int)param_1 % 3 != op - 7) return 0; goto done;
+        case 0x14: if ((param_1 & 1) != 0) return 0; goto done;
+        case 0x15: param_1 = param_1 & 1; break;
+        default: goto mimo;
+        }
+    } else {
+    mimo:
+        if (op < 10) goto done;
+        param_1 = func_8005cd58(op);
+    }
+    if (param_1 == 0) return 0;
+done:
+    param_2[0] = '\x01';
+    return 1;
+}
 /* SoundTriggerConditional */
 void SoundTriggerConditional(int param)
 {
@@ -1481,17 +1541,24 @@ int func_8003b20c(void)
 {
     return (int)&D_8006E4F0;
 }
-int func_8002C438(void) { return 0; }
+extern int D_8006D9BC;
+/* Original: returns &DAT_8006d9bc (Scene_VtableAlt, CD_MODE_STARTING mode vtable) */
+int func_8002C438(void) { return (int)&D_8006D9BC; }
 void func_8002C448(void) { }
 int func_8002C468(int a0, int a1, int a2) { (void)a0;(void)a1;(void)a2; return 1; }
 void func_8002C478(void) { }
+/* Undefined originals (2C054.c missing) - no-op stubs for the D_8006D4AC primitive walk */
+int func_8002C3A8(int a0) { (void)a0; return 0; }
+int func_8002CC0C(int a0) { (void)a0; return 0; }
 int func_80027EC8(void) { return 0; }
 int func_80027ED4(void) { return 0; }
 int func_80027EE0(void) { return 0; }
 int func_80027EEC(void) { return 0; }
 void func_80027EF8(void) { }
 void func_80028B6C(void) { }
-int NopSub_27e68(void) { return 0; }
+extern int D_8006D4E8;
+/* Original: returns &DAT_8006d4e8 (PrimCdDaVtable, CD_MODE_STOPPED mode vtable) */
+int NopSub_27e68(void) { return (int)&D_8006D4E8; }
 int NopSub_27f18(int a0, int a1, int a2) { (void)a0;(void)a1;(void)a2; return 1; }
 /* Label vtable getter - return a minimal valid vtable stub */
 static int LabelVtableFiller(int obj, int *arg2) { (void)obj; (void)arg2; return 0; }

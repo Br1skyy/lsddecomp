@@ -6,28 +6,6 @@
 */
 
 /* --- from auto_defsym_args.txt --- */
-.set Primitive_FuncTable, 0x8006d4ac
-.globl Primitive_FuncTable
-.set Gpu_DitherMode, 0x8008e248
-.globl Gpu_DitherMode
-.set Gpu_SemiTrans, 0x8008e24c
-.globl Gpu_SemiTrans
-.set Gpu_TexMapFlag, 0x8008e250
-.globl Gpu_TexMapFlag
-.set Gpu_CurPrimPtr, 0x8008e794
-.globl Gpu_CurPrimPtr
-.set Gpu_TexDisableFlag, 0x800902e0
-.globl Gpu_TexDisableFlag
-.set Gpu_PageMode, 0x80090c18
-.globl Gpu_PageMode
-.set Primitive_BaseTable, 0x8006b5cc
-.globl Primitive_BaseTable
-.set Primitive_AuxDataA, 0x8006b684
-.globl Primitive_AuxDataA
-.set Primitive_AuxDataB, 0x8006b690
-.globl Primitive_AuxDataB
-.set Primitive_CollideFlag, 0x8008a838
-.globl Primitive_CollideFlag
 .set Stage_AdjDirectionOffsets, D_800868A8
 .globl Stage_AdjDirectionOffsets
 .set DreamCamMotionAmp, D_80087E20
@@ -464,7 +442,7 @@
 .globl D_8008B3CC
 .set SpuCurrentBankData, D_8008E970
 .globl SpuCurrentBankData
-.set TimerCallback_Default, D_80033738
+.set TimerCallback_Default, TimerCallback_Default_impl
 .globl TimerCallback_Default
 .set TimerCallback_SpuSet, D_80032A9C
 .globl TimerCallback_SpuSet

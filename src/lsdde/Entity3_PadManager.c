@@ -57,7 +57,7 @@ void PadManagerAlloc(int obj)
     PadStop();
   }
   iVar1 = GetCoordSystemVtable();
-  (**(code **)(iVar1 + 0xc))(obj);
+  (*(code *)(iVar1 + 0xc))(obj);
 }
 void PadManagerAnalogStick(void)
 {
@@ -78,7 +78,7 @@ void PadManagerSetEnabled(int *obj, int active)
   obj[4] = 0;
   obj[5] = 0;
   obj[6] = 0;
-  (**(code **)(*obj + 0x50))();
+  (*(code *)(*obj + 0x50))();
 }
 void PadManagerUnknownA(void)
 {
@@ -88,7 +88,7 @@ void PadManagerConfigure(int *obj, int padMode, int arg3)
   int bVar1;
   int iVar2;
   iVar2 = GetCoordSystemVtable();
-  (**(code **)(iVar2 + 8))(obj);
+  (*(code *)(iVar2 + 8))(obj);
   iVar2 = PadManagerGetVtable();
   *obj = iVar2;
   iVar2 = Pad_RefCount + 1;
@@ -97,11 +97,11 @@ void PadManagerConfigure(int *obj, int padMode, int arg3)
   if (bVar1) {
     PadInit(padMode);
   }
-  (**(code **)(*obj + 0x40))(obj, arg3);
+  (*(code *)(*obj + 0x40))(obj, arg3);
 }
 int PadManagerConstructor(int type, int arg2)
 {
-  /* Original function was a stub (jr $ra) — returns 0, pad never initialized */
+  /* Original function was a stub (jr $ra) - returns 0, pad never initialized */
   (void)type;
   (void)arg2;
   return 0;
@@ -131,21 +131,21 @@ void UpdateTransformPosition(EntityObj *entity, int *outPos, int matrixIdx)
     int *pi;
     int vec;
     char localBuf[32];
-    (**(code **)(*(int *)entity + 0x84))(entity, localBuf, 0, 0);
+    (*(code *)(*(int *)entity + 0x84))(entity, localBuf, 0, 0);
     ApplyRawMatrixToVectors(outPos, matrixIdx, 1, localBuf);
     pi = 0;
     if (entity->nPosZ != 0) {
         pi = (int *)(entity->pData + 0x38);
     }
     *outPos += *pi;
-    vec = (**(code **)(Other_DreamSysStatePtr + 0x200))(0, 0, 0, 0);
+    vec = (*(code *)(Other_DreamSysStatePtr + 0x200))(0, 0, 0, 0);
     if (entity->nPosZ != 0) {
-        vec = (**(code **)(Other_DreamSysStatePtr + 0x200))(0, 0, 0, 0);
+        vec = (*(code *)(Other_DreamSysStatePtr + 0x200))(0, 0, 0, 0);
     }
     outPos[1] += *(int *)(vec + 4);
-    vec = (**(code **)(Other_DreamSysStatePtr + 0x200))(0, 0, 0, 0);
+    vec = (*(code *)(Other_DreamSysStatePtr + 0x200))(0, 0, 0, 0);
     if (entity->nPosZ != 0) {
-        vec = (**(code **)(Other_DreamSysStatePtr + 0x200))(0, 0, 0, 0);
+        vec = (*(code *)(Other_DreamSysStatePtr + 0x200))(0, 0, 0, 0);
     }
     outPos[2] += *(int *)(vec + 8);
 }
@@ -160,11 +160,11 @@ void LinkObjectToParent(int child, int parent)
 void EntityListCallEach(int *list)
 {
     int i;
-    (**(code **)(*list + 0x104))(0, 0, 0, 0);
+    (*(code *)(*list + 0x104))(0, 0, 0, 0);
     if (list[0x18] == 0) {
         list[0x17] = 0;
     } else {
-        i = (**(code **)(*(int *)list[0x17] + 4))(0, 0, 0, 0);
+        i = (*(code *)(*(int *)list[0x17] + 4))(0, 0, 0, 0);
         list[0x17] = i;
     }
 }

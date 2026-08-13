@@ -188,7 +188,7 @@ int CreateSeqPlayer(void *seqData, s32 soundBankId, s32 channel)
     vtable = 0;
     if (obj != 0) {
         vtable = (int)SpuGetVtable_SeqPlayer();
-        (**(code **)(vtable + 8))(obj, seqData, soundBankId, channel);
+        (*(code *)(vtable + 8))(obj, seqData, soundBankId, channel);
         vtable = obj;
     }
     return vtable;
@@ -756,7 +756,7 @@ int CreateSeqChannel(void *initData)
     vtable = 0;
     if (obj != 0) {
         vtable = (int)SpuGetVtable_SeqChannelAccessor();
-        (**(code **)(vtable + 8))(obj, initData);
+        (*(code *)(vtable + 8))(obj, initData);
         vtable = obj;
     }
     return vtable;
@@ -831,7 +831,7 @@ int CreateSeqLineDraw(void *initParam1, void *initParam2, void *initParam3, void
     vtable = 0;
     if (obj != 0) {
         vtable = (int)SpuGetVtable_SeqLineDraw();
-        (**(code **)(vtable + 8))(obj, initParam1, initParam2, initParam3, initParam4);
+        (*(code *)(vtable + 8))(obj, initParam1, initParam2, initParam3, initParam4);
         vtable = obj;
     }
     return vtable;
@@ -861,7 +861,7 @@ int CreateSeqTrack(void *initParam1, void *initParam2, void *initParam3)
     vtable = 0;
     if (obj != 0) {
         vtable = (int)SpuGetVtable_ObjectC();
-        (**(code **)(vtable + 8))(obj, initParam1, initParam2, initParam3);
+        (*(code *)(vtable + 8))(obj, initParam1, initParam2, initParam3);
         vtable = obj;
     }
     return vtable;

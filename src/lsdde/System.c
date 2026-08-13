@@ -29,6 +29,7 @@ bool DreamStateCheckEq(int index);
 void* GetGsVtable1(void) {
     return (void*)0x8006e730;
 }
+
 /**
  * GetGSVtable2 - Returns pointer to GS object vtable #2
  * Used for light/camera object creation
@@ -36,6 +37,7 @@ void* GetGsVtable1(void) {
 void* GetGsVtable2(void) {
     return (void*)0x8006e854;
 }
+
 /**
  * GetGSVtable3 - Returns pointer to GS object vtable #3
  * Used for auxiliary object creation
@@ -43,6 +45,7 @@ void* GetGsVtable2(void) {
 void* GetGsVtable3(void) {
     return (void*)0x8006e878;
 }
+
 /**
  * CreateGSObject - Allocate and initialize a GS library object
  *
@@ -63,6 +66,7 @@ void* CreateGSObject(void) {
     ((void (*)(void*))((void**)vtable)[2])(obj);
     return obj;
 }
+
 /**
  * GetGSVtable4 - Returns pointer to GS object vtable #4
  * Used for CreateGSObject
@@ -70,6 +74,7 @@ void* CreateGSObject(void) {
 void* GetGsVtable4(void) {
     return (void*)0x8006e8e4;
 }
+
 /**
  * GetLastListNode - Traverse linked list to find the last element
  *
@@ -89,6 +94,7 @@ void* GetLastListNode(void* node) {
     }
     return current;
 }
+
 /**
  * GsSetProjection - Set projection screen distance for 3D rendering
  *
@@ -100,6 +106,7 @@ void* GetLastListNode(void* node) {
 void GsSetProjection(long distance) {
     SetGeomScreen(distance);
 }
+
 /**
  * GsSetWorkBase - Set the work base pointer for GS operations
  *
@@ -111,6 +118,7 @@ void GsSetProjection(long distance) {
 void GsSetWorkBase(PACKET* workBase) {
     System_GsWorkBase = (u32)workBase;
 }
+
 /**
  * GsSetClipMode - Set the clipping mode for GS rendering
  *
@@ -121,6 +129,7 @@ void GsSetWorkBase(PACKET* workBase) {
 void GsSetClipMode(void* mode) {
     System_GsClipMode = mode;
 }
+
 /**
  * CreateGSObjectEx - Allocate and initialize a GS object with parameters
  *
@@ -183,8 +192,12 @@ __asm__(
     ".set reorder\n"
 );
 extern int CdInit(void);
+extern void CdInitRom(void);
 extern void startIntrVSync(void);
 extern void CdLoadStage2(void *dest, u32 lba, u32 count);
+extern void cd_data_callback(void);
+extern void cd_ready_callback(u_char intr, u_char *result);
+extern void cd_sync_callback(u_char intr, u_char *result);
 extern void *BMemPMgrInit(u32 size, int a1);
 extern void System_HeapInit(void);
 extern int EntityAllocSmall(void *a0);
@@ -206,12 +219,15 @@ void *func_800206e0(void)
     }
     return obj;
 }
-extern int PadManagerConstructor(int a0, int a1);
+extern void SpuSetFrameRate(u32 setting);
+extern void SpuStartTimer(s32 arg);
+extern void SpuInitCold(void);
+extern void TimerCallback_Default_impl(void);
 extern void ReinstallHandler(void);
 extern int vsync_rel_handler(int channel, void *callback);
 /* PS-EXE resident CD callback table (4 entries: data_ready, data_sync, ready, complete) */
 extern void *CdCallbackTable[4];
-/* Override PsyQ VSyncCallback — register callback in our PS-EXE resident table */
+/* Override PsyQ VSyncCallback - register callback in our PS-EXE resident table */
 int VSyncCallback(void (*f)(void))
 {
     extern void *VSyncCallbackTable[16];
@@ -219,7 +235,7 @@ int VSyncCallback(void (*f)(void))
     VSyncCallbackTable[0] = (void *)f;
     return old;
 }
-/* Override PsyQ InterruptCallback — store handlers in our PS-EXE resident IntrTab */
+/* Override PsyQ InterruptCallback - store handlers in our PS-EXE resident IntrTab */
 void *InterruptCallback(int mask, void *handler)
 {
     extern void *IntrCallbackTable[16];
@@ -232,7 +248,7 @@ void *InterruptCallback(int mask, void *handler)
 extern void *VSyncCallbackTable[16];
 extern void *IntrCallbackTable[16];
 extern void *CdCallbackTable[4];
-/* Override PsyQ HookEntryInt — called from startIntr() after I_MASK = 0.
+/* Override PsyQ HookEntryInt - called from startIntr() after I_MASK = 0.
  * Original calls address 0xB0 (now inside our exception handler code) and
  * crashes. We set I_MASK directly to enable VSync(0), CDROM(2), DMA(3),
  * Timer(4), and Controller(7). */
@@ -247,7 +263,7 @@ __asm__(
     "_start:\n"
     ".set noreorder\n"
     "lui $t0, 0x800B\n"
-    "addiu $t0, $t0, 0x9000\n"
+    "ori $t0, $t0, 0x9000\n"
     "lui $t1, 0xDEAD\n"
     "sw $t1, 0($t0)\n"
     "lui $sp, 0x801F\n"
@@ -276,7 +292,7 @@ __asm__(
     "nop\n"
     "lui $gp, %hi(_gp)\n"
     "addiu $gp, $gp, %lo(_gp)\n"
-    /* InitHeap disabled — our BMemPMgrInit sets up the heap at 0x800C82FC instead,
+    /* InitHeap disabled - our BMemPMgrInit sets up the heap at 0x800C82FC instead,
        and InitHeap's region (main_BSS_END+4, 0x100000) overlaps with it. */
     /* "lui $a0, %hi(main_BSS_END)\n" */
     /* "addiu $a0, $a0, %lo(main_BSS_END)\n" */
@@ -300,11 +316,16 @@ __asm__(
     "nop\n"
     "jal ReinstallHandler\n"   /* install exception_handler immediately after startIntrVSync */
     "nop\n"
-    "lui $t0, %hi(vsync_rel_handler)\n"
-    "addiu $t0, $t0, %lo(vsync_rel_handler)\n"
-    "lui $t1, 0x800B\n"
-    "    sw $t0, 0x2CA0($t1)\n"
-    "    sw $t0, 0x2CE0($t1)\n"
+    "lui $t0, %hi(vsync_interrupt_wrapper)\n"
+    "addiu $t0, $t0, %lo(vsync_interrupt_wrapper)\n"
+    "la $t1, IntrCallbackTable\n"   /* IntrCallbackTable[0] = vsync_interrupt_wrapper */
+    "sw $t0, 0($t1)\n"
+    "/* DBG: increment handler install counter at 0x800BAF1C */\n"
+    "lui $t0, 0x800B\n"
+    "ori $t0, $t0, 0xAF1C\n"
+    "lw $t1, 0($t0)\n"
+    "addiu $t1, $t1, 1\n"
+    "sw $t1, 0($t0)\n"
     "jal  main\n"
     "nop\n"
     "1:\n"
@@ -337,10 +358,10 @@ void  main (void)
     *(volatile u32 *)0x800B3D2C = 0x800B2C9C;
     D0 = 1; D1 = 0;
     SetMem(2);
-    /* _bu_init() is syscall 0x70 — hangs in DuckStation BIOS. Use no-op stub for now. */
+    /* _bu_init() is syscall 0x70 - hangs in the BIOS. Use no-op stub for now. */
     /* But we MUST re-init heap after _bu_init would have run, since _start's InitHeap gets clobbered */
-    System_HeapBase = BMemPMgrInit(0x166C00, 0);
-    if (System_HeapBase == 0) System_HeapBase = (u32)0x800C82FC;  /* force heap base if BMemPMgrInit returns 0 */
+    System_HeapBase = BMemPMgrInit(0x137000, 0);
+    if (System_HeapBase < 0x80000000) System_HeapBase = (u32)0x800C82FC;  /* force heap base if BMemPMgrInit returns garbage below RAM */
     *(volatile u32 *)0x800B0188 = System_HeapBase;  /* force write to global */
     D3 = *(volatile u32 *)0x800C830C;  /* D3 = heap firstBlock[0] after BMemPMgrInit */
     D4 = *(volatile u32 *)0x800C8304;  /* D4 = heap free list head after BMemPMgrInit */
@@ -350,10 +371,33 @@ D0 = 2; D1 = 0;
        If it shows 0x800C82FC, System_HeapInit worked correctly. */
     D8 = 0xCAFEBABE;     /* D8 = sentinel written before System_HeapInit */
     System_HeapInit();
+    if (Other_MemHeapPtr < 0x80000000) Other_MemHeapPtr = (u32)0x800C82FC;  /* force heap ptr if System_HeapInit left garbage */
     D9 = Other_MemHeapPtr;  /* D9 = snapshot of Other_MemHeapPtr after init */
     D5 = *(volatile u32 *)0x800C830C;  /* D5 = heap firstBlock[0] after System_HeapInit */
     D6 = *(volatile u32 *)0x800C8304;  /* D6 = heap free list head after System_HeapInit */
+    /* IMPORTANT: arm ONLY the CD-ROM interrupt (I_MASK bit2 = 0x0004) BEFORE
+       the CD warm-up, not the full 0x00DD mask.  The VSync IRQ (bit0) can
+       re-assert in a tight loop (~300 cycles), so with bit0 armed the CPU
+       re-enters the ISR at the rfe delay and main() is phase-locked: it never
+       gets a slice to advance.  libcd's CdInit/CdControl also wait on the CD
+       IRQ2 callback, so bit2 must be armed here (before CdInit) or those waits
+       deadlock.  bit0 (VSync) is required later by the game's frame loop, armed
+       when we reach the main loop. */
+    *(volatile unsigned short *)0x1F801070 = (unsigned short)0x00FF;  /* clear I_STAT */
+    *(volatile unsigned short *)0x1F801074 = (unsigned short)0x0004;  /* CD IRQ only */
     D0 = 5; D1 = 0;
+    /* CD warm-up must run BEFORE the GameState ctor: EntityAllocSmall(D_80066828)
+       constructs the GameState, whose ctor calls libcd CD_init (0x80070884) and
+       polls the CD status (0x80070928) for completion.  That poll only returns
+       once the CD-ROM IRQ2 fires and libcd's ISR (registered in
+       IntrCallbackTable[2]) updates the status byte - which requires the drive
+       to be spun up AND libcd's CdInit to have registered the ISR.  The original
+       game relied on the BIOS having done this during boot; the port stubs
+       _bu_init, so the drive was never woken and the ctor deadlocked at D0=5. */
+    CdInitRom();
+    CdInit();
+    CdDataCallback(cd_data_callback);
+    CdReadyCallback(cd_ready_callback);
     int gs =  EntityAllocSmall(D_80066828);
     GameStatePtr = gs;
     D7 = *(volatile u32 *)0x800C830C;  /* D7 = heap firstBlock[0] after EntityAllocSmall */
@@ -368,13 +412,36 @@ D0 = 2; D1 = 0;
        The original relied on the BIOS-zeroed pool; the port pool is heap
        garbage, so force the gate explicitly. */
     game[6] = 0;
-    (**(code **)(*game + 0x44))(game, uVar1, pad);
+    (*(code *)(*game + 0x44))(game, uVar1, pad);
     D0 = 9; D1 = 0;
     game[6] = 1;
-    CdInit();
+    /* CdInitRom() + CdInit() + callback registration now happened at D0=5,
+       before the GameState ctor's CD poll (see comment above).  Just ensure the
+       callbacks are (re)registered and load the game blob. */
+    CdDataCallback(cd_data_callback);
+    CdReadyCallback(cd_ready_callback);
     CdLoadStage2(_gamedata_vaddr, LBA_GAME_BIN, GAME_BIN_SECTORS);
     log_gp0_state();
-    (**(code **)(*game + 0x4C))(game);
+    /* Populate VSyncCallbackTable before entering the main loop so the
+       license state machine gets per-frame ticks.  SpuInitCold() must run
+       FIRST: SpuInitSystem(0) zeroes TimerSpinCounter, sets TimerMode=-1,
+       initializes SPU registers, and sets VideoMode. Without it,
+       SpuStartTimer(1) reads garbage TimerSpinCounter/FrameRateSetting/
+       TimerMode and either returns early or takes the wrong path, so
+       VSyncCallbackTable[0] is never populated.
+       SpuSetFrameRate(1) selects NTSC 60 Hz mode (SpuTickRate = 0x3c).
+       SpuStartTimer(1) then takes the correct path.  The Timer2 IRQ
+       (bit 6) callback is separate from the VSync interrupt (bit 0), so
+       we ALSO register the per-frame SPU tick as VSyncCallbackTable[0]
+       via VSyncCallback() - vsync_rel_handler walks that table every
+       VSync interrupt and calls the entry, which advances the license
+       state machine in func_8003B110. */
+    SpuInitCold();
+    SpuSetFrameRate(1);
+    SpuStartTimer(1);
+    VSyncCallback(TimerCallback_Default_impl);
+    D0 = 10; D1 = 0;
+    (*(code *)(*game + 0x4C))(game);
     D0 = 11; D1 = 0;
 }
 void log_gp0_state(void)
@@ -469,7 +536,7 @@ int Create_ObjectType1(int arg1, int arg2, int arg3)
     vtable = 0;
     if (obj != 0) {
         vtable = GetVtable_ObjectType1();
-        (**(code **)(vtable + 8))(obj, arg1, arg2, arg3);
+        (*(code *)(vtable + 8))(obj, arg1, arg2, arg3);
         vtable = obj;
     }
     return vtable;
@@ -507,7 +574,7 @@ int Create_ObjectType2(int arg1, int arg2, int arg3)
     vtable = 0;
     if (obj != 0) {
         vtable = GetVtable_ObjectType2();
-        (**(code **)(vtable + 8))(obj, arg1, arg2, arg3);
+        (*(code *)(vtable + 8))(obj, arg1, arg2, arg3);
         vtable = obj;
     }
     return vtable;
@@ -613,7 +680,7 @@ int Create_ObjectType4(int arg1, u8 arg2)
     vtable = 0;
     if (obj != 0) {
         vtable = GetVtable_ObjectType4();
-        (**(code **)(vtable + 8))(obj, arg1, arg2);
+        (*(code *)(vtable + 8))(obj, arg1, arg2);
         vtable = obj;
     }
     return vtable;
@@ -644,7 +711,7 @@ int Create_ObjectType5(int arg1, int arg2, int arg3)
     vtable = 0;
     if (obj != 0) {
         vtable = GetVtable_ObjectType5();
-        (**(code **)(vtable + 8))(obj, arg1, arg2, arg3);
+        (*(code *)(vtable + 8))(obj, arg1, arg2, arg3);
         vtable = obj;
     }
     return vtable;
@@ -695,7 +762,7 @@ int Create_ObjectType6(int arg1)
     vtable = 0;
     if (obj != 0) {
         vtable = GetVtable_ObjectType6();
-        (**(code **)(vtable + 8))(obj, arg1);
+        (*(code *)(vtable + 8))(obj, arg1);
         vtable = obj;
     }
     return vtable;
@@ -714,7 +781,7 @@ int Create_ObjectType7(void)
     vtable = 0;
     if (obj != 0) {
         vtable = GetVtable_ObjectType7();
-        (**(code **)(vtable + 8))(obj);
+        (*(code *)(vtable + 8))(obj);
         vtable = obj;
     }
     return vtable;
@@ -733,7 +800,7 @@ int Create_ObjectType8(void)
     vtable = 0;
     if (obj != 0) {
         vtable = GetVtable_ObjectType8();
-        (**(code **)(vtable + 8))(obj);
+        (*(code *)(vtable + 8))(obj);
         vtable = obj;
     }
     return vtable;
@@ -752,7 +819,7 @@ int Create_ObjectType9(int arg1)
     vtable = 0;
     if (obj != 0) {
         vtable = GetVtable_ObjectType9();
-        (**(code **)(vtable + 8))(obj, arg1);
+        (*(code *)(vtable + 8))(obj, arg1);
         vtable = obj;
     }
     return vtable;
@@ -771,7 +838,7 @@ int Create_ObjectType10(int arg1)
     vtable = 0;
     if (obj != 0) {
         vtable = GetVtable_ObjectType10();
-        (**(code **)(vtable + 8))(obj, arg1);
+        (*(code *)(vtable + 8))(obj, arg1);
         vtable = obj;
     }
     return vtable;
@@ -877,7 +944,7 @@ int Create_ObjectType12_Safe(int arg1)
     vtable = 0;
     if (obj != 0) {
         vtable = GetVtable_ObjectType12();
-        initResult = (**(code **)(vtable + 8))(obj, arg1);
+        initResult = (*(code *)(vtable + 8))(obj, arg1);
         vtable = obj;
         if (initResult == 0) {
             MemFree(obj);
@@ -900,7 +967,7 @@ int Create_ObjectType13(int arg1)
     vtable = 0;
     if (obj != 0) {
         vtable = GetVtable_ObjectType13();
-        (**(code **)(vtable + 8))(obj, arg1);
+        (*(code *)(vtable + 8))(obj, arg1);
         vtable = obj;
     }
     return vtable;
@@ -919,7 +986,7 @@ int Create_ObjectType14(int arg1)
     vtable = 0;
     if (obj != 0) {
         vtable = GetVtable_ObjectType14();
-        (**(code **)(vtable + 8))(obj, arg1);
+        (*(code *)(vtable + 8))(obj, arg1);
         vtable = obj;
     }
     return vtable;
@@ -950,7 +1017,7 @@ int Create_ObjectType15(int arg1, int arg2)
     vtable = 0;
     if (obj != 0) {
         vtable = GetVtable_ObjectType15();
-        (**(code **)(vtable + 8))(obj, arg1, arg2);
+        (*(code *)(vtable + 8))(obj, arg1, arg2);
         vtable = obj;
     }
     return vtable;
@@ -970,7 +1037,7 @@ int Create_ObjectType16_Safe(int arg1)
     vtable = 0;
     if (obj != 0) {
         vtable = GetVtable_ObjectType16();
-        initResult = (**(code **)(vtable + 8))(obj, arg1, 1);
+        initResult = (*(code *)(vtable + 8))(obj, arg1, 1);
         vtable = obj;
         if (initResult == 0) {
             MemFree(obj);
@@ -994,7 +1061,7 @@ int Create_ObjectType17_Safe(int arg1)
     vtable = 0;
     if (obj != 0) {
         vtable = GetVtable_ObjectType17();
-        initResult = (**(code **)(vtable + 8))(obj, arg1);
+        initResult = (*(code *)(vtable + 8))(obj, arg1);
         vtable = obj;
         if (initResult == 0) {
             MemFree(obj);
@@ -1017,7 +1084,7 @@ int Create_ObjectType18(int arg1, int arg2)
     vtable = 0;
     if (obj != 0) {
         vtable = GetVtable_ObjectType18();
-        (**(code **)(vtable + 8))(obj, arg1, arg2);
+        (*(code *)(vtable + 8))(obj, arg1, arg2);
         vtable = obj;
     }
     return vtable;
@@ -1036,7 +1103,7 @@ int Create_ObjectType19(int arg1)
     vtable = 0;
     if (obj != 0) {
         vtable = GetVtable_ObjectType19();
-        (**(code **)(vtable + 8))(obj, arg1);
+        (*(code *)(vtable + 8))(obj, arg1);
         vtable = obj;
     }
     return vtable;
@@ -1056,7 +1123,7 @@ int Create_ObjectType20_Safe(int arg1)
     vtable = 0;
     if (obj != 0) {
         vtable = GetVtable_ObjectType20();
-        initResult = (**(code **)(vtable + 8))(obj, arg1);
+        initResult = (*(code *)(vtable + 8))(obj, arg1);
         vtable = obj;
         if (initResult == 0) {
             MemFree(obj);
@@ -1080,7 +1147,7 @@ int Create_ObjectType21_Safe(int arg1, int arg2, int arg3)
     vtable = 0;
     if (obj != 0) {
         vtable = GetVtable_ObjectType21();
-        initResult = (**(code **)(vtable + 8))(obj, arg1, arg2, arg3);
+        initResult = (*(code *)(vtable + 8))(obj, arg1, arg2, arg3);
         vtable = obj;
         if (initResult != 0) {
             MemFree(obj);
@@ -1178,7 +1245,7 @@ int Create_ObjectType23(int arg1, int arg2, int arg3)
     vtable = 0;
     if (obj != 0) {
         vtable = GetVtable_ObjectType23();
-        (**(code **)(vtable + 8))(obj, arg1, arg2, arg3);
+        (*(code *)(vtable + 8))(obj, arg1, arg2, arg3);
         vtable = obj;
     }
     return vtable;
@@ -1201,7 +1268,7 @@ void CleanupWithCallback(int *obj, int arg2)
 {
     if ((code *)obj[0x12] != (code *)0x0) {
         (*(code *)obj[0x12])(obj[0x11]);
-        (**(code **)(*obj + 0x70))(obj, arg2);
+        (*(code *)(*obj + 0x70))(obj, arg2);
     }
 }
 /* Call cleanup callback and invoke destruction via vtable */
@@ -1209,7 +1276,7 @@ void DestroyWithCallback(int *obj)
 {
     if (obj[0x13] != 0) {
         (*(code *)obj[0x12])(obj[0x11]);
-        (**(code **)(*obj + 0x48))(obj);
+        (*(code *)(*obj + 0x48))(obj);
     }
 }
 /* vtable getter for audio object type */
@@ -1243,7 +1310,7 @@ int Create_ObjectType24(void)
     vtable = 0;
     if (obj != 0) {
         vtable = GetVtable_ObjectType24();
-        (**(code **)(vtable + 8))(obj);
+        (*(code *)(vtable + 8))(obj);
         vtable = obj;
     }
     return vtable;
@@ -1391,7 +1458,7 @@ int SceneNodeAlloc(void)
     obj = MemAllocImpl(0x44);
     if (obj != 0) {
         vtab =  SceneNodeAlloc ();
-        result = (**(code **)(vtab + 8))(obj);
+        result = (*(code *)(vtab + 8))(obj);
         if (result == 0) {
             MemFreeImpl((void *)obj);
             obj = 0;
@@ -1410,14 +1477,14 @@ int * GetPrimitiveBaseTable (int *obj)
         *(int *)(obj[5] + 0x44) = iVar1;
         if (iVar1 != 0) {
             iVar1 = GetCoordSystemVtable();
-            (**(code **)(iVar1 + 8))(obj);
+            (*(code *)(iVar1 + 8))(obj);
             iVar1 =  SceneNodeConstructor ();
             *obj = iVar1;
             obj[8] = 0;
             obj[6] = 0;
             obj[3] = 0;
             *(int *)(obj[5] + 0x48) = 0;
-            (**(code **)(*obj + 0x40))(obj);
+            (*(code *)(*obj + 0x40))(obj);
             return obj;
         }
         MemFreeImpl((void *)obj[5]);
@@ -1428,20 +1495,20 @@ int * GetPrimitiveBaseTable (int *obj)
 void SceneNodeDestructor(int *obj)
 {
     int vtab;
-    (**(code **)(*obj + 0x50))();
-    (**(code **)(*obj + 0x54))(obj);
-    (**(code **)(*obj + 0x5c))(obj, 0);
+    (*(code *)(*obj + 0x50))();
+    (*(code *)(*obj + 0x54))(obj);
+    (*(code *)(*obj + 0x5c))(obj, 0);
     MemFreeImpl((void *)*(int *)(obj[5] + 0x44));
     MemFreeImpl((void *)obj[5]);
     vtab = GetCoordSystemVtable();
-    (**(code **)(vtab + 0xc))(obj);
+    (*(code *)(vtab + 0xc))(obj);
 }
 /* Transition-in handler: call vtable+0x10, check type==9, call  func_8001e57c  */
 void SceneNodeAttach(int handle, int *typeInfo)
 {
     int vtab;
     vtab = GetCoordSystemVtable();
-    (**(code **)(vtab + 0x10))(handle, typeInfo);
+    (*(code *)(vtab + 0x10))(handle, typeInfo);
     if ((*(int *)*typeInfo & 0xf) == 9) {
          func_8001cba4 (handle, typeInfo);
     }
@@ -1454,7 +1521,7 @@ void SceneNodeDetach(int handle, int *typeInfo)
          func_8001cc48 (handle);
     }
     vtab = GetCoordSystemVtable();
-    (**(code **)(vtab + 0x14))(handle, typeInfo);
+    (*(code *)(vtab + 0x14))(handle, typeInfo);
 }
 /* Destructor helper: call  func_8001e770 , then vtab+0x18 */
 void SceneNodeClear(int handle)
@@ -1462,7 +1529,7 @@ void SceneNodeClear(int handle)
     int vtab;
      func_8001e7b0 (handle);
     vtab = GetCoordSystemVtable();
-    (**(code **)(vtab + 0x18))(handle);
+    (*(code *)(vtab + 0x18))(handle);
 }
 /* Type-dispatch render: call vtab+0x38, then call type-specific vtab entry (0x94/0x98/0x9c) */
 void SceneNodeRenderDispatch(int *obj, int *typeInfo, int arg)
@@ -1471,7 +1538,7 @@ void SceneNodeRenderDispatch(int *obj, int *typeInfo, int arg)
     code handler;
     int type;
     vtab = GetCoordSystemVtable();
-    (**(code **)(vtab + 0x38))(obj, typeInfo, arg);
+    (*(code *)(vtab + 0x38))(obj, typeInfo, arg);
     type = *(int *)*typeInfo & 0xf;
     if (type == 2) {
         handler = *(code *)(*obj + 0x94);
@@ -1490,8 +1557,8 @@ void SceneNodeInitCoords(int *obj)
     obj[9] = 0;
     obj[4] = 0;
     GsInitCoordinate2((GsCOORDINATE2 *)0, (GsCOORDINATE2 *)obj[5]);
-    (**(code **)(*obj + 0x44))(obj, 1, Primitive_AuxDataA);
-    (**(code **)(*obj + 0x48))(obj, 1, Primitive_AuxDataB);
+    (*(code *)(*obj + 0x44))(obj, 1, Primitive_AuxDataA);
+    (*(code *)(*obj + 0x48))(obj, 1, Primitive_AuxDataB);
     *(int *)obj[5] = 1;
 }
 /* Apply rotation offset: read 3 packed angles, divide by 360, apply to sub-object */
@@ -1553,7 +1620,7 @@ int SceneNodeAddChild(int obj, int *child, int *posData)
     if (*(int *)(obj + 0xc) == 0) {
         *(int **)(obj + 0xc) = child;
         *(int *)(*(int *)(obj + 0x14) + 0x48) = child[5];
-        (**(code **)(*child + 0x10))(child, obj);
+        (*(code *)(*child + 0x10))(child, obj);
         if (posData == 0) {
             *(int *)(*(int *)(obj + 0x14) + 0x18) = 0;
             *(int *)(*(int *)(obj + 0x14) + 0x1c) = 0;
@@ -1573,7 +1640,7 @@ int SceneNodeRemoveChild(int obj)
     int *child;
     child = *(int **)(obj + 0xc);
     if (child != 0) {
-        (**(code **)(*child + 0x14))(child, obj);
+        (*(code *)(*child + 0x14))(child, obj);
         *(int *)(*(int *)(obj + 0x14) + 0x48) = 0;
         *(int *)(obj + 0xc) = 0;
     }
@@ -1586,9 +1653,9 @@ void SceneNodeIterateChildren(int *obj)
     int more;
     child = 0;
     do {
-        (**(code **)(*obj + 0x58))(obj, &child, &more);
+        (*(code *)(*obj + 0x58))(obj, &child, &more);
         if (child != 0) {
-            (**(code **)(*child + 0x50))();
+            (*(code *)(*child + 0x50))();
         }
     } while (more != 0);
 }
@@ -1663,8 +1730,8 @@ void SceneNodeRenderChildren(int *obj, int arg)
     if (arg > 1 && arg < 4 && obj[8] != 0) {
         visible =  func_8001d0ec ();
         if (visible != 0) {
-            (**(code **)(*obj + 0x8c))(obj);
-            (**(code **)(*obj + 0x90))(obj, arg);
+            (*(code *)(*obj + 0x8c))(obj);
+            (*(code *)(*obj + 0x90))(obj, arg);
         }
     }
 }
@@ -1680,7 +1747,7 @@ void SceneNodeSetAnimSeq(int *obj, int *data, int arg)
     obj[10] = 0;
     obj[11] = 0;
     obj[12] = (int)data;
-    (**(code **)(*obj + 0x30))(obj, arg);
+    (*(code *)(*obj + 0x30))(obj, arg);
     obj[12] = 0;
 }
 /* Empty function (stub) */
@@ -1692,7 +1759,7 @@ void SceneNodeHandleEvent(int *obj, int val, int mode)
 {
     if (mode > 1) {
         if (mode < 4) {
-            (**(code **)(*obj + 0xa0))();
+            (*(code *)(*obj + 0xa0))();
         } else if (mode == 4) {
             obj[10] = val;
         }
@@ -1736,13 +1803,13 @@ void SceneNodeCollisionCheck(int *obj, int *other)
                         local_78[1] = local_88[1];
                         local_78[2] = local_88[2];
                         i = *(int *)other[12];
-                        (**(code **)(*obj + 0xa4))(obj, &local_78, other[12] + 4, i << 3);
-                        i = (**(code **)(*obj + 0xa8))(obj, &i, &local_78);
+                        (*(code *)(*obj + 0xa4))(obj, &local_78, other[12] + 4, i << 3);
+                        i = (*(code *)(*obj + 0xa8))(obj, &i, &local_78);
                         if (i != 0) {
-                            i = (**(code **)(*obj + 0xac))(obj, other + 11, &local_78, &i);
+                            i = (*(code *)(*obj + 0xac))(obj, other + 11, &local_78, &i);
                             if (i != 0) {
                                 obj[10] = (int)other;
-                                (**(code **)(*other + 0x38))(other, obj, 4);
+                                (*(code *)(*other + 0x38))(other, obj, 4);
                             }
                         }
                     }
@@ -1756,9 +1823,9 @@ void SceneNodeTransformPoints(int *obj, int dst, int src, int data, int count)
 {
     int *child;
     MATRIX M1, M2;
-    (**(code **)(*obj + 0x84))(obj, &M1, 1);
+    (*(code *)(*obj + 0x84))(obj, &M1, 1);
     for (child = (int *)obj[3]; child != 0; child = (int *)child[3]) {
-        (**(code **)(*child + 0x84))(child, &M2, 1);
+        (*(code *)(*child + 0x84))(child, &M2, 1);
         MulMatrix2(&M2, &M1);
     }
      MathBitfieldOp (src, data, count, &M1);
@@ -1961,7 +2028,7 @@ void ObjectProcessType4(int obj, int handle)
     do {
         BasicClass__func_1816c(handle, &child, &more);
         if (child != 0 && (*(int *)*child & 0xf) == 4) {
-            (**(code **)(*(int *)*child + 0x10))(child, obj);
+            (*(code *)(*(int *)*child + 0x10))(child, obj);
         }
     } while (more != 0);
 }
@@ -1974,7 +2041,7 @@ int GetPrimitiveBaseTablePtr(void)
 void MathApplyWorldTransform(int *obj, int *dst, short *src)
 {
     int local[8];
-    (**(code **)(*obj + 0x84))(obj, local, 0);
+    (*(code *)(*obj + 0x84))(obj, local, 0);
     dst[0] = (int)src[0];
     dst[1] = (int)src[1];
     dst[2] = (int)src[2];
@@ -1985,7 +2052,7 @@ void MathTransformByMatrix(int *obj, int *dst, int src)
 {
     int *parentPos;
     int local[8];
-    (**(code **)(*obj + 0x84))(obj, local, 0);
+    (*(code *)(*obj + 0x84))(obj, local, 0);
      GpuGetReady (dst, src, 1, local);
     parentPos = 0;
     if (obj[3] != 0) parentPos = (int *)(obj[5] + 0x38);
@@ -2042,7 +2109,7 @@ calc_psVar:
     local_38 = *pos - *psVar7;
     local_36 = pos[2] - psVar7[2];
     local_34 = pos[4] - psVar7[4];
-    (**(code **)(*obj + 0xa4))(obj, 0, &local_40, &local_38, 1);
+    (*(code *)(*obj + 0xa4))(obj, 0, &local_40, &local_38, 1);
     local_38 = local_40;
     local_34 = local_3e - 0x400;
     local_36 = *(short *)((int)&local_40 + 2) - 0x400;
@@ -2088,9 +2155,9 @@ void MathComputeAngleToTarget(int *obj, int target, int lockYaw, int flipPitch, 
     angles[5] = 1;
     if (lockYaw != 0) angles[0] = 0;
     if (flipPitch == 0) angles[4] += 0xb4;
-    (**(code **)(*obj + 0x44))(obj, 1, angles);
+    (*(code *)(*obj + 0x44))(obj, 1, angles);
     if (extraAngles != 0)
-        (**(code **)(*obj + 0x44))(obj, 0, extraAngles);
+        (*(code *)(*obj + 0x44))(obj, 0, extraAngles);
 }
 /* Divide a fixed-point value: (a / b) * 0x1000, returns 4.12 result */
 int MathFixedDiv(short *in)
@@ -2220,7 +2287,7 @@ void ReadDreamSysVector(int unused, short *outVec)
 {
     short s;
     int vec;
-    vec = (**(code **)(*(u32 *)Other_DreamSysStatePtr + 0x200))();
+    vec = (*(code *)(*(u32 *)Other_DreamSysStatePtr + 0x200))();
     s = *(short *)(vec + 0x10);
     outVec[1] = 1;
     outVec[0] = (short)(s * 0x2d >> 9);
@@ -2244,7 +2311,7 @@ int DreamStateTraverse(int id, int arg, int state, int *obj)
     if (i != 0) {
         pc = (char *)(state + 4);
         DreamCheckTeleport(*(char *)(state + 3));
-        local_24 = (**(code **)(*obj + 0x88))(obj, (int)*(char *)(state + 2), 0, 0);
+        local_24 = (*(code *)(*obj + 0x88))(obj, (int)*(char *)(state + 2), 0, 0);
         if (local_24 == 0) {
 fallback:
             result = 0;
@@ -2319,7 +2386,7 @@ bool DreamStateCheckEq(int index)
     char c;
     int vec;
     c = (&Other_DreamStateMap)[index];
-    vec = (**(code **)(*(u32 *)Other_DreamSysStatePtr + 0x200))();
+    vec = (*(code *)(*(u32 *)Other_DreamSysStatePtr + 0x200))();
     return c == vec;
 }
 /* Range-check state value in groups of 30, with step of 3 */
@@ -2344,13 +2411,13 @@ int ArrayCtrlInit(int id, int *ctrl, int max, int entrySize, int cdItemSize)
     result = 0;
     if (*ctrl == 0) {
         pi = ctrl + 6;
-        i = (**(code **)(*(u32 *)Other_DreamSysStatePtr + 0x200))();
+        i = (*(code *)(*(u32 *)Other_DreamSysStatePtr + 0x200))();
         *ctrl = max;
         ctrl[2] = entrySize;
         ctrl[3] = cdItemSize;
         do {
             *pi = -1;
-            i = (**(code **)(*(u32 *)Other_DreamSysStatePtr + 0x200))();
+            i = (*(code *)(*(u32 *)Other_DreamSysStatePtr + 0x200))();
             pi += 5;
         } while (i >= 0);
         result = 1;
@@ -2365,15 +2432,15 @@ void ArrayCtrlProcess(int *ctrl, int *out)
     int i;
     int *pi;
     int j;
-    pi = (int *)(**(code **)(*(u32 *)Other_DreamSysStatePtr + 0x200))();
+    pi = (int *)(*(code *)(*(u32 *)Other_DreamSysStatePtr + 0x200))();
     j = 0;
     do {
         j++;
         if (*pi >= 0) {
-            i = (**(code **)(*ctrl + 0x84))(ctrl, 0, 0, 0);
-            *pi = (**(code **)(*(u32 *)Other_DreamSysStatePtr + 0x200))();
+            i = (*(code *)(*ctrl + 0x84))(ctrl, 0, 0, 0);
+            *pi = (*(code *)(*(u32 *)Other_DreamSysStatePtr + 0x200))();
         }
-        pi = (int *)(**(code **)(*(u32 *)Other_DreamSysStatePtr + 0x200))();
+        pi = (int *)(*(code *)(*(u32 *)Other_DreamSysStatePtr + 0x200))();
     } while (j < 3);
     *out = 0;
 }
@@ -2388,37 +2455,37 @@ void ArrayCtrlProcessCd(int *ctrl, int *out)
     int *pj;
     if (*out > 0) {
         l = 0;
-        pi = (int *)(**(code **)(*(u32 *)Other_DreamSysStatePtr + 0x200))();
+        pi = (int *)(*(code *)(*(u32 *)Other_DreamSysStatePtr + 0x200))();
         do {
             l++;
             pi[-3] = -1;
             pi[-2] = 0;
             pi[-1] = 0x7f;
-            *pi = (**(code **)(*(u32 *)Other_DreamSysStatePtr + 0x200))();
-            pi = (int *)(**(code **)(*(u32 *)Other_DreamSysStatePtr + 0x200))();
+            *pi = (*(code *)(*(u32 *)Other_DreamSysStatePtr + 0x200))();
+            pi = (int *)(*(code *)(*(u32 *)Other_DreamSysStatePtr + 0x200))();
         } while (l < 3);
         out[4] = 0;
         if (out[3] != 0) {
-            (**(code **)out[3])(out[2], out, 0, 0);
+            (*(code *)out[3])(out[2], out, 0, 0);
         }
         if (out[4] >= 0) {
             pj = out + 6;
             l = 0;
-            pi = (int *)(**(code **)(*(u32 *)Other_DreamSysStatePtr + 0x200))();
+            pi = (int *)(*(code *)(*(u32 *)Other_DreamSysStatePtr + 0x200))();
             do {
                 if (pi[-3] < 0) {
                     if ((pi[-3] == -2) && (*pj >= 0)) {
-                        (**(code **)(*ctrl + 0x84))(ctrl, 0, 0, 0);
+                        (*(code *)(*ctrl + 0x84))(ctrl, 0, 0, 0);
                     }
                 } else {
                     if (*pj >= 0) {
-                        (**(code **)(*ctrl + 0x84))(ctrl, 0, 0, 0);
+                        (*(code *)(*ctrl + 0x84))(ctrl, 0, 0, 0);
                     }
-                    (**(code **)(*ctrl + 0x9c))(ctrl, pi[-2], 0, 0);
+                    (*(code *)(*ctrl + 0x9c))(ctrl, pi[-2], 0, 0);
                     k = pi[-1];
                     i = out[5];
                     j = *pi;
-                    i = (**(code **)(*ctrl + 0x80))(ctrl, pi[-3] << 4,
+                    i = (*(code *)(*ctrl + 0x80))(ctrl, pi[-3] << 4,
                         k - (k / i) * out[4], j - (j / i) * out[4]);
                     *pj = i;
                 }
@@ -2459,8 +2526,8 @@ void SoundOffsetApply(int sound, int mode, int *offset)
 /* Initialize dream state fields to defaults via vtable callbacks */
 void DreamSys__func_588ec(int *state)
 {
-    (**(code **)(*state + 0x60))(state, 0, 0, 0);
-    (**(code **)(*state + 0x44))(state, 1, &DreamDefaultVisual, 0);
+    (*(code *)(*state + 0x60))(state, 0, 0, 0);
+    (*(code *)(*state + 0x44))(state, 1, &DreamDefaultVisual, 0);
     state[0x20] = 0;
     state[0x26] = 0;
     state[0x33] = 0;
@@ -2505,7 +2572,7 @@ void EnterCriticalSection(void)
         : : : "t0", "memory"
     );
 }
-/* === ExitCriticalSection — re-enable interrupts === */
+/* === ExitCriticalSection - re-enable interrupts === */
 void ExitCriticalSection(void)
 {
     __asm__ volatile(
@@ -2558,9 +2625,10 @@ void *GetStageDataTable(int *outSize)
 void *BMemPMgrInit(unsigned int poolSize, int a1)
 {
     (void)a1;
-    if (poolSize > 0x130000) poolSize = 0x130000;  /* cap to fit within 2MB RAM (ends at 0x801FFFFF) */
+    /* Set up heap at 0x800C82FC in format for MemAlloc (Other.c).
+       poolSize is capped (0x137000) so 0x800C82FC + poolSize stays below
+       RAM end 0x80200000 - full 0x166C00 would write the end fence outside RAM. */
     *(volatile u32 *)0x800BAFF8 = poolSize;  /* debug: write poolSize to D2 */
-    /* Set up heap at 0x800C82FC in format expected by MemAlloc (Other.c) */
     int *heapBase = (int *)0x800C82FC;
     int *firstBlock = (int *)0x800C830C;  /* leave 16 bytes for heap header */
     *(volatile u32 *)0x800BAFEC = (u32)firstBlock;  /* debug: D3 = firstBlock addr */

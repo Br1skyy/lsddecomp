@@ -4,8 +4,8 @@
 /* ------------------------------------------------------------------ */
 /* Ghidra decompiler compatibility                                     */
 /* "code" is Ghidra's internal type for executable code.              */
-/* code *  ==  void (*)(void)   — a function pointer                  */
-/* code ** ==  void (**)(void)  — pointer to function pointer         */
+/* code *  ==  void (*)(void)   - a function pointer                  */
+/* code ** ==  void (**)(void)  - pointer to function pointer         */
 /* ------------------------------------------------------------------ */
 #include "lsdde/ghidra_compat.h"
 

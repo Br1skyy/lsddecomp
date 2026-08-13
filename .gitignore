@@ -1,6 +1,6 @@
-build_ps1/
 build/
 build_lsdde/
+build_ps1/
 out/
 include/lba_table.inc
 include/lba_table.h
@@ -13,13 +13,11 @@ nonmatchings/
 ctx.c
 ctx.c.m2c
 *auto.*.txt
-lsdde_defsyms.ld
 backups/
 *.original
 *.bak
 *.tmp
 Notes.txt
-tools/gdb/
 tools/run_and_log.ps1
 config/original_layout.xml
 config/test_layout.xml

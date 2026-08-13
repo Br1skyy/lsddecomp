@@ -55,36 +55,36 @@ extern int RandomSpawnSelector();
 void EntityDispatchCallbacks(int obj)
 {
   if (*(code **)(obj + 0x80) != (code *)0x0) {
-    (**(code **)(obj + 0x80))();                 /* vtable[32] */
+    (*(code *)(obj + 0x80))();                 /* vtable[32] */
   }
   if (*(code **)(obj + 0x98) != (code *)0x0) {
-    (**(code **)(obj + 0x98))(obj);              /* vtable[38] */
+    (*(code *)(obj + 0x98))(obj);              /* vtable[38] */
   }
 }
 void EntityProcessManagerState(int *obj)
 {
   int iVar1;
-  (**(code **)(*(int *)obj[0x13] + 0xf0))();     /* vtable[60] */
-  (**(code **)(*obj + 0x14))(obj,obj[0x13]);     /* vtable[5] */
+  (*(code *)(*(int *)obj[0x13] + 0xf0))();     /* vtable[60] */
+  (*(code *)(*obj + 0x14))(obj,obj[0x13]);     /* vtable[5] */
   iVar1 = GetGameManagerAlias();
-  (**(code **)(iVar1 + 0x50))(obj);              /* vtable[20] */
+  (*(code *)(iVar1 + 0x50))(obj);              /* vtable[20] */
 }
 void EntityProcessActionNormalize(int *obj,int *arg2,int arg3)
 {
   int iVar1;
   iVar1 = GetGameManagerAlias();
-  (**(code **)(iVar1 + 0x9c))(obj,arg2,arg3);    /* vtable[39] */
+  (*(code *)(iVar1 + 0x9c))(obj,arg2,arg3);    /* vtable[39] */
   if ((*(u32 *)*arg2 & ANGLE_NORMALIZE) == 0x114) {
-    (**(code **)(*obj + 0x1e4))(obj,arg2,arg3);  /* vtable[121] */
+    (*(code *)(*obj + 0x1e4))(obj,arg2,arg3);  /* vtable[121] */
   }
 }
 void EntityProcessActionSpecial(int *obj,int *arg2,int arg3)
 {
   int iVar1;
   iVar1 = GetGameManagerAlias();
-  (**(code **)(iVar1 + 0xdc))(obj,arg2,arg3);    /* vtable[55] */
+  (*(code *)(iVar1 + 0xdc))(obj,arg2,arg3);    /* vtable[55] */
   if ((*(u32 *)*arg2 & 0xfffff) == 0x1f234) {
-    (**(code **)(*obj + 0x1e8))(obj,arg2,arg3);  /* vtable[122] */
+    (*(code *)(*obj + 0x1e8))(obj,arg2,arg3);  /* vtable[122] */
   }
 }
 int EntityCalcDreamColor(int obj,int *outColor,int moodValue)
@@ -102,10 +102,10 @@ int EntityCalcDreamColor(int obj,int *outColor,int moodValue)
 }
 void EntityResetState(int *obj,int arg2,int arg3)
 {
-  (**(code **)(*obj + 500))(obj,obj + 0x5b);     /* vtable[125] */
-  (**(code **)(*obj + 0x138))(obj,1);            /* vtable[78] */
-  (**(code **)(*obj + 0x13c))(obj,1);            /* vtable[79] */
-  (**(code **)(*obj + 0x180))(obj,arg2);         /* vtable[96] */
+  (*(code *)(*obj + 500))(obj,obj + 0x5b);     /* vtable[125] */
+  (*(code *)(*obj + 0x138))(obj,1);            /* vtable[78] */
+  (*(code *)(*obj + 0x13c))(obj,1);            /* vtable[79] */
+  (*(code *)(*obj + 0x180))(obj,arg2);         /* vtable[96] */
   obj[0x2f] = -1;
   obj[0x2d] = 0;
   obj[0x2e] = 0;
@@ -115,8 +115,8 @@ void EntityResetState(int *obj,int arg2,int arg3)
   obj[0x24] = 0;
   obj[0x23] = 0;
   obj[0x25] = 0;
-  (**(code **)(*obj + 0x18c))(obj,0,1,1,1);      /* vtable[99] */
-  (**(code **)(*obj + 400))(obj,arg3);           /* vtable[100] */
+  (*(code *)(*obj + 0x18c))(obj,0,1,1,1);      /* vtable[99] */
+  (*(code *)(*obj + 400))(obj,arg3);           /* vtable[100] */
   *(u16 *)((int)obj + 0x16a) = 0xffff;
   obj[0x1c] = 0;
   obj[0x11] = 0;
@@ -126,7 +126,7 @@ void EntityResetState(int *obj,int arg2,int arg3)
   obj[0x244] = 0;
   obj[0x1e] = 0;
   MathReadScaledShorts(obj,obj + 0x1a);
-  (**(code **)(*obj + 0x44))(obj,1,obj + 0x1a);  /* vtable[17] */
+  (*(code *)(*obj + 0x44))(obj,1,obj + 0x1a);  /* vtable[17] */
 }
 void EntityResetAnimation(int obj,int value)
 {
@@ -212,28 +212,28 @@ int EntityReturnZero(void)
 }
 void EntityCleanupState(int *obj,int flag)
 {
-  (**(code **)(*obj + 0x13c))(obj,0);            /* vtable[79] */
+  (*(code *)(*obj + 0x13c))(obj,0);            /* vtable[79] */
   if (flag != 0) {
-    (**(code **)(*obj + 0x138))(obj,0);          /* vtable[78] */
+    (*(code *)(*obj + 0x138))(obj,0);          /* vtable[78] */
   }
 }
 void EntityEndAction(int *obj,int arg2,int arg3)
 {
-  (**(code **)(*obj + 0x13c))();                 /* vtable[79] */
-  (**(code **)(*obj + 0x138))(obj,arg3);         /* vtable[78] */
+  (*(code *)(*obj + 0x13c))();                 /* vtable[79] */
+  (*(code *)(*obj + 0x138))(obj,arg3);         /* vtable[78] */
 }
 void EntityDispatchAction(int *obj)
 {
-  (**(code **)(*obj + 0x144))();                 /* vtable[81] */
-  (**(code **)(*obj + 0x148))(obj);              /* vtable[82] */
+  (*(code *)(*obj + 0x144))();                 /* vtable[81] */
+  (*(code *)(*obj + 0x148))(obj);              /* vtable[82] */
 }
 void EntitySetActionType(int *obj,int value)
 {
   obj[0x1b] = value;
   if (value != 0) {
-    (**(code **)(*obj + 0x180))(obj,1);          /* vtable[96] */
+    (*(code *)(*obj + 0x180))(obj,1);          /* vtable[96] */
     if (obj[0x221] != 0) {
-      (**(code **)(*obj + 0x44))(obj,1);         /* vtable[17] */
+      (*(code *)(*obj + 0x44))(obj,1);         /* vtable[17] */
     }
   }
 }
@@ -241,7 +241,7 @@ void EntityDispatchByActionType(int *obj)
 {
   code *pcVar1;
   if (obj[0x1b] == 0) {
-    (**(code **)(*obj + 0x174))();               /* vtable[93] */
+    (*(code *)(*obj + 0x174))();               /* vtable[93] */
     pcVar1 = *(code **)(*obj + 0x158);           /* vtable[86] */
   } else if (obj[0x1b] == 2) {
     pcVar1 = *(code **)(*obj + 0x160);           /* vtable[88] */
@@ -254,8 +254,8 @@ void EntityRunActionCheck(int *obj)
 {
   int uVar1;
   if (obj[0x1c] == 0) {
-    uVar1 = (**(code **)(*obj + 0x164))(obj,1);  /* vtable[89] */
-    (**(code **)(*obj + 0x170))(obj,uVar1);      /* vtable[92] */
+    uVar1 = (*(code *)(*obj + 0x164))(obj,1);  /* vtable[89] */
+    (*(code *)(*obj + 0x170))(obj,uVar1);      /* vtable[92] */
   }
 }
 void EntityRunActionState(int *obj)
@@ -263,10 +263,10 @@ void EntityRunActionState(int *obj)
   int uVar1;
   obj[0x28] = 1;
   if (obj[0x1c] == 0) {
-    uVar1 = (**(code **)(*obj + 0x164))(obj,1);  /* vtable[89] */
-    (**(code **)(*obj + 0x170))(obj,uVar1);      /* vtable[92] */
+    uVar1 = (*(code *)(*obj + 0x164))(obj,1);  /* vtable[89] */
+    (*(code *)(*obj + 0x170))(obj,uVar1);      /* vtable[92] */
   } else {
-    (**(code **)(*obj + 0x164))(obj,0);          /* vtable[89] */
+    (*(code *)(*obj + 0x164))(obj,0);          /* vtable[89] */
   }
 }
 void EntitySetCounterFlag(int obj)
@@ -276,14 +276,14 @@ void EntitySetCounterFlag(int obj)
 void EntityApplyShakePalette(int *obj)
 {
   if (obj[0x29] != 0) {
-    (**(code **)(*obj + 0x44))(obj,0,(int)&gShakePalette + obj[0x29] * 0xc);  /* vtable[17] */
+    (*(code *)(*obj + 0x44))(obj,0,(int)&gShakePalette + obj[0x29] * 0xc);  /* vtable[17] */
     obj[0x29] = 0;
   }
 }
 void EntityUpdateShakeEffect(int *obj)
 {
   if (obj[0x31] != 0) {
-    (**(code **)(*obj + 0xbc))(obj,(int)&gShakeApplyUnk);   /* vtable[47] */
+    (*(code *)(*obj + 0xbc))(obj,(int)&gShakeApplyUnk);   /* vtable[47] */
     *(int *)(obj[0x17] + 0x24) = *(int *)(obj[0x17] + 0x24) + -600;
   }
   if (obj[0x32] != 0) {
@@ -293,11 +293,11 @@ void EntityUpdateShakeEffect(int *obj)
 void EntityProcessActionDetailed(int *obj,int action)
 {
   int iVar1 = GetGameManagerAlias();
-  (**(code **)(iVar1 + 0x88))(obj,action);        /* vtable[34] */
+  (*(code *)(iVar1 + 0x88))(obj,action);        /* vtable[34] */
   if (action == -2) {
-    iVar1 = (**(code **)(*(int *)obj[0x13] + 0x11c))((int *)obj[0x13],obj[5] + 0x18);   /* vtable[71] */
+    iVar1 = (*(code *)(*(int *)obj[0x13] + 0x11c))((int *)obj[0x13],obj[5] + 0x18);   /* vtable[71] */
     if (*(short *)(*(int *)(iVar1 + 4) + 0x2c) != 2) {
-      (**(code **)(*obj + 0x224))(obj);           /* vtable[137] */
+      (*(code *)(*obj + 0x224))(obj);           /* vtable[137] */
     }
   } else if (action == -1) {
     u32 uVar2 = *(u16 *)(obj[10] + 0x36) & 0x7f;
@@ -309,8 +309,8 @@ void EntityProcessActionDetailed(int *obj,int action)
       obj[0x2e] = 2;
     }
     if (obj[0x59] != 9) { return; }
-    int uVar3 = (**(code **)(*(int *)obj[0x13] + 0x10c))((int *)obj[0x13],0,0);   /* vtable[67] */
-    (**(code **)(*obj + 0x1d4))(obj,uVar3);       /* vtable[117] */
+    int uVar3 = (*(code *)(*(int *)obj[0x13] + 0x10c))((int *)obj[0x13],0,0);   /* vtable[67] */
+    (*(code *)(*obj + 0x1d4))(obj,uVar3);       /* vtable[117] */
   }
 }
 void EntitySetActionByCode(int *obj,int arg2,int action)
@@ -322,14 +322,14 @@ void EntitySetActionByCode(int *obj,int arg2,int action)
     case 4:   obj[0x29] = 1; break;
     case 5:   obj[0x29] = 2; break;
     case 6:   obj[0x22] = 1; break;
-    case 7:   if (obj[0x28] == 1) { (**(code **)(*obj + 0x184))(obj,4); } break;  /* vtable[97] */
+    case 7:   if (obj[0x28] == 1) { (*(code *)(*obj + 0x184))(obj,4); } break;  /* vtable[97] */
     case 8:   obj[0x22] = 2; break;
     case 0xd: obj[0x24] = 2; break;
     case 0xe: obj[0x28] = 4; break;
     case 0xf: obj[0x24] = 1; break;
     case 0x10: obj[0x28] = 3; break;
     case 0x19: obj[0x1d] = 1; break;
-    case 0x22: (**(code **)(*obj + 0x188))(); break;   /* vtable[98] */
+    case 0x22: (*(code *)(*obj + 0x188))(); break;   /* vtable[98] */
     }
   }
 }
@@ -353,7 +353,7 @@ void EntitySetAnimModeVtable(int *obj,int mode)
 {
   int iVar1 = *obj;
   if (obj[0x27] == 2) {
-    (**(code **)(iVar1 + 0x17c))(obj,0);         /* vtable[95] */
+    (*(code *)(iVar1 + 0x17c))(obj,0);         /* vtable[95] */
   }
   obj[0x27] = mode;
   if (mode == 1) {
@@ -387,7 +387,7 @@ int EntityCounterStateMachine(int *obj,int flag)
       bVar1 = true;
     }
     if (bVar1) {
-      (**(code **)(*obj + 0x168))(obj);            /* vtable[90] */
+      (*(code *)(*obj + 0x168))(obj);            /* vtable[90] */
     }
     iVar5 = obj[0x17];
     if (((iVar5 != 0) && (obj[0x19e] != 0)) && (flag != 0)) {
@@ -404,14 +404,14 @@ int EntityCounterStateMachine(int *obj,int flag)
     }
   }
   if (!bVar1) {
-    (**(code **)(*obj + 0x16c))(obj);              /* vtable[91] */
+    (*(code *)(*obj + 0x16c))(obj);              /* vtable[91] */
   }
   return iVar5;
 }
 void EntityClearSoundEffect(int obj)
 {
   if (-1 < *(int *)(obj + 0xbc)) {
-    (**(code **)(**(int **)(obj + 0x58) + 0x84))();   /* vtable[33] */
+    (*(code *)(**(int **)(obj + 0x58) + 0x84))();   /* vtable[33] */
     *(int *)(obj + 0xbc) = 0xffffffff;
   }
 }
@@ -483,7 +483,7 @@ void CamEffectUpdate(int *obj)
     int iVar1 = -0x2d;
     if (obj[0x25] < 0) { iVar1 = 0x2d; }
     gShakeValue = (s16)iVar1;
-    (**(code **)(*obj + 0x44))(obj,0,&gShakePalette);     /* vtable[17] */
+    (*(code *)(*obj + 0x44))(obj,0,&gShakePalette);     /* vtable[17] */
     obj[0x25] = iVar1 + obj[0x25];
     goto call_59A1C;
   }
@@ -496,7 +496,7 @@ void CamEffectUpdate(int *obj)
     goto call_59A1C;
   }
   gShakeValue = (s16)*(int *)((int)&gEffectOffsetTbl + iVar1);
-  (**(code **)(*obj + 0x44))(obj,0,&gShakePalette);       /* vtable[17] */
+  (*(code *)(*obj + 0x44))(obj,0,&gShakePalette);       /* vtable[17] */
   obj[0x25] = uVar2;
 clear24:
   obj[0x24] = 0;
@@ -509,16 +509,16 @@ void ProcessDreamAction(int *obj,int action)
   if (action == 0) { return; }
   char cVar1 = ((char *)&gEffectParamTbl)[action];
   int iVar2 = *(int *)((int)&gEffectStageTbl + obj[0x2b] * 4);
-  (**(code **)(*obj + 300))();                              /* vtable[75] */
-  int uVar3 = (**(code **)(*(int *)obj[0x13] + 0x10c))((int *)obj[0x13],0,0);   /* vtable[67] */
-  int iVar4 = (**(code **)(*obj + 0x1dc))(obj,uVar3);      /* vtable[119] */
-  if (((iVar4 == 0) && (iVar4 = (**(code **)(*obj + 0x1d8))(obj,uVar3), iVar4 == 0)) &&  /* vtable[118] */
-     (iVar4 = (**(code **)(*obj + 0x1d0))(obj,uVar3), iVar4 == 0)) {                    /* vtable[116] */
-    (**(code **)(*obj + 0x220))(obj);                       /* vtable[136] */
-    (**(code **)((int)&gEffectFuncTbl + action * 4))(obj,cVar1 * iVar2,obj[0x243] == 0);
+  (*(code *)(*obj + 300))();                              /* vtable[75] */
+  int uVar3 = (*(code *)(*(int *)obj[0x13] + 0x10c))((int *)obj[0x13],0,0);   /* vtable[67] */
+  int iVar4 = (*(code *)(*obj + 0x1dc))(obj,uVar3);      /* vtable[119] */
+  if (((iVar4 == 0) && (iVar4 = (*(code *)(*obj + 0x1d8))(obj,uVar3), iVar4 == 0)) &&  /* vtable[118] */
+     (iVar4 = (*(code *)(*obj + 0x1d0))(obj,uVar3), iVar4 == 0)) {                    /* vtable[116] */
+    (*(code *)(*obj + 0x220))(obj);                       /* vtable[136] */
+    (*(code *)((int)&gEffectFuncTbl + action * 4))(obj,cVar1 * iVar2,obj[0x243] == 0);
     if (((obj[0x59] == 0) && (*(int *)(obj[5] + 0x1c) < -2000)) &&
        (-500 < *(int *)(obj[5] + 0x18))) {
-      (**(code **)(*obj + 0xe0))(obj,obj,4);               /* vtable[56] */
+      (*(code *)(*obj + 0xe0))(obj,obj,4);               /* vtable[56] */
     }
   }
   *(int *)obj[5] = 0;
@@ -565,11 +565,11 @@ int TestInstantTeleport(int *obj,int pos)
   iVar1 = ExecuteLink((DreamSys *)obj,iVar1,0x11,0);
   if (iVar1 != 0) {
     obj[0x11] = 0;
-    (**(code **)(*(int *)obj[0x13] + 0xe8))((int *)obj[0x13],buf_16,obj + 0x5b);  /* vtable[58] */
-    (**(code **)(*obj + 0xb8))(obj,buf_16);                                        /* vtable[46] */
+    (*(code *)(*(int *)obj[0x13] + 0xe8))((int *)obj[0x13],buf_16,obj + 0x5b);  /* vtable[58] */
+    (*(code *)(*obj + 0xb8))(obj,buf_16);                                        /* vtable[46] */
     if (iVar3 != 0 && obj[0x1a] == 0) {
-      iVar1 = (**(code **)(*obj + 0x108))(obj);   /* vtable[66] */
-      (**(code **)(*obj + 0x104))(obj,iVar1 + iVar3);  /* vtable[65] */
+      iVar1 = (*(code *)(*obj + 0x108))(obj);   /* vtable[66] */
+      (*(code *)(*obj + 0x104))(obj,iVar1 + iVar3);  /* vtable[65] */
     }
   }
   return 1;
@@ -606,7 +606,7 @@ int TestStaircaseNodes(int *obj,u32 bitmask)
       obj[0x245] = 0;
       iVar4 = StairGetTypeIndex();
       obj[0x244] = (int)PTR_func_8005AB2C_80087eec[iVar4];
-      (**(code **)(*obj + 0x44))(obj,1,obj[0x221]);         /* vtable[17] */
+      (*(code *)(*obj + 0x44))(obj,1,obj[0x221]);         /* vtable[17] */
       (*(code *)obj[0x244])(obj);
     }
   } else {
@@ -616,7 +616,7 @@ int TestStaircaseNodes(int *obj,u32 bitmask)
       obj[0x244] = 0;
       obj[0x243] = 0;
       if (obj[0x2b] == 4) {
-        (**(code **)(*obj + 0x188))(obj);                    /* vtable[98] */
+        (*(code *)(*obj + 0x188))(obj);                    /* vtable[98] */
       }
     }
   }
@@ -632,7 +632,7 @@ int StairAnimState1(int *obj)
     int iVar1 = obj[0x245];
     if (0x12 < iVar1) { return 1; }
     if ((iVar1 - 8U < 2) || (iVar1 - 0xdU < 2)) {
-      (**(code **)(*obj + 0x44))(obj,0,&gStairColor1);      /* vtable[17] */
+      (*(code *)(*obj + 0x44))(obj,0,&gStairColor1);      /* vtable[17] */
     }
   } else {
     int iVar1 = obj[0x245];
@@ -656,7 +656,7 @@ int StairAnimState2(int *obj)
     int iVar2 = obj[0x245];
     if (0x18 < iVar2) { return 1; }
     if (((iVar2 - 6U < 2) || (iVar2 - 0xbU < 2)) || (iVar2 - 0x14U < 2)) {
-      (**(code **)(*obj + 0x44))(obj,0,&gStairColor2);      /* vtable[17] */
+      (*(code *)(*obj + 0x44))(obj,0,&gStairColor2);      /* vtable[17] */
     }
     bVar1 = obj[0x245] - 3U < 0xe;
   } else {
@@ -681,7 +681,7 @@ int StairAnimState3(int *obj)
   if (obj[0x2b] == 4) {
     if (0xe < obj[0x245]) { return 1; }
     if (obj[0x245] - 8U < 2) {
-      (**(code **)(*obj + 0x44))(obj,0,&gStairColor1);      /* vtable[17] */
+      (*(code *)(*obj + 0x44))(obj,0,&gStairColor1);      /* vtable[17] */
     }
   } else {
     if (100 < obj[0x245]) { return 1; }
@@ -704,7 +704,7 @@ int StairAnimState4(int *obj)
     int iVar2 = obj[0x245];
     if (0x12 < iVar2) { return 1; }
     if ((iVar2 - 6U < 2) || (iVar2 - 0xfU < 2)) {
-      (**(code **)(*obj + 0x44))(obj,0,&gStairColor2);      /* vtable[17] */
+      (*(code *)(*obj + 0x44))(obj,0,&gStairColor2);      /* vtable[17] */
     }
     bVar1 = (u32)obj[0x245] < 9;
   } else {
@@ -849,17 +849,17 @@ void DispatchSubObject(int obj)
   int iVar5 = *piVar4;
   if (iVar2 != 0) {
     char cVar1 = ((char *)&gSubObjParamTbl)[iVar2];
-    (**(code **)(iVar5 + 0x9c))(piVar4,(int)(char)((char *)&gSubObjParam2Tbl)[iVar2]);
-    int uVar3 = (**(code **)(iVar5 + 0x80))(piVar4,(int)cVar1 << 4,0x6e,0x6e);
+    (*(code *)(iVar5 + 0x9c))(piVar4,(int)(char)((char *)&gSubObjParam2Tbl)[iVar2]);
+    int uVar3 = (*(code *)(iVar5 + 0x80))(piVar4,(int)cVar1 << 4,0x6e,0x6e);
     *(int *)(obj + 0xbc) = uVar3;
     if (*(int *)(obj + 0xb8) != 0x16) {
       *(int *)(obj + 0xbc) = 0xffffffff;
     }
     if (*(int *)(obj + 0xb8) == 0xb) {
-      (**(code **)(iVar5 + 0x9c))(piVar4,1);
-      (**(code **)(iVar5 + 0x80))(piVar4,(int)cVar1 << 4,0x6e,0x6e);
-      (**(code **)(iVar5 + 0x9c))(piVar4,2);
-      (**(code **)(iVar5 + 0x80))(piVar4,0x90,0x6e,0x6e);
+      (*(code *)(iVar5 + 0x9c))(piVar4,1);
+      (*(code *)(iVar5 + 0x80))(piVar4,(int)cVar1 << 4,0x6e,0x6e);
+      (*(code *)(iVar5 + 0x9c))(piVar4,2);
+      (*(code *)(iVar5 + 0x80))(piVar4,0x90,0x6e,0x6e);
     }
   }
 }
@@ -870,7 +870,7 @@ void StairVecDiff(int *obj,short *src,short *dst)
   local_18[0] = (int)*src - (int)*dst;
   local_18[1] = 0;
   local_18[2] = (int)src[2] - (int)dst[2];
-  (**(code **)(*obj + 0xbc))(obj,local_18);     /* vtable[47] */
+  (*(code *)(*obj + 0xbc))(obj,local_18);     /* vtable[47] */
 }
 // data copy (struct to backup)
 void BackupStructData(int obj)
