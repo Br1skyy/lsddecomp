@@ -125,10 +125,16 @@ void CdModeRunTask(int mode)
     else
         i = func_8002C438();
     base = CdModeUnknown();
+    /* Copy the mode template fields into the instance exactly once. Calling
+       this inside the walk below re-zeroed slots +0x40..+0x58 and +0x68..+0x74
+       of the instance after every primitive had run, wiping both the static
+       entries (func_800272C8 etc.) and anything a primitive had just stored,
+       while intact asm callers still dispatch through those offsets
+       (e.g. func_8003b3fc loads 0x6C(v0) and calls it). */
+    CdModeSubD(i, base);
     pp = (int **)&D_8006D4AC;
     for (;;)
     {
-        CdModeSubD(i, base);
         if (!*pp)
             break;
         (*(code)(*pp))(i);
