@@ -403,10 +403,10 @@ DreamSys_CinemaState_08:
     j _stub_ret
     nop
 
-.globl DREAMSYS_METHODS
-DREAMSYS_METHODS:
-    j _stub_ret
-    nop
+/* REMOVED: DREAMSYS_METHODS is defined by the real vtable in data/DreamSys.data.s.
+   This 8 byte text stub used to win the link because missing_stubs.o is linked
+   before data/, so New_DreamSys and DreamSys__DreamSys dispatched method calls
+   through instruction bytes instead of the vtable. */
 
 .globl EnableCdRead
 EnableCdRead:
@@ -1258,10 +1258,7 @@ SetupPrimOtEntry:
 /* REMOVED:     j _stub_ret */
 /* REMOVED:     nop */
 /* REMOVED:  */
-.globl SPECIAL_DAYS
-SPECIAL_DAYS:
-    j _stub_ret
-    nop
+/* REMOVED: SPECIAL_DAYS is defined by the real data table in data/DreamSys.data.s. */
 
 /* REMOVED (PSYQ): sprintf provided by PsyQ library */
 
@@ -1486,10 +1483,7 @@ SpuCinema_Init:
 /* REMOVED (DATA): j _stub_ret */
 /* REMOVED (DATA): nop */
 
-.globl STAGE_SPAWNPOINTS
-STAGE_SPAWNPOINTS:
-    j _stub_ret
-    nop
+/* REMOVED: STAGE_SPAWNPOINTS is defined by the real data table in data/DreamSys.data.s. */
 
 /* REMOVED (DATA): .globl Stage_StageChunkVtable */
 /* REMOVED (DATA): Stage_StageChunkVtable: */
@@ -1501,10 +1495,7 @@ STAGE_SPAWNPOINTS:
 /* REMOVED (DATA): j _stub_ret */
 /* REMOVED (DATA): nop */
 
-.globl STAGE_TIME_LIMITS
-STAGE_TIME_LIMITS:
-    j _stub_ret
-    nop
+/* REMOVED: STAGE_TIME_LIMITS is defined by the real data table in data/DreamSys.data.s. */
 
 /* REMOVED (DATA): .globl StageChildObjects */
 /* REMOVED (DATA): StageChildObjects: */
@@ -1783,9 +1774,9 @@ D_80010764:
 /* REMOVED: D_80066828: */
 /* REMOVED: .word 0 */
 
-.globl D_800878D4
-D_800878D4:
-.word 0
+/* REMOVED: D_800878D4 is defined by the real data in data/76DC8.data.s. The stub
+   made GetGameManager() return a text address, so the DreamSys constructor read
+   code bytes as game state and called *(gm+8) as a function pointer. */
 
 .globl Entity_Field100
 Entity_Field100:
@@ -2919,9 +2910,7 @@ SoundGetTick:
 Spawn_DreamParticles_Grid:
 .word 0
 
-.globl SPAWN_POS_ADJUST
-SPAWN_POS_ADJUST:
-.word 0
+/* REMOVED: SPAWN_POS_ADJUST is defined by the real data table in data/DreamSys.data.s. */
 
 .globl Spawn_VisitFlagArray
 Spawn_VisitFlagArray:

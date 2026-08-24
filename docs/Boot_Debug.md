@@ -90,18 +90,77 @@ New problem found, address space mixing:
 Action item: build with `-Wl,-Map` and redo the address bookkeeping in one
 coordinate system before trusting the "ruled out" list above.
 
+## Second Static Pass and Fixes Applied (2026-08-23)
+
+Traced every indirect call on the boot path through source and asm.
+
+Confirmed:
+
+- The runtime `.data` shift is real and measured. `block[0] = 0x80084404`
+  equals `D_8006D3C8 + 0x1703C` exactly, and `block[0x20] = 0x8007D864`
+  equals `D_80066828 + 0x1703C` exactly. Two independent matches, so
+  `+0x1703C` is confirmed as our build's `.data` offset versus splat.
+- Every call on `EntityAllocSmall -> CdModeInitDream -> func_8003af8c ->
+  CdModeRunTask` resolves to valid code statically. `func_8003af8c`
+  (psyq_SpuSetMute.s line 5215) was fully decoded: it calls
+  `BasicClass__BasicClass` via `GetCoordSystemVtable()+8`, stores
+  `&D_8006E4F0` into `obj[0]`, runs one-time init guarded by
+  `D_8008A8DC`, calls `CdModeRunTask(mode)` (`func_80026cfc` alias),
+  then dispatches `obj->vt[+0x40]`. Nothing on this chain jumps into
+  data by itself.
+- The ISR register picture (`$t9=NopSub_27e68`, `$v1=0x13`) fits an
+  interruption during normal CD mode selection/polling (the
+  `func_80026cac` / `CdModePoll` shape), i.e. after the GameState ctor
+  finished, which matches the fully constructed block snapshot.
+
+Fixed (source edits only, needs a Windows build to verify):
+
+- `CdModeRunTask` called `CdModeSubD(i, base)` inside the primitive
+  walk. That re-copied base slots `[16..21]` and `[26..29]` onto the
+  instance before every primitive call, keeping instance offsets
+  `+0x40..+0x58` and `+0x68..+0x74` zeroed (statically those hold
+  `func_800272C8` .. `func_80027D70`) and wiping whatever a primitive
+  had just stored there. Intact asm still dispatches through those
+  offsets after boot init: `func_8003b3fc` loads `0x6C(v0)` and calls
+  it (psyq_SpuSetMute.s line 5596), and there are 26+ `func_80026cac`
+  dispatch sites across the psyq files. Calling through a wiped slot
+  transfers control to 0 or garbage, which is exactly the kind of path
+  that ends up executing non-code bytes like the template at
+  `0x8007D864`, whose word at +8 decodes to funct 1 (RI). `CdModeSubD`
+  now runs once before the walk (Entity3_CdMode.c).
+- Six real data tables were shadowed by text stubs: `missing_stubs.o`
+  links before the `data/` objects and `--allow-multiple-definition`
+  keeps the first definition, so the stubs won. Affected symbols:
+  `DREAMSYS_METHODS` (DreamSys vtable), `D_800878D4` (GameManager data
+  behind `GetGameManager()`), `SPAWN_POS_ADJUST`, `SPECIAL_DAYS`,
+  `STAGE_SPAWNPOINTS`, `STAGE_TIME_LIMITS`. While the bug was live,
+  `New_DreamSys` and `DreamSys__DreamSys` called `*(vt+8)` / `*(gm+8)`
+  through instruction bytes, and gameplay code read instruction
+  encodings as table values. The stub definitions were removed from
+  missing_stubs.s so the real tables link. Full catalog of duplicate
+  resolutions: `docs/Linker_Duplicates.md`.
+
+Not done here:
+
+- No rebuild and no runtime test: the MIPS toolchain currently only
+  runs on the Windows side. Both fixes are static edits. Verify with
+  the next Windows build (`-Wl,-Map` recommended) and record the
+  outcome here, whichever way it goes.
+
 ## Next Steps
 
-1. Find the control-transfer that reaches the template. Since `$ra=0x8007D864`
-   at the ISR save, hunt for the call/return that put the template address in
-   `$ra` - likely a `jalr`/`jr` through a block/descriptor field, or a
-   corruption of the stack/return address earlier in the chain.
-2. Set breakpoints earlier in the chain (CdModeInitDream entry, func_8003af8c,
-   CdModeRunTask) and single-step forward with register capture until `$ra`
-   becomes the template.
-3. Cross-check the descriptor/block field layout against the C in
-   `Entity3_CdMode.c` / `class_39e08.c` - a wrong struct offset in our
-   reconstruction could feed a data value where a code pointer belongs.
+1. Rebuild on the Windows side with `-Wl,-Map=build_ps1/lsddecomp.map`
+   and confirm in the map that `DREAMSYS_METHODS` and `D_800878D4` now
+   land inside `.data` (they used to resolve into `.text` stubs).
+2. Boot the rebuilt ISO. If the RI storm is gone, note where it gets
+   to (license screen or a new blocker). If it still crashes at
+   `0x8007D864`, the next suspects are the remaining duplicate-symbol
+   resolutions listed in `docs/Linker_Duplicates.md` and the exact
+   semantics of the original `func_80026cfc`, whose body was never
+   recovered.
+3. If a crash persists, breakpoint `func_80026cac` return paths and
+   single-step the first dispatch through an instance slot above +0x40,
+   capturing registers when `$pc` leaves known code.
 4. When register/step reads error out, fall back to reading the ISR save
    block at `0x80059DC0` - it reliably holds the CPU state from the last
    exception.
@@ -149,6 +208,8 @@ coordinate system before trusting the "ruled out" list above.
   NopSub_260a4, NopSub_26108).
 - `asm/lsdde/psyq_SpuSetMute.s`: func_8003af8c / func_8003b044.
 - `src/lsdde/Sound.c`: NopSub_27e68 (~line 1561).
+- `docs/Linker_Duplicates.md`: link order rules and every known
+  duplicate symbol resolution.
 - `src/lsdde/DreamSys.c`: New_DreamSys (0x800307F4).
 - `_bu_init()` is syscall 0x70 - hangs in the BIOS, stubbed no-op
   (System.c ~line 340).
