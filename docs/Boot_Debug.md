@@ -55,6 +55,41 @@ still unknown.
   iterates the `D_8006D4AC` function-pointer table (real pointers, terminator
   0).
 
+## Static Verification (2026-08-23)
+
+Cross-checked the runtime claims above against the splat data files. Results:
+
+Confirmed:
+
+- The template word at +8 really is `0x00000001` (`asm/lsdde/data/57070.data.s`),
+  which decodes as SPECIAL funct=1, a reserved instruction on the R3000A.
+- `func_8003af8c` and `func_8003b044` are real function bodies in
+  `asm/lsdde/psyq_SpuSetMute.s`, not empty stubs.
+- `D_8006D4AC` holds 14 real function pointers followed by a NULL terminator,
+  exactly as described.
+- No static data file contains the dword value `0x8007D864`.
+
+New problem found, address space mixing:
+
+- This document mixes runtime addresses from our build with splat-layout
+  labels without saying so. They are not the same coordinate system. In the
+  splat layout `D_80066828` sits at `0x80066828` and the bytes at `0x8007D864`
+  are an unrelated repeating table (`00010005` / `0000FE00`), not the template.
+- Assuming the crash site identification is right, our build shifts `.data`
+  by roughly `+0x1703C` relative to the splat layout, which is why the template
+  shows up at `0x8007D864` at runtime. Text placement can shift independently
+  because `lsdde.ld` reorders objects.
+- The pairing in "Verified at Runtime" of descriptor value `0x800254C4` with
+  `func_8003af8c` does not reconcile: `psyq_SpuSetMute.s` places that function
+  at `0x8003AF8C`, and no uniform shift explains both this reference and the
+  data shift. Treat that specific mapping as unverified.
+- Static content at splat address `0x8008552C` is zeroed, so the descriptor
+  values seen at runtime are installed by initialization code and cannot be
+  confirmed statically.
+
+Action item: build with `-Wl,-Map` and redo the address bookkeeping in one
+coordinate system before trusting the "ruled out" list above.
+
 ## Next Steps
 
 1. Find the control-transfer that reaches the template. Since `$ra=0x8007D864`
