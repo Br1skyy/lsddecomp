@@ -1,6 +1,7 @@
 #include "common.h"
 #include "dat_globals.h"
 #include <libcd.h>
+#include <string.h>
 /* VSync callback table (defined in System.c) */
 extern void *VSyncCallbackTable[16];
 /* Interrupt callback table / IntrTab (defined in System.c) */
@@ -883,12 +884,12 @@ void CdLoadStage2(void *dest, u32 lba, u32 count)
          CdOperationPending - cleared so the license->logo transition is not blocked */
     if (*(volatile u32 *)dest != 0) {
         *D0 = 0xDD; *D1 = 1;  /* marker: data already loaded, skipping CdLoadStage2 */
-        /* Signal CD completion globals so any polling code sees "done".
-           Note: the EntityBehavior_State_80026170/26348/26410 gates read
-           D_80066828[0xC/8/10] which are always-1 static config - NOT these
-           globals.  These writes are defensive cleanup only. */
         CdReadDone = 1;
         CdOperationPending = 0;
+        extern char Cd_FilePathPrefix[];
+        if (Cd_FilePathPrefix[0] == 0) {
+            strcpy(Cd_FilePathPrefix, "CDI/STG04/TEXA.TIX;1");
+        }
         return;
     }
     CdlLOC loc;

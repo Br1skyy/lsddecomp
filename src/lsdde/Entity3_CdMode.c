@@ -243,28 +243,15 @@ char *FileLoadFromDisc(char *dst, char *s1, char *s2, char *s3)
 }
 char *StrCat(char *dst, char *src)
 {
-    char *ret;
-    int lenDst;
-    int lenSrc;
     char *p;
     if (!dst || !src)
         return 0;
-    lenDst = strlen_imp(dst);
-    lenSrc = strlen_imp(src);
-    p = dst + lenDst;
-    if (dst + lenDst == src + lenSrc)
-        return dst;
-    ret = dst;
-    while (*p)
-        p++;
-    p--;
-    while (*src)
-    {
-        *p = *src;
-        p++;
-        src++;
+    p = dst + strlen_imp(dst);
+    while (*src) {
+        *p++ = *src++;
     }
-    return ret;
+    *p = 0;
+    return dst;
 }
 int EntityAllocSmall(int type)
 {
