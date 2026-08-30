@@ -140,27 +140,61 @@ Fixed (source edits only, needs a Windows build to verify):
   missing_stubs.s so the real tables link. Full catalog of duplicate
   resolutions: `docs/Linker_Duplicates.md`.
 
+Verified on Windows (2026-08-23 rebuild with `-Wl,-Map=build_ps1/ps-exe/lsddecomp.map`,
+`lsdde.ld:240` / `scripts/build_ps1.ps1:153`):
+
+- `main_TEXT` `0x80011e78-0x8007d828`, `main_DATA` `0x8007d828-0x800a8194`.
+- Map grep:
+  ```
+  0x8009d558  LOCATION_GRID_DIMENSIONS   (.data 0x8009d1d4 0x3d8 StageGrid2.c.o)
+  0x8009ebc0  DREAMSYS_METHODS           (.data 0x8009ebc0 0x114c DreamSys.data.s.o)
+  0x8009eef8  LOCATION_TIME_LIMITS       (.data 0x8009ebc0 0x114c DreamSys.data.s.o)
+  0x8009f59c  LOCATION_SPAWNPOINTS       (.data 0x8009ebc0 0x114c DreamSys.data.s.o)
+  0x8009e8b8  D_800878D4                 (.data 0x8009d5ac 0x1614 76DC8.data.s.o)
+  ```
+  All four (plus `D_800878D4` / `GameManagerPtr`) now land in `.data`, not `.text`.
+  `nm --defined-only` on the six previously-shadowed symbols shows no remaining
+  `missing_stubs.o` duplicate: `DREAMSYS_METHODS`, `D_800878D4`, `SPAWN_POS_ADJUST`,
+  `SPECIAL_DAYS`, `LOCATION_SPAWNPOINTS`, `LOCATION_TIME_LIMITS` each have a single
+  `D` definition in their `data/*.s.o` (or `StageGrid2.c.o` for the grid).
+- `CdModeRunTask` (`func_80026cfc` alias, `lsdde_defsyms.ld:238`) is still body-less
+  on the static side, but its caller `func_8003af8c` (`psyq_SpuSetMute.s:5215`) is
+  recovered: it does `jal GetCoordSystemVtable` -> `lw v0,8(v0)` -> `jalr v0` (construct),
+  stores `&D_8006E4F0`, guards one-time `D_8008A8DC`, then `jal func_80026cfc` with
+  `a0 = mode` (preserved `s1`) and `sw zero,0x18(s0)` before the call, then dispatches
+  `obj->vt[0x40]` once. This matches the single-call `CdModeSubD(i, base)` before the
+  primitive walk at `src/lsdde/Entity3_CdMode.c:118` rather than inside the loop.
+- Remaining `missing_stubs.o` vs `data/*.s` duplicates after this rebuild: **none** for
+  the `Location_*` / `STAGE_*` class. The only absolute/data duplicates left are
+  `D_80010764` (`F28.rodata.s.o` R vs `missing_stubs.s.o` t) and `D_800879C4`
+  (`76DC8.data.s.o` D vs `auto_gen_stubs.s.o` D, where `data/` wins because
+  `lsdde.ld` lists `76DC8` before `auto_gen_stubs`). Neither is on the boot
+  `EntityAllocSmall -> CdModeInitDream -> func_8003af8c -> CdModeRunTask(mode=0x13)`
+  path. See `docs/Linker_Duplicates.md` for the ranked list; the boot-relevant
+  duplicates that remain are the C-vs-C `CdModeRunTask`/`CdModePoll`/`EntityAllocSmall`
+  set where `Entity3_CdMode.c.o` vs `Entity2.c.o` ordering decides the winner
+  (ranked at `psyq_SpuSetMute.s:5596` `lw v0,0x6C(v0)` / `jalr`).
+
 Not done here:
 
-- No rebuild and no runtime test: the MIPS toolchain currently only
-  runs on the Windows side. Both fixes are static edits. Verify with
-  the next Windows build (`-Wl,-Map` recommended) and record the
-  outcome here, whichever way it goes.
+- No runtime boot test of the rebuilt ISO (static-only on Windows). The map proves the
+  data placement, but whether the RI storm at `0x8007D864` is gone still needs a
+  DuckStation/GDB boot run.
 
 ## Next Steps
 
-1. Rebuild on the Windows side with `-Wl,-Map=build_ps1/lsddecomp.map`
-   and confirm in the map that `DREAMSYS_METHODS` and `D_800878D4` now
-   land inside `.data` (they used to resolve into `.text` stubs).
+1. ~~Rebuild with `-Wl,-Map` and confirm `.data` placement~~ — **done** (see verification
+   above). Keep the map for future audits: `build_ps1/ps-exe/lsddecomp.map`
+   (build_ps1.ps1 writes it there; `build_ps1/lsddecomp.map` is the historic docs name).
 2. Boot the rebuilt ISO. If the RI storm is gone, note where it gets
    to (license screen or a new blocker). If it still crashes at
-   `0x8007D864`, the next suspects are the remaining duplicate-symbol
-   resolutions listed in `docs/Linker_Duplicates.md` and the exact
-   semantics of the original `func_80026cfc`, whose body was never
-   recovered.
-3. If a crash persists, breakpoint `func_80026cac` return paths and
-   single-step the first dispatch through an instance slot above +0x40,
-   capturing registers when `$pc` leaves known code.
+   `0x8007D864`, the next suspects are the ranked duplicate list in
+   `docs/Linker_Duplicates.md:54` and the exact semantics of the original
+   `func_80026cfc` (now documented from `func_8003af8c` above).
+3. If a crash persists, breakpoint `func_80026cac` (`CdModePoll`, `lsdde_defsyms.ld:238`)
+   return paths and single-step the first dispatch through an instance slot above
+   +0x40 (`psyq_SpuSetMute.s:5596` `0x6C(v0)`), capturing registers when `$pc` leaves
+   known code.
 4. When register/step reads error out, fall back to reading the ISR save
    block at `0x80059DC0` - it reliably holds the CPU state from the last
    exception.
