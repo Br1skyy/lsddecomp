@@ -34,7 +34,7 @@ typedef unsigned int  dword;
 #include <stdbool.h>
 
 /* ------------------------------------------------------------------ */
-/* LSD-specific types (must be defined before DreamSys.h / StageGrid.h) */
+/* LSD-specific types (must be defined before DreamSys.h / LocationGrid.h) */
 /* ------------------------------------------------------------------ */
 typedef union MoodGraphPoint {
     s16 value;
@@ -49,7 +49,7 @@ typedef union MoodGraphPoint {
 /* ------------------------------------------------------------------ */
 #include "types.h"
 #include "DreamSys.h"
-#include "StageGrid.h"
+#include "LocationGrid.h"
 
 /* ------------------------------------------------------------------ */
 #include "lsdde/magic_numbers.h"

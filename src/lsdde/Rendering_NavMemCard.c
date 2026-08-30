@@ -193,7 +193,7 @@ void NavMenu_CommitSave(int *index)
   Sjis_Decode(uVar1,&Rendering_Unk1149c);
   ((int (*)(int,int))(*(void **)(*(int *)((EntityObj *)index)->field_0xb0 + 0xcc)))((int *)((EntityObj *)index)->field_0xb0,uVar1);
   MemFreeImpl(uVar1);
-  StageEntity_SetDreamFlag(index,((EntityObj *)index)->pObject);
+  LocationEntity_SetDreamFlag(index,((EntityObj *)index)->pObject);
   ((int (*)(int,int))(*(void **)(*index + 0xe0)))(index,index[5]);
   ((int (*)(int,int))(*(void **)(*(int *)((EntityObj *)index)->field_0xa4 + 0x19c)))((int *)((EntityObj *)index)->field_0xa4,local_18);
   ((EntityObj *)index)->pChild = 5;
@@ -262,7 +262,7 @@ void NavMenu_HandleInput(int *index, uint id, int index_2)
 }
 void * MemoryCard_GetVtable(void)
 {
-  return &Stage_EntityVtable;
+  return &Location_EntityVtable;
 }
 
 int MemoryCard_New(uint id,uint type)
@@ -395,7 +395,7 @@ uint MemoryCard_OpenEvents(int index)
   int iVar4;
   NopSub_24ce0();
   iVar4 = 0;
-  puVar2 = &Stage_McEventStatusResults;
+  puVar2 = &Location_McEventStatusResults;
   iVar3 = index;
   do {
     uVar1 = *puVar2;
@@ -510,9 +510,9 @@ int MemoryCard_Format(int index)
   int iVar4;
   iVar4 = 10;
   do {
-    puVar3 = &Stage_McPathPrefix0;
+    puVar3 = &Location_McPathPrefix0;
     if (*(int *)(index + 0xc) != 0) {
-      puVar3 = &Stage_McPathPrefix1;
+      puVar3 = &Location_McPathPrefix1;
     }
     iVar2 = format(puVar3);
   } while ((iVar2 == 0) && (bVar1 = iVar4 != 0, iVar4 = iVar4 + -1, bVar1));
@@ -624,7 +624,7 @@ bool MemoryCard_DeleteFile(int index,uint id,int value)
   char *__file;
   int __fd;
   u8 auStack_28 [32];
-  __file = (char *)MemoryCard_BuildPath(auStack_28,*(uint *)(index + 0xc),&Stage_McDeleteFilename);
+  __file = (char *)MemoryCard_BuildPath(auStack_28,*(uint *)(index + 0xc),&Location_McDeleteFilename);
   __fd = open(__file,(value + 0x21ffU >> 0xd) << 0x10 | 0x200);
   if (__fd != -1) {
     close(__fd);
@@ -1057,9 +1057,9 @@ char *MemoryCard_BuildPath(char *id, int type, char *flags)
   uint uVar4;
   uint uVar5;
   uint *puVar6;
-  puVar6 = &Stage_McPathPrefix0;
+  puVar6 = &Location_McPathPrefix0;
   if (type != 0) {
-    puVar6 = &Stage_McPathPrefix1;
+    puVar6 = &Location_McPathPrefix1;
   }
   uVar3 = *puVar6;
   uVar5 = puVar6[1];
@@ -1130,7 +1130,7 @@ uint MemoryCard_PollEvents(uint *id,int index)
     do {
       iVar1 = TestEvent(*puVar3);
       if (iVar1 != 0) {
-        return (&Stage_McEventStatusResults)[iVar2];
+        return (&Location_McEventStatusResults)[iVar2];
       }
       iVar2 = iVar2 + 1;
       puVar3 = puVar3 + 1;
@@ -1678,9 +1678,9 @@ void TextInput_SetState(int *index, int *value, int index_2)
   }
   ((int (*)(...))(pcVar2))(index,uVar3);
 }
-void * MemoryCardStage_GetVtable(void)
+void * MemoryCardLocation_GetVtable(void)
 {
-  return &Stage_MemoryCardVtable;
+  return &Location_MemoryCardVtable;
 }
 
 void Gpu_SetupCardPrimitive(int index,int value)
@@ -1728,8 +1728,8 @@ void Gpu_SetupCardPrimitive(int index,int value)
     *puVar3 = *puVar3 & 0xffffffffU >> (4 - uVar2) * 8 | -0x667d7e7e << uVar2 * 8;
     iVar4 = atoi((char *)(value + iVar4));
     iVar4 = (iVar4 + -1) * 2;
-    uVar1 = Stage_McEncodingData2[iVar4];
-    *(u8 *)(index + 8) = Stage_McEncodingData[iVar4];
+    uVar1 = Location_McEncodingData2[iVar4];
+    *(u8 *)(index + 8) = Location_McEncodingData[iVar4];
     *(u8 *)(index + 9) = uVar1;
   }
 }

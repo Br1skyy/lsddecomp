@@ -912,7 +912,7 @@ int TextInput_CreateToken(uint id, uint type, uint flags, uint arg3,
 void TextInput_DrawLine(int *id, int index_2, int value, int arg2, int arg3, int arg4)
 {
   int iVar1;
-  iVar1 = GetStageGridVtable();
+  iVar1 = GetLocationGridVtable();
   ((int (*)(int,int,int))(*(void **)(iVar1 + 8)))(index_2,0,id);
   iVar1 = GetVramTextureVtable();
   *id = iVar1;
@@ -932,7 +932,7 @@ void TextInput_DrawLine(int *id, int index_2, int value, int arg2, int arg3, int
 void TextInput_FreeToken(uint id)
 {
   int iVar1;
-  iVar1 = GetStageGridVtable();
+  iVar1 = GetLocationGridVtable();
   ((int (*)(int))(*(void **)(iVar1 + 0xc)))(id);
 }
 
@@ -941,7 +941,7 @@ void TextInput_DrawTokenList(int *index, uint *id, uint id_2)
   int iVar1;
   code *pcVar2;
   uint uVar3;
-  iVar1 = GetStageGridVtable();
+  iVar1 = GetLocationGridVtable();
   ((int (*)(int,int,int))(*(void **)(iVar1 + 0x38)))(index,id,id);
   uVar3 = *(uint *)*id & 0xfff;
   if (uVar3 == 0x114) {
@@ -968,7 +968,7 @@ void TextInput_SetTokenPos(int *index, int index_2, int value)
   int iVar1;
   ((int (*)(int,int,int))(*(void **)(**(int **)(index + 0xc) + 200)))(*(int **)(index + 0xc),Font_ProcessChar,index);
   ((EntityObj *)index)->pOtherEntity = value;
-  iVar1 = GetStageGridVtable();
+  iVar1 = GetLocationGridVtable();
   ((int (*)(int,int,int))(*(void **)(iVar1 + 0x44)))(index,index,1);
   ((int (*)(int,int))(*(void **)(*index + 0x10)))(index,value);
 }
@@ -987,7 +987,7 @@ void TextInput_InitRenderer(int *index)
 {
   int iVar1;
   ((int (*)(int,int))(*(void **)(*index + 0x14)))(index,((EntityObj *)index)->pOtherEntity);
-  iVar1 = GetStageGridVtable();
+  iVar1 = GetLocationGridVtable();
   ((int (*)(int))(*(void **)(iVar1 + 0x48)))(index);
 }
 
@@ -1420,23 +1420,23 @@ bool Font_IsLoaded(int index)
   return iVar3 == 0;
 }
 
-void GetStageEntityVtable(void)
+void GetLocationEntityVtable(void)
 {
 }
 
-void StageEntity_SetCollide(int index)
+void LocationEntity_SetCollide(int index)
 {
   if ((((EntityObj *)index)->nCondition != 0) && (((EntityObj *)index)->nField_20 == 0)) {
     ((EntityObj *)index)->nSubState = 1;
   }
 }
 
-void StageEntity_WarpTo(int index)
+void LocationEntity_WarpTo(int index)
 {
   ((EntityObj *)index)->nSubState = 0;
 }
 
-void StageEntity_SetRender(int *index)
+void LocationEntity_SetRender(int *index)
 {
   if (((EntityObj *)index)->nSubState != 0) {
     ((int (*)(void))(*(void **)(*index + 0xd4)))();
@@ -1444,7 +1444,7 @@ void StageEntity_SetRender(int *index)
   }
 }
 
-void StageEntity_Delete(int *index)
+void LocationEntity_Delete(int *index)
 {
   if (((EntityObj *)index)->nSubState != 0) {
     ((int (*)(void))(*(void **)(*index + 0xd4)))();
@@ -1452,7 +1452,7 @@ void StageEntity_Delete(int *index)
   }
 }
 
-void StageEntity_SetAlpha(int index)
+void LocationEntity_SetAlpha(int index)
 {
   int *piVar1;
   int iVar2;
@@ -1475,7 +1475,7 @@ void StageEntity_SetAlpha(int index)
   }
 }
 
-void StageEntity_ApplyAlpha(int index)
+void LocationEntity_ApplyAlpha(int index)
 {
   if (((EntityObj *)index)->nCondition != 0) {
     ((int (*)(void))(*(void **)(*(uint **)((EntityObj *)index)->pSubObj + 4)))();
@@ -1504,7 +1504,7 @@ VramTexture_DrawFunc(int index,uint id,uint type,uint flags,uint arg4
     ParticleConfigParam = arg4;
     ParticleFrameCounter = 0;
     ParticleSysEntityPtr = index;
-    ParticleStageIndex = id;
+    ParticleLocationIndex = id;
     ParticleEffectSelector = flags;
     ParticleWorldPtr = type;
     do {
@@ -1522,7 +1522,7 @@ VramTexture_DrawFunc(int index,uint id,uint type,uint flags,uint arg4
 void ** VramTexture_SetupDraw(void)
 {
   int iVar1;
-  iVar1 = *(int *)(&ParticleStageDefTable + ParticleStageIndex * 4);
+  iVar1 = *(int *)(&ParticleLocationDefTable + ParticleLocationIndex * 4);
   if (iVar1 == 0) {
     iVar1 = GetVramTexture2Vtable();
   }
@@ -1566,7 +1566,7 @@ void * GetVramTexture2Vtable(void)
   int iVar2;
   uint uVar3;
   u8 *puVar4;
-  uVar3 = ParticleEffectSelector + ParticleStageIndex;
+  uVar3 = ParticleEffectSelector + ParticleLocationIndex;
   ParticleMode = (int)(char)(&ParticleModeIndexTable)[uVar3 & 0xf];
   iVar2 = (int)(char)(&ParticleModeDenomTable)[ParticleMode];
   ParticleModeSubIndex = (int)uVar3 % iVar2;

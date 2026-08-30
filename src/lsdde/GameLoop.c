@@ -1,6 +1,6 @@
 #include "common.h"
 #include "DreamSys.h"
-#include "StageGrid.h"
+#include "LocationGrid.h"
 #include <libcd.h>
 /*
  * GameLoop.c - SPU voice management, frame timing, and game loop helpers
@@ -177,7 +177,7 @@ extern s16   VoiceSoundId[];
 extern s16   VoiceProgramIdx[];
 extern s16   VoiceChannel[];
 extern s16   VoiceBankIdx[];
-extern s16   VoiceStage[];
+extern s16   VoiceLocation[];
 extern u8    VoiceStatus[];
 extern u32   TimerCallback_SpuSet;
 extern u32   TimerCallback_VSync;
@@ -312,7 +312,7 @@ s32 SpuMixVolume(u32 voiceId, s16 stage, s16 program, u32 volMultiplier, u16 env
         for (i = 0; i < SpuVoiceCount; i++) {
             if ((VoiceSoundId[i * 0x1a / 2] == (s16)voiceId) &&
                 ((s32)VoiceChannel[i * 0x1a / 2] == (s32)program) &&
-                (VoiceStage[i * 0x1a / 2] == stage)) {
+                (VoiceLocation[i * 0x1a / 2] == stage)) {
                 attrA = (u32)*(u8 *)((s16)VoiceProgramIdx[i * 0x1a / 2] * 0x10 + SpuCurrentProgramData + 1);
                 attrB = (u32)*(u8 *)((s16)VoiceChannel[i * 0x1a / 2] * 0x10 + SpuCurrentProgramData + 1);
                 if (attrA != attrB)
@@ -411,7 +411,7 @@ u32 SpuStartSeqVoice(s16 soundId, u16 program, u8 voiceAttrIdx,
                 if (voiceIdx != SpuVoiceCount) {
                     SpuCurrentChannelIdx = (u16)voiceIdx;
                     VoiceSoundId[voiceIdx * 0x1a / 2] = 0x21;
-                    VoiceStage[voiceIdx * 0x1a / 2] = soundId;
+                    VoiceLocation[voiceIdx * 0x1a / 2] = soundId;
                     VoiceChannel[voiceIdx * 0x1a / 2] = program;
                     VoiceProgramIdx[voiceIdx * 0x1a / 2] = (u16)SpuCurrentVoiceAttrIdx;
                     VoicePitch[voiceIdx * 0x1a / 2] = SpuCurrentPitch;

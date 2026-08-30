@@ -3,7 +3,7 @@
 #define ENTITY_VTABLE 0
 #endif
 #include "DreamSys.h"
-#include "StageGrid.h"
+#include "LocationGrid.h"
 #include "dat_globals.h"
 #include "lsdde/structs.h"
 /* Forward declarations for functions used before defined */
@@ -27,15 +27,15 @@ extern u32 ParticlePaletteDefault;
 extern u32 ParticlePaletteAlt;
 extern u32 ParticleEffectObjectType;
 extern u32 ParticleEffectParam2;
-extern u32 MusicVolLineTargetStage2;
-extern u32 MusicVolLineTargetStage3;
+extern u32 MusicVolLineTargetLocation2;
+extern u32 MusicVolLineTargetLocation3;
 extern u32 Unk_EntityBufC8;
 extern u32 ParticleFixedVelocity;
 extern u32 Unk_ParticleBuf1C;
 extern u32 ParticleGroundVelocity3;
 extern u32 ParticleColourTable;
 extern u32 Unk_ParticleBuf28;
-extern u32 PTR_StageSecondaryEntityTablePtr;
+extern u32 PTR_LocationSecondaryEntityTablePtr;
 /* -----------------------------------------------------------------------
    Entity2.c  -  LSD: Dream Emulator entity/particle/effect subsystem
    ----------------------------------------------------------------------- */
@@ -413,7 +413,7 @@ void Init_EntityRenderState(int *entity, int state, int *pos)
     Setup_EntityState((int*)entity, state, auStack_20, *(int*)(entity + 100), *(int*)(entity + 0x68));
     iVar2 = *(int*)(entity + 0x54);
     if (iVar2 < 2) {
-        int uVar1 = (*(code*)(*(u32 *)ParticleStageObject + 0x80))(ParticleStageObject, (&StageChildObjects)[iVar2]); /* vtable[0x20] */
+        int uVar1 = (*(code*)(*(u32 *)ParticleLocationObject + 0x80))(ParticleLocationObject, (&LocationChildObjects)[iVar2]); /* vtable[0x20] */
         LinkObjectToParent(entity, uVar1);
         iVar2 = *(int*)(entity + 0x54);
     }
@@ -615,7 +615,7 @@ int CheckTileRenderState(int tile)
  * DREAM PARTICLE SYSTEM - GLOBALS
  *
  * ParticleSysEntityPtr  = primary entity/system pointer
- * ParticleStageIndex  = dream stage index
+ * ParticleLocationIndex  = dream stage index
  * ParticleFrameCounter  = frame counter
  * ParticleEffectSelector  = effect colour/type selector
  * ParticleWorldPtr  = world/instance pointer
@@ -628,7 +628,7 @@ int CheckTileRenderState(int tile)
  * ParticleExtraChunkPtr  = extra chunk pointer
  * ParticleEffectObject  = effect object
  * ParticleEntityScanIndex  = scan index into entity list
- * ParticleStageObject  = stage object
+ * ParticleLocationObject  = stage object
  * ParticleSpawnAllocator  = spawn object allocator
  * ParticleTickTimer  = tick timer object
  *
@@ -636,7 +636,7 @@ int CheckTileRenderState(int tile)
  *   ParticleInstanceArray[...]  = spawned particle instances
  *   ParticleGridEntries[...]  = grid particle entries (0x12 count)
  *   ParticleSecondarySlots[2]    = secondary entity slots
- *   StageChildObjects[2]    = stage object children
+ *   LocationChildObjects[2]    = stage object children
  ***********************************************************************/
 /* Phase 1 - set globals and call into phase 2 */
 int Init_DreamParticleSystem(int mainPtr, int stage, int worldPtr, int effectIdx, int configParam)
@@ -650,7 +650,7 @@ int Init_DreamParticleSystem(int mainPtr, int stage, int worldPtr, int effectIdx
     ParticleConfigParam = configParam;
     ParticleFrameCounter = 0;
     ParticleSysEntityPtr = mainPtr;
-    ParticleStageIndex = stage;
+    ParticleLocationIndex = stage;
     ParticleEffectSelector = effectIdx;
     ParticleWorldPtr = worldPtr;
     do { *p = 0; cnt = cnt - 1; p = p - 1; } while (-1 < cnt);
@@ -660,7 +660,7 @@ int Init_DreamParticleSystem(int mainPtr, int stage, int worldPtr, int effectIdx
 void **Init_DreamParticleSystem_Phase2(void)
 {
     int def;
-    def = *(int*)(&ParticleStageDefTable + ParticleStageIndex * 4);
+    def = *(int*)(&ParticleLocationDefTable + ParticleLocationIndex * 4);
     if (def == 0) def = Init_DreamParticleSystem_Phase3();
     Init_ParticleVtableTable(&Ptr_SecondEntity, (char*)def);
     if (3 < *(char*)(def + 1))
@@ -681,7 +681,7 @@ void *Init_DreamParticleSystem_Phase3(void)
     u32 idx;
     int denom;
     u8 *record;
-    idx = ParticleEffectSelector + ParticleStageIndex;
+    idx = ParticleEffectSelector + ParticleLocationIndex;
     ParticleMode = (int)(char)(&ParticleModeIndexTable)[idx & 0xf];
     denom = (int)(char)(&ParticleModeDenomTable)[ParticleMode];
     ParticleModeSubIndex = (int)idx % denom;
@@ -726,13 +726,13 @@ void Init_DreamParticleEnv(int mode, int *stageObj, int allocPtr, int tickObj)
     int i;
     int *p;
     i = 0;
-    p = &StageChildObjects;
-    ParticleStageObject = stageObj;
+    p = &LocationChildObjects;
+    ParticleLocationObject = stageObj;
     ParticleSpawnAllocator = (int*)allocPtr;
     ParticleTickTimer = tickObj;
     do {
         *p = (int)(*(code*)(*stageObj + 0x80))(stageObj, *p); /* vtable[0x20] */
-        SetObjectTransform(*p, &StageChildTransform);
+        SetObjectTransform(*p, &LocationChildTransform);
         i = i + 1;
         p = p + 1;
     } while (i < 2);
@@ -903,7 +903,7 @@ int Tick_DreamParticleSystem(int tick, int state, int local)
     Update_DreamParticles_Anim();
     Update_ParticleFrame(&local_res8);
     iVar2 = 0;
-    Set_MusicVolumeForStage();
+    Set_MusicVolumeForLocation();
     ParticleEntityScanIndex = 0;
     piVar4 = &ParticleSecondarySlots;
     do {
@@ -924,12 +924,12 @@ int Tick_DreamParticleSystem(int tick, int state, int local)
     return local_res8;
 }
 /* Adjust music volume by dream stage */
-void Set_MusicVolumeForStage(void)
+void Set_MusicVolumeForLocation(void)
 {
-    if (ParticleStageIndex == 2) {
-        SpuDrawLineSegments(&MusicVolLineDataStage2, 1, &MusicVolLineTargetStage2);
-    } else if (ParticleStageIndex - 3U <= 2) {
-        SpuDrawLineSegments(&MusicVolLineDataStage3, 1, &MusicVolLineTargetStage3);
+    if (ParticleLocationIndex == 2) {
+        SpuDrawLineSegments(&MusicVolLineDataLocation2, 1, &MusicVolLineTargetLocation2);
+    } else if (ParticleLocationIndex - 3U <= 2) {
+        SpuDrawLineSegments(&MusicVolLineDataLocation3, 1, &MusicVolLineTargetLocation3);
     }
 }
 /********************************************************************
@@ -1073,8 +1073,8 @@ void *Find_SecondaryEntitySlot(int *distOut, int *idxOut, int *pos3)
     u8 *scan;
     int distX, distY;
     if (pos3 == 0) return 0;
-    count = (u32)((u8*)&StageSecondaryEntityCount)[ParticleStageIndex] - ParticleEntityScanIndex;
-    scan = (&PTR_StageSecondaryEntityTablePtr)[ParticleStageIndex] + ParticleEntityScanIndex * 8;
+    count = (u32)((u8*)&LocationSecondaryEntityCount)[ParticleLocationIndex] - ParticleEntityScanIndex;
+    scan = (&PTR_LocationSecondaryEntityTablePtr)[ParticleLocationIndex] + ParticleEntityScanIndex * 8;
     if (0 < count) {
         for (i = 0; i < count; i = i + 1) {
             ParticleEntityScanIndex = ParticleEntityScanIndex + 1;

@@ -500,9 +500,9 @@ void Chunk_ApplyToAllEntries(uint id,code *arg0,int index)
     ((int (*)(...))(arg0))(id,*puVar1);
   }
 }
-void * Stage_GetChunkVtable(void)
+void * Location_GetChunkVtable(void)
 {
-  return &Stage_MapChunkVtable;
+  return &Location_MapChunkVtable;
 }
 
 int ChunkData_Alloc(void)
@@ -512,7 +512,7 @@ int ChunkData_Alloc(void)
   iVar1 = MemAllocImpl(0xdc);
   iVar2 = 0;
   if (iVar1 != 0) {
-    iVar2 = Stage_GetChunkDataVtable();
+    iVar2 = Location_GetChunkDataVtable();
     ((int (*)(int))(*(void **)(iVar2 + 8)))(iVar1);
     iVar2 = iVar1;
   }
@@ -524,7 +524,7 @@ void ChunkData_Constructor(int *index)
   int iVar1;
   iVar1 = ChunkData_GetDataPtr();
   ((int (*)(int))(*(void **)(iVar1 + 8)))(index);
-  iVar1 = Stage_GetChunkDataVtable();
+  iVar1 = Location_GetChunkDataVtable();
   *index = iVar1;
   ((int (*)(int))(*(void **)(iVar1 + 0x40)))(index);
 }
@@ -557,9 +557,9 @@ void ChunkDataTable_Nop03(void)
 void ChunkDataTable_Nop04(void)
 {
 }
-void * Stage_GetChunkDataVtable(void)
+void * Location_GetChunkDataVtable(void)
 {
-  return &Stage_ChunkDataVtable;
+  return &Location_ChunkDataVtable;
 }
 
 int ChunkDataTable_Alloc(void)
@@ -569,7 +569,7 @@ int ChunkDataTable_Alloc(void)
   iVar1 = MemAllocImpl(0x3c);
   iVar2 = 0;
   if (iVar1 != 0) {
-    iVar2 = Stage_GetChunkDataTableVtable();
+    iVar2 = Location_GetChunkDataTableVtable();
     ((int (*)(int))(*(void **)(iVar2 + 8)))(iVar1);
     iVar2 = iVar1;
   }
@@ -582,7 +582,7 @@ void ChunkDataTable_Constructor(uint *id)
   uint uVar2;
   iVar1 = GetPrimitiveBaseTable();
   ((int (*)(int))(*(void **)(iVar1 + 8)))(id);
-  uVar2 = Stage_GetChunkDataTableVtable();
+  uVar2 = Location_GetChunkDataTableVtable();
   *id = uVar2;
   *(u16 *)(id + 0xd) = 0;
   *(u16 *)((int)id + 0x36) = 0;
@@ -614,12 +614,12 @@ uint ChunkDataTable_Identity(uint id)
 {
   return id;
 }
-void * Stage_GetChunkDataTableVtable(void)
+void * Location_GetChunkDataTableVtable(void)
 {
-  return &Stage_ChunkDataTableVtable;
+  return &Location_ChunkDataTableVtable;
 }
 
-int StageEntity_Alloc(uint id)
+int LocationEntity_Alloc(uint id)
 {
   int iVar1;
   int iVar2;
@@ -633,7 +633,7 @@ int StageEntity_Alloc(uint id)
   return iVar2;
 }
 
-void StageEntity_Constructor(int *index,int *value)
+void LocationEntity_Constructor(int *index,int *value)
 {
   int iVar1;
   uint uVar2;
@@ -647,7 +647,7 @@ void StageEntity_Constructor(int *index,int *value)
   iVar1 = ((int (*)(int,int))(*(void **)(*value + 0x1b0)))(value,index + 0x30);
   ((EntityObj *)index)->field_0xbc = iVar1;
   uVar2 = ((int (*)(int,int))(*(void **)(*value + 0x1a0)))(value,0);
-  Stage_SetupChallengeData(uVar2);
+  Location_SetupChallengeData(uVar2);
   ((int (*)(int,int))(*(void **)(*index + 0xd8)))(index,&PTR_s_ETC_FONTICON_TIM_80086d44);
   ((int (*)(int,int))(*(void **)(*index + 0x40)))(index,value);
   /* GameStateCheck reads obj[0x38] via NavMenu_GetField (vtable[0x44]) and
@@ -656,7 +656,7 @@ void StageEntity_Constructor(int *index,int *value)
   ((EntityObj *)index)->nField_38 = 1;
 }
 
-void StageEntity_SetDreamFlag(int index,int value)
+void LocationEntity_SetDreamFlag(int index,int value)
 {
   uint uVar1;
   uVar1 = 1;
@@ -666,9 +666,9 @@ void StageEntity_SetDreamFlag(int index,int value)
   *(uint *)(*(int *)(value + 0x18) + 4) = uVar1;
 }
 
-void Stage_SetupChallengeData(uint id)
+void Location_SetupChallengeData(uint id)
 {
-  Sjis_FormatNumber(&Stage_NavChallengeBuf,id,3,0);
-  Stage_NavChallengeWord1 = Stage_NavChallengeWord1 & 0xffff | 0x36370000;
-  Stage_NavChallengeWord2 = 0x32333435;
+  Sjis_FormatNumber(&Location_NavChallengeBuf,id,3,0);
+  Location_NavChallengeWord1 = Location_NavChallengeWord1 & 0xffff | 0x36370000;
+  Location_NavChallengeWord2 = 0x32333435;
 }

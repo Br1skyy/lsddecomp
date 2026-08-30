@@ -196,9 +196,11 @@
 #define TILE_GRID_COUNT     0x13
 #define GRID_DIM_MASK       0x1f
 
-/* Stage Grid Size Constants */
-#define STAGE_CHUNK_SIZE    0x50
-#define STAGE_GRID_SIZE     0x1e8
+/* Location Grid Size Constants */
+#define LOCATION_CHUNK_SIZE    0x50
+#define STAGE_CHUNK_SIZE    LOCATION_CHUNK_SIZE // deprecated alias: use LOCATION_CHUNK_SIZE
+#define LOCATION_GRID_SIZE     0x1e8
+#define STAGE_GRID_SIZE     LOCATION_GRID_SIZE // deprecated alias
 #define SPAWN_ENTRY_STRIDE  0x1c
 #define ENTITY_LIST_STRIDE  0x14
 #define COLOR_TABLE_STRIDE  0x0c
@@ -249,8 +251,10 @@
 #define SIZEOF_SUBOBJECT2   0xa8
 #define SIZEOF_RENDER_CTX   0x50
 #define SIZEOF_RENDER_SUB   0x38
-#define SIZEOF_STAGE_CHUNK  0x50
-#define SIZEOF_STAGE_GRID   0x1e8
+#define SIZEOF_LOCATION_CHUNK  0x50
+#define SIZEOF_STAGE_CHUNK  SIZEOF_LOCATION_CHUNK // deprecated alias
+#define SIZEOF_LOCATION_GRID   0x1e8
+#define SIZEOF_STAGE_GRID   SIZEOF_LOCATION_GRID // deprecated alias
 #define SIZEOF_GSOBJ        0xBC
 #define SIZEOF_OBJGENERIC   0xA0
 #define SIZEOF_OBJTYPE1     0x6c

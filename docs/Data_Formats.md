@@ -29,24 +29,24 @@ The game disc uses standard PS1 CD-ROM layout:
   - **FILM/** - Video content
   - **CARD/** - Memory card icons
 
-## Stage Data Format
+## Location Data Format
 
-### Stage Structure
+### Location Structure
 
 Each stage directory contains:
 
 - **Level Data** - 3D environment data
 - **Entity Data** - Entity placements and configurations
-- **Texture Data** - Stage-specific textures
+- **Texture Data** - Location-specific textures
 - **Collision Data** - Physics and interaction boundaries
 
 ### Chunk System
 
-Stage maps are built from a per-stage grid of chunks (grid dimensions vary per stage - e.g. Kyoto is 6x6, Natural is 16x16; see STAGE_GRID_DIMENSIONS in StageGrid2.c):
+Stage maps are built from a per-stage grid of chunks (grid dimensions vary per stage - e.g. Kyoto (STG02) is 6x6, The Natural World (STG03) is 16x16; see LOCATION_GRID_DIMENSIONS in LocationGrid2.c for the full wiki-canonical list):
 
 - **SIZEOF_CHUNK_DATA (0xEC)** - size of the chunk data block that precedes the spawn entries in memory
 - **SPAWN_ENTRY_STRIDE (0x1C = 28 bytes)** - fixed stride between spawn-point entries (`GetChunkSpawnTable` + index * stride)
-- **StageGridChannel (0x1C = 28 bytes)** - 7 channels inside the StageGrid struct, starting at offset 0xEC
+- **LocationGridChannel (0x1C = 28 bytes)** - 7 channels inside the LocationGrid struct, starting at offset 0xEC
 - **Type identifiers** - chunk classification (ground, wall, etc.)
 
 There is no fixed "7x7" chunk layout. The grid is stage-dependent, which made our first attempt to document it a fun afternoon of chasing our own tail.

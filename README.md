@@ -153,7 +153,7 @@ lsddecomp-main/
 - System.c: GS library wrappers
 - Sound.c / SpuInit.c: Audio system
 - GameLoop.c: Frame loop
-- Rendering_*.c: Rendering system (split 7 ways: Chunk, Entity, NavMemCard, RenderUtils, Stage, UI, World)
+- Rendering_*.c: Rendering system (split 7 ways: Chunk, Entity, NavMemCard, RenderUtils, Location, UI, World)
 - Entity2.c / Entity3_*.c: Entity system and behaviors (5 Entity3 files)
 - NavMenu_*.c: Menu/UI system (2 files)
 - Other.c: Miscellaneous functionality

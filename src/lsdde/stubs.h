@@ -27,7 +27,7 @@ extern void *GetCdObj(void);
 extern int GetVideoMode(void);
 extern unsigned int GetSoundSize(void *snd);
 extern void *ExecSoundAction(void *a, void *b, void *c, void *d);
-extern void *GetStageDataTable(int *outSize);
+extern void *GetLocationDataTable(int *outSize);
 extern void ProcessEntityCallback(void *entity, void *cb, int arg3);
 extern void *GetActiveSoundObject(int a, int b, int c, int d);
 extern int GetRandomValue(void);

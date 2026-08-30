@@ -85,8 +85,8 @@ void * RenderUtils_CreateSub(int *index,int *value,int *arg2)
   u16 local_38;
   if (arg2 != NULL) {
     iVar8 = 0;
-    iVar9 = (uint)(byte)(&StageSecondaryEntityCount)[ParticleStageIndex] - ParticleEntityScanIndex;
-    puVar7 = (&PTR_PTR_StageSecondaryEntityTablePtr)[ParticleStageIndex] + ParticleEntityScanIndex * 8;
+    iVar9 = (uint)(byte)(&LocationSecondaryEntityCount)[ParticleLocationIndex] - ParticleEntityScanIndex;
+    puVar7 = (&PTR_PTR_LocationSecondaryEntityTablePtr)[ParticleLocationIndex] + ParticleEntityScanIndex * 8;
     if (0 < iVar9) {
       pcVar6 = puVar7 + 6;
       do {
@@ -208,7 +208,7 @@ uint RenderUtils_CreateDisplay(int index,uint id,uint type)
   VramParticle_UpdateAnim();
   VramParticle_DrawAll(puVar6);
   iVar2 = 0;
-  StageGrid_DrawTiles();
+  LocationGrid_DrawTiles();
   ParticleEntityScanIndex = 0;
   piVar4 = &ParticleSecondarySlots;
   do {
@@ -230,20 +230,20 @@ uint RenderUtils_CreateDisplay(int index,uint id,uint type)
   return local_res8[0];
 }
 
-void StageGrid_DrawTiles(void)
+void LocationGrid_DrawTiles(void)
 {
   void *puVar1;
   void *puVar2;
-  if (ParticleStageIndex == 2) {
-    puVar1 = &MusicVolLineDataStage2;
-    puVar2 = &MusicVolLineTargetStage2;
+  if (ParticleLocationIndex == 2) {
+    puVar1 = &MusicVolLineDataLocation2;
+    puVar2 = &MusicVolLineTargetLocation2;
   }
   else {
-    if (2 < ParticleStageIndex - 3U) {
+    if (2 < ParticleLocationIndex - 3U) {
       return;
     }
-    puVar1 = &MusicVolLineDataStage3;
-    puVar2 = &MusicVolLineTargetStage3;
+    puVar1 = &MusicVolLineDataLocation3;
+    puVar2 = &MusicVolLineTargetLocation3;
   }
   Prim_DrawTiles(puVar1,1,puVar2);
 }
@@ -574,7 +574,7 @@ int * ParticleConstruct(int *index,int index_2,uint *id,uint type,uint flags
     id[0x11] = 0;
     id[0x15] = index;
     ((int (*)(int,int))(*(void **)(*id + 0x40)))(id,id);
-    ParticleLinkToStage(id,type,flags);
+    ParticleLinkToLocation(id,type,flags);
     piVar2 = id;
   }
   return piVar2;
@@ -618,7 +618,7 @@ void ParticleTickUpdate(int index)
   ParticleUpdatePosition();
 }
 
-void ParticleLinkToStage(int index,uint id,uint type)
+void ParticleLinkToLocation(int index,uint id,uint type)
 {
   uint uVar1;
   int iVar2;
@@ -629,7 +629,7 @@ void ParticleLinkToStage(int index,uint id,uint type)
                *(uint *)(index + 0x68));
   iVar2 = *(int *)(index + 0x54);
   if (iVar2 < 2) {
-    uVar1 = ((int (*)(int,int))(*(void **)(*((u32 *)(ParticleStageObject)) + 0x80)))(ParticleStageObject,(&StageChildObjects)[iVar2]);
+    uVar1 = ((int (*)(int,int))(*(void **)(*((u32 *)(ParticleLocationObject)) + 0x80)))(ParticleLocationObject,(&LocationChildObjects)[iVar2]);
     GsLinkObject2(index,uVar1);
     iVar2 = *(int *)(index + 0x54);
   }
@@ -895,8 +895,8 @@ void ParticleSysInit(uint id,int *index,uint type,uint flags)
   uint *puVar2;
   int iVar3;
   iVar3 = 0;
-  puVar2 = &StageChildObjects;
-  ParticleStageObject = index;
+  puVar2 = &LocationChildObjects;
+  ParticleLocationObject = index;
   ParticleSpawnAllocator = type;
   ParticleTickTimer = flags;
   do {
@@ -904,7 +904,7 @@ void ParticleSysInit(uint id,int *index,uint type,uint flags)
     puVar2 = puVar2 + 1;
     iVar3 = iVar3 + 1;
     uVar1 = ((int (*)(int,int))(*(void **)(*index + 0x80)))(index,uVar1);
-    Prim_SetDrawOffset(uVar1,&StageChildTransform);
+    Prim_SetDrawOffset(uVar1,&LocationChildTransform);
   } while (iVar3 < 2);
 }
 
@@ -1437,26 +1437,26 @@ void * GetNngVtable(void)
   return &Vtable_EntitySubObject2;
 }
 
-int NewStageArea(uint index, uint id)
+int NewLocationArea(uint index, uint id)
 {
   int iVar1;
   int iVar2;
   iVar1 = MemAllocImpl(0x244);
   iVar2 = 0;
   if (iVar1 != 0) {
-    iVar2 = GetStageAreaVtable();
+    iVar2 = GetLocationAreaVtable();
     ((int (*)(int,int))(*(void **)(iVar2 + 8)))(iVar1,id);
     iVar2 = iVar1;
   }
   return iVar2;
 }
 
-void StageArea_Init(int *index, int index_2)
+void LocationArea_Init(int *index, int index_2)
 {
   int iVar1;
   iVar1 = NavMenu_GetDataPtr();
   ((int (*)(int,int,int,int))(*(void **)(iVar1 + 8)))(index,0,"ETC\\ETCSE",0);
-  iVar1 = GetStageAreaVtable();
+  iVar1 = GetLocationAreaVtable();
   *index = iVar1;
   ((int (*)(int,int))(*(void **)(*(int *)((EntityObj *)index)->nStateFlag + 0x9c)))((int *)((EntityObj *)index)->nStateFlag,0xffffffff);
   ((EntityObj *)index)->field_0xa4 = index;
@@ -1464,7 +1464,7 @@ void StageArea_Init(int *index, int index_2)
   ((int (*)(int,int))(*(void **)(*index + 0x40)))(index,index);
 }
 
-void StageArea_InitHGraph(int *index)
+void LocationArea_InitHGraph(int *index)
 {
   ((EntityObj *)index)->nSubState = 5;
   ((EntityObj *)index)->nVabIdx = 400;
@@ -1472,7 +1472,7 @@ void StageArea_InitHGraph(int *index)
   ((int (*)(int,int))(*(void **)(*index + 0x6c)))(index,10);
 }
 
-void StageArea_Draw(int *index,uint id,uint type)
+void LocationArea_Draw(int *index,uint id,uint type)
 {
   int iVar1;
   iVar1 = NavMenu_GetDataPtr();
@@ -1485,7 +1485,7 @@ void StageArea_Draw(int *index,uint id,uint type)
   ((int (*)(int))(*(void **)(*index + 0x124)))(index);
 }
 
-void StageArea_Update(int *index)
+void LocationArea_Update(int *index)
 {
   if (index[0x8e] == 0) {
     ((int (*)(int,int))(*(void **)(*index + 0x70)))(index,0x10);
@@ -1544,7 +1544,7 @@ void ParticleSys_Destroy(int index)
   ((int (*)(int))(*(void **)(iVar2 + 0xdc)))(index);
 }
 
-uint StageArea_GetState(int index,uint id,uint type)
+uint LocationArea_GetState(int index,uint id,uint type)
 {
   int iVar1;
   uint uVar2;
@@ -1557,7 +1557,7 @@ uint StageArea_GetState(int index,uint id,uint type)
   return uVar2;
 }
 
-void StageArea_SetupParticles(int index,uint id)
+void LocationArea_SetupParticles(int index,uint id)
 {
   bool bVar1;
   int iVar2;
@@ -1574,7 +1574,7 @@ void StageArea_SetupParticles(int index,uint id)
   iVar2 = NavMenu_GetDataPtr();
   ((int (*)(int,int))(*(void **)(iVar2 + 0xe0)))(index,id);
   iVar2 = ((int (*)(int,int))(*(void **)(**(int **)(index + 0xa4) + 0x1b0)))(*(int **)(index + 0xa4),0);
-  uVar3 = StageArea_NumToPos(index,iVar2);
+  uVar3 = LocationArea_NumToPos(index,iVar2);
   *(uint *)(index + 0x238) = uVar3;
   bVar1 = false;
   if ((*(int *)(iVar2 + 4) != 0) || (iVar8 = *(int *)(iVar2 + 8), 100 < iVar8)) {
@@ -1610,7 +1610,7 @@ void StageArea_SetupParticles(int index,uint id)
   }
 }
 
-uint StageArea_NumToPos(int index, int value)
+uint LocationArea_NumToPos(int index, int value)
 {
   int iVar1;
   int iVar2;
@@ -1657,7 +1657,7 @@ LAB_80058684:
   return uVar3;
 }
 
-void StageArea_UpdateParticles(int index)
+void LocationArea_UpdateParticles(int index)
 {
   uint uVar1;
   int *piVar2;
@@ -1669,7 +1669,7 @@ void StageArea_UpdateParticles(int index)
     *(int *)(index + 0x23c) = *(int *)(index + 0x23c) + 1;
   }
 }
-void * GetStageAreaVtable(void)
+void * GetLocationAreaVtable(void)
 {
   return &Vtable_DreamSymbol;
 }

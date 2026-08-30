@@ -4,7 +4,7 @@
 #include "MEMORY.H"
 #include "RAND.H"
 #include "DreamSys.h"
-#include "StageGrid.h"
+#include "LocationGrid.h"
 // BSS globals (sbss region)
 s8 (*gpNavChallengesComplete)[30];
 s32 *gpDinamicLinkPenalty;
@@ -16,7 +16,7 @@ s32 Spawn_CurrentSubType;
 static int TestTunnelDirection(int *outDir1, int *outDir2, int angle);
 static bool CheckAngleProximity(int angle, u8 dir);
 static // Validates stage link. Returns stage ID or -1.
-s32 ValidateStageLink(int linkCoords, int stage, int *data, u32 flags);
+s32 ValidateLocationLink(int linkCoords, int stage, int *data, u32 flags);
 static // Gets staircase type pointer for current stage.
 void *GetStaircaseTypePtr(void);
 static u64 TestStaircaseDirection(void *outDir1, void *outDir2, void *angle);
@@ -128,7 +128,7 @@ extern MoodGraphPoint DreamNullMoodPoint;
 #define OFFSET_0x128         0x128  // tunnel coord
 #define OFFSET_0x12C         0x12C  // tunnel coord
 #define OFFSET_0x130         0x130  // tunnel coord
-#define OFFSET_0x164         0x164  // currentStage (also in struct)
+#define OFFSET_0x164         0x164  // currentLocation (also in struct)
 #define OFFSET_0x16C         0x16C  // linkCoordinates (struct)
 #define OFFSET_0x178         0x178  // unknown_sdata_0x178
 #define OFFSET_0x17C         0x17C  // currentYear
@@ -246,7 +246,7 @@ void DreamSys__HandleLinkTransition(DreamSys *this, int linkType) {
         if ((this->unknwon_int_0x44 == 0xf) && (GET_INT(this, 0xb8) == 0)) {
             SET_INT(this, 0xb8, 2);
         }
-        if (this->currentStage != 9) {
+        if (this->currentLocation != 9) {
             return;
         }
     } else {
@@ -769,7 +769,7 @@ void DreamSys__PerformLinkAction(DreamSys *this, int action) {
         if ((linkResult1 == 0) && (linkResult2 == 0) && (linkResult3 == 0)) {
             (*(code *)((int)this->vt + 0x1d4))(this);
             ((void (*)(DreamSys *, int, int))(&DreamLinkActionFuncs + action * 4))(this, scale * magnitude, GET_INT(this, 0x90c) == 0);
-            if ((this->currentStage == 0) &&
+            if ((this->currentLocation == 0) &&
                 (GET_INT(GET_INT(this, 0x14), 0x1c) < -2000) &&
                 (-500 < GET_INT(GET_INT(this, 0x14), 0x18))) {
                 (*(code *)(this->vt->unknown_functions_0xe4[0]))(this, this, 4);
@@ -890,7 +890,7 @@ void *DreamSys__GetMoodDataPtr(DreamSys *this, s32 *outSize) {
 }
 s32 DreamSys__StartDay(DreamSys *this) {
     MoodGraphPoint *specialMood;
-    s32 startStage;
+    s32 startLocation;
     this->currentFlashbackIndex = 0;
     this->dreamTimer = 0;
     this->storedDay = this->currentDay;
@@ -904,8 +904,8 @@ s32 DreamSys__StartDay(DreamSys *this) {
         }
         this->vt->InitSpawnLoc(this);
     }
-    startStage = this->currentStage;
-    return startStage;
+    startLocation = this->currentLocation;
+    return startLocation;
 }
 s32 DreamSys__EndDay(DreamSys *this, s32 arg1) {
     this->currentDay = this->storedDay;
@@ -926,7 +926,7 @@ void DreamSys__InitSpawnLoc(DreamSys *this) {
     MoodGraphPoint mood;
     s32 timeLimit;
     this->vt->GetPreviousDayMood(this, &mood, 1);
-    this->currentStage = GenerateInitialSpawn(
+    this->currentLocation = GenerateInitialSpawn(
         &this->linkCoordinates,
         &timeLimit,
         &mood,
@@ -938,16 +938,16 @@ void DreamSys__InitSpawnLoc(DreamSys *this) {
 void DreamSys__DynamicLink(DreamSys *this) {
     s32 stage;
     if (this->unknwon_int_0x44 == 0) {
-        stage = GetRandomSpawnFromStage(&this->linkCoordinates, this->currentStage, this->dreamTimer);
+        stage = GetRandomSpawnFromLocation(&this->linkCoordinates, this->currentLocation, this->dreamTimer);
         ExecuteLink(this, stage, 0xC, 1);
     }
 }
 bool DreamSys__StaticWallLink(DreamSys *this, PlayerSpawnPoint *currentPos) {
-    int linkStage;
+    int linkLocation;
     if (this->unknwon_int_0x44 == 0) {
-        linkStage = TestForStaticLink(&this->linkCoordinates, currentPos, this->currentStage);
-        if (linkStage >= 0) {
-            ExecuteLink(this, linkStage, 0xd, 1);
+        linkLocation = TestForStaticLink(&this->linkCoordinates, currentPos, this->currentLocation);
+        if (linkLocation >= 0) {
+            ExecuteLink(this, linkLocation, 0xd, 1);
             return true;
         }
     }
@@ -962,7 +962,7 @@ bool DreamSys__LoadNextFlashback(DreamSys *this, bool unknown) {
             (*(code *)(*(int *)this + 0x30))(this, 0xe);
         }
         this->currentDay = entry->day;
-        this->currentStage = entry->stageID;
+        this->currentLocation = entry->stageID;
         this->linkCoordinates.chunk = entry->position.chunk;
         this->linkCoordinates.tile = entry->position.tile;
         this->linkCoordinates.position = entry->position.position;
@@ -993,7 +993,7 @@ int DreamSys__TryTunnelLink(DreamSys *this, void *linkData) {
 int DreamSys__TryInstanceLink(DreamSys *this, void *data) {
     int linkIdx;
     if ((this->unknwon_int_0x44 == 0) &&
-        (linkIdx = ValidateStageLink((int)&this->linkCoordinates,
+        (linkIdx = ValidateLocationLink((int)&this->linkCoordinates,
                                      GET_INT(this, 0x164), (int *)data,
                                      GET_UINT(this, 0x90)),
          linkIdx >= 0)) {
@@ -1009,7 +1009,7 @@ int DreamSys__TryInstanceLink(DreamSys *this, void *data) {
 int DreamSys__TryInstantTeleport(DreamSys *this, void *linkData) {
     int linkIdx;
     s8 buffer[16];
-    linkIdx = Test4InstantTeleporters(&this->linkCoordinates, linkData, this->currentStage);
+    linkIdx = Test4InstantTeleporters(&this->linkCoordinates, linkData, this->currentLocation);
     if (linkIdx >= 0) {
         u8 shift = GetStaircaseShift();
         linkIdx = ExecuteLink(this, linkIdx, 0x11, 0);
@@ -1033,7 +1033,7 @@ bool ExecuteLink(DreamSys *this, int stage, int linkType, int playSound) {
     this->unknwon_int_0x44 = linkType;
     (*(code *)(*(int *)this + 0x30))();
     if (this->unknwon_int_0x44 != 0) {
-        this->currentStage = stage;
+        this->currentLocation = stage;
         if (this->isFlashbackSession != 0) {
             this->dreamTimer = 0;
         }
@@ -1062,7 +1062,7 @@ int DreamSys__TryStaircaseLink(DreamSys *this, u32 nodePtr) {
         }
         return 0;
     }
-    int linkIdx = Test4StaircaseNodes(&this->linkCoordinates, (void *)nodePtr, this->currentStage);
+    int linkIdx = Test4StaircaseNodes(&this->linkCoordinates, (void *)nodePtr, this->currentLocation);
     if (linkIdx >= 0) {
         ReadDreamSysVector(this, buffer);
         u64 valid = TestStaircaseDirection((void *)((int)this + 0x888), (void *)((int)this + 0x884), buffer);
@@ -1199,8 +1199,8 @@ void DreamSys__SetStaircaseDirection(DreamSys *this, s16 *target, s16 *current) 
     diff[2] = (int)target[2] - (int)current[2];
     (*(code *)((int)this->vt + 0xbc))(this, diff);
 }
-s32 DreamSys__GetCurrentStage(DreamSys *this) {
-    return this->currentStage;
+s32 DreamSys__GetCurrentLocation(DreamSys *this) {
+    return this->currentLocation;
 }
 void DreamSys__ProcessChunkChange(DreamSys *this, void *entity, int changeType) {
     if (changeType == 5) {
@@ -1225,12 +1225,12 @@ void DreamSys__InstanceEffectsOnJournal(DreamSys *this, void *entity, int effect
             break;
         case 10:
             {
-                int oldStage = this->currentStage;
+                int oldStage = this->currentLocation;
                 int stageDelta = (*(code *)(*(int *)entity + 0x154))(entity);
-                this->currentStage = -stageDelta;
+                this->currentLocation = -stageDelta;
                 (*(code *)((int)this->vt + 0x1c4))(this);
-                if (this->currentStage < 0) {
-                    this->currentStage = oldStage;
+                if (this->currentLocation < 0) {
+                    this->currentLocation = oldStage;
                 }
             }
             break;
@@ -1288,7 +1288,7 @@ void DreamSys__InitMoodContibutors(DreamSys *this, MoodGraphPoint *special) {
 }
 void DreamSys__LogChunkMood(DreamSys *this, PlayerSpawnPoint *currentPos) {
     MoodGraphPoint *mood;
-    mood = GetMoodFromStageChunk(this->currentStage, (StageChunk *)&currentPos->chunk);
+    mood = GetMoodFromLocationChunk(this->currentLocation, (LocationChunk *)&currentPos->chunk);
     this->vt->LogMood(this, &this->areaMoods, mood);
 }
 void DreamSys__LogInstanceMood(DreamSys *this, MoodGraphPoint *source) {
@@ -1400,7 +1400,7 @@ void DreamSys__FlashbackSaving(DreamSys *this, void *unused, void *unused2) {
     if ((GET_PTR(this, 0x4c) != NULL) && (rnd = rand(), rnd == (rnd / 3) * 3)) {
         void *spawnData = (*(code *)(**(int **)GET_PTR(this, 0x4c) + 0x10c))(GET_PTR(this, 0x4c), 0, 0);
         ReadDreamSysVector(this, buffer);
-        (*(code *)((int)this->vt + 0x214))(this, this->currentStage, spawnData, buffer, unused, unused2, GET_PTR(this, 0x180));
+        (*(code *)((int)this->vt + 0x214))(this, this->currentLocation, spawnData, buffer, unused, unused2, GET_PTR(this, 0x180));
     }
 }
 void DreamSys__ResetFlashbackList(DreamSys *this) {
@@ -1477,30 +1477,30 @@ s32 CalcNavigationScore(void) {
     }
     return currentScore;
 }
-s32 GetRandomSpawnFromStage(PlayerSpawnPoint *target, s32 stg, s32 unused) {
-    StageSpawn *spawn;
-    s32 newStage;
+s32 GetRandomSpawnFromLocation(PlayerSpawnPoint *target, s32 stg, s32 unused) {
+    LocationSpawn *spawn;
+    s32 newLocation;
     if (stg >= 0) {
-        newStage = rand() % 6;
-        if (newStage == stg) {
-            newStage += 1;
-            if (newStage > 5) {
-                newStage = 0;
+        newLocation = rand() % 6;
+        if (newLocation == stg) {
+            newLocation += 1;
+            if (newLocation > 5) {
+                newLocation = 0;
             }
         }
     } else {
-        newStage = -stg;
+        newLocation = -stg;
     }
-    spawn = &STAGE_SPAWNPOINTS[newStage][rand() % (s32)LEN_STAGE_SPAWNPOINTS[newStage]];
+    spawn = &LOCATION_SPAWNPOINTS[newLocation][rand() % (s32)LEN_LOCATION_SPAWNPOINTS[newLocation]];
     target->tile = spawn->tile;
     target->chunk = spawn->chunk;
     target->position = (SPAWN_POS_ADJUST[spawn->adjustment]);
     *gpDinamicLinkPenalty += 1;
-    return newStage;
+    return newLocation;
 }
 /// NOTE: This is a stub - original implementation delegates to GetStaticSpawn
 /// with arguments pre-loaded in registers via tail call optimization.
-int TestForStaticLink(PlayerSpawnPoint *linkCoords, PlayerSpawnPoint *currentPos, int currentStage) {
+int TestForStaticLink(PlayerSpawnPoint *linkCoords, PlayerSpawnPoint *currentPos, int currentLocation) {
     return -1;
 }
 /// NOTE: This is a stub - original implementation delegates to GetStaticSpawn
@@ -1534,17 +1534,17 @@ static bool CheckAngleProximity(int angle, u8 dir) {
     return (diff + 0x2cU & 0xffff) < 0x59;
 }
 static // Validates stage link. Returns stage ID or -1.
-s32 ValidateStageLink(int linkCoords, int stage, int *data, u32 flags) {
+s32 ValidateLocationLink(int linkCoords, int stage, int *data, u32 flags) {
     if ((stage == 3) || (stage == 1)) {
-        goto checkStage5;
+        goto checkLocation5;
     }
     if (stage != 5) {
         if ((stage != 9) && (stage != 0xc)) {
             return -1;
         }
-        goto checkStage5;
+        goto checkLocation5;
     }
-checkStage5:
+checkLocation5:
     if (stage != 5) {
         if ((stage == 9) && (*(s16 *)((int)data + 6) < 0x800)) {
             return -1;
@@ -1558,7 +1558,7 @@ doSpawn:
     if ((flags & 1) != 0) {
         stage = -0xc;
     }
-    Spawn_CurrentType = GetRandomSpawnFromStage((PlayerSpawnPoint *)linkCoords, stage, flags);
+    Spawn_CurrentType = GetRandomSpawnFromLocation((PlayerSpawnPoint *)linkCoords, stage, flags);
     return Spawn_CurrentType;
 }
 static // Gets staircase type pointer for current stage.
@@ -1646,31 +1646,31 @@ int GetStaticSpawn(u32 outPos, s16 *entry, int chunkIdx, int countBase, int entr
 }
 s32 GenerateInitialSpawn(PlayerSpawnPoint *target, s32 *timeLimit, MoodGraphPoint *mood, s32 day) {
     s16 sp10;
-    StageSpawn *newSpawn;
-    s32 defaultStage;
+    LocationSpawn *newSpawn;
+    s32 defaultLocation;
     s32 stg;
     s32 i;
     u8 max_i;
-    stg = GetStageChunkFromMood(&sp10, mood);
+    stg = GetLocationChunkFromMood(&sp10, mood);
     if (stg >= 0) {
-        *timeLimit = (s32)STAGE_TIME_LIMITS[stg];
-        max_i = (u8)LEN_STAGE_SPAWNPOINTS[stg];
-        newSpawn = STAGE_SPAWNPOINTS[stg];
+        *timeLimit = (s32)LOCATION_TIME_LIMITS[stg];
+        max_i = (u8)LEN_LOCATION_SPAWNPOINTS[stg];
+        newSpawn = LOCATION_SPAWNPOINTS[stg];
         for (i = 0; i < max_i; i++) {
             if (sp10 != *(s16 *)&(newSpawn->chunk)) {
                 break;
             }
             newSpawn += 1;
         }
-        newSpawn = &STAGE_SPAWNPOINTS[stg][(s16)sp10 % (s32)max_i];
+        newSpawn = &LOCATION_SPAWNPOINTS[stg][(s16)sp10 % (s32)max_i];
         target->chunk = newSpawn->chunk;
         target->tile = newSpawn->tile;
         target->position = SPAWN_POS_ADJUST[newSpawn->adjustment];
         return stg;
     }
-    defaultStage = GetRandomSpawnFromStage(target, stg, day);
-    *timeLimit = (s32)STAGE_TIME_LIMITS[defaultStage];
-    return defaultStage;
+    defaultLocation = GetRandomSpawnFromLocation(target, stg, day);
+    *timeLimit = (s32)LOCATION_TIME_LIMITS[defaultLocation];
+    return defaultLocation;
 }
 MoodGraphPoint *IsDaySpecial(CinematicCall *cinematic, s32 day) {
     s16 *daysTable;

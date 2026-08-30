@@ -18,10 +18,10 @@ memset = 0x8004117C;
 rand = 0x80049480;
 srand = 0x800494a8;
 
-GetStageGridDimensionsTable = 0x800494bc;
-GetStageGridDimensions = 0x800494d8;
-GetStageChunkFromMood = 0x8004950c;
-GetMoodFromStageChunk = 0x800495b8;
+GetLocationGridDimensionsTable = 0x800494bc;
+GetLocationGridDimensions = 0x800494d8;
+GetLocationChunkFromMood = 0x8004950c;
+GetMoodFromLocationChunk = 0x800495b8;
 
 New_DreamSys = 0x80058774;
 DreamSys__DreamSys = 0x800587f0;
@@ -61,7 +61,7 @@ DreamSys__ResetFlashbackList = 0x8005B8FC;
 Get_vtable_DreamSys = 0x8005ba40;
 InitNavChallengesArray = 0x8005ba50;
 CalcNavigationScore = 0x8005ba7c;
-GetRandomSpawnFromStage = 0x8005bb30;
+GetRandomSpawnFromLocation = 0x8005bb30;
 TestForStaticLink = 0x8005bcb4;
 Test4TunnelLinks = 0x8005bcf8;
 Test4InstantTeleporters = 0x8005bf74;
@@ -76,7 +76,7 @@ New_Entity = 0x8005cfdc;
 Entity__Entity = 0x8005d068;
 Entity__GetMoodEffect = 0x8005d944;
 Entity__GetUnlockEffect = 0x8005d95c;
-Entity__GetLinkStage = 0x8005d994;
+Entity__GetLinkLocation = 0x8005d994;
 Entity__GetEventVideo = 0x8005d9d0;
 Get_vtable_Entity = 0x8005e150;
 
@@ -85,7 +85,7 @@ class_65650__Constructor = 0x80065650;
 
 // First short is amount of columns, second is amount of rows
 // third and fourth is a bool determining whether the stage is "tower-like"
-STAGE_GRID_DIMENSIONS = 0x800861d4; // type:s16 size:112
+LOCATION_GRID_DIMENSIONS = 0x800861d4; // type:s16 size:112
 
 // Low byte is dynamic effect, high byte is upper effect
 STG00_CHUNK_MOODS = 0x80086244; // type:s16 size:12
@@ -102,12 +102,12 @@ STG10_CHUNK_MOODS = 0x80086540; // type:s16 size:8
 STG11_CHUNK_MOODS = 0x80086548; // type:s16 size:24
 STG12_CHUNK_MOODS = 0x80086560; // type:s16 size:40
 STG13_CHUNK_MOODS = 0x80086588; // type:s16 size:8
-STAGE_CHUNK_MOODS = 0x80086590; // type:s32 size:56
+LOCATION_CHUNK_MOODS = 0x80086590; // type:s32 size:56
 
 DREAMSYS_METHODS = 0x80087bdc;
 
 // Array of shorts defining dream length is seconds
-STAGE_TIME_LIMITS = 0x80087f14; // type:s16 size:28
+LOCATION_TIME_LIMITS = 0x80087f14; // type:s16 size:28
 
 // First short is relative X adjustment, second is Y off ground, third is Z.
 SPAWN_POS_ADJUST = 0x80087f30; // type:s16 size:222
@@ -116,14 +116,14 @@ SPAWN_POS_ADJUST = 0x80087f30; // type:s16 size:222
 // Second short, Low = Tile column, High = Tile row
 // Third short, Low = Adjustment index (see above), High = unused
 STG00_SPAWNPOINTS = 0x80088010; // type:s16 size:48
-STAGE_SPAWNPOINTS = 0x800885b8;
-LEN_STAGE_SPAWNPOINTS = 0x800885f0; // type:s8 size:14
+LOCATION_SPAWNPOINTS = 0x800885b8;
+LEN_LOCATION_SPAWNPOINTS = 0x800885f0; // type:s8 size:14
 
-// Same as STAGE_SPAWNPOINTS, but this time third short high represents a nav challenge index.
+// Same as LOCATION_SPAWNPOINTS, but this time third short high represents a nav challenge index.
 STG00_PERMALINK_SPAWNS = 0x80088600; // type:s16 size:18
-STAGE_PERMALINK_SPAWNS = 0x80088664;
+LOCATION_PERMALINK_SPAWNS = 0x80088664;
 
-//First two shorts are like STAGE_SPAWNPOINTS, but a tile value of 0xFFFF means "any tile"
+//First two shorts are like LOCATION_SPAWNPOINTS, but a tile value of 0xFFFF means "any tile"
 //Third short low is target stage, while the high byte is an index from the spawn table above
 STG00_PERMALINK_TRIGGERS = 0x8008869c; // type:s16 size:18
 STG02_PERMALINK_TRIGGERS = 0x800886b0;
@@ -135,8 +135,8 @@ STG09_PERMALINK_TRIGGERS = 0x800886f0;
 STG10_PERMALINK_TRIGGERS = 0x800886f8;
 STG11_PERMALINK_TRIGGERS = 0x80088700;
 STG12_PERMALINK_TRIGGERS = 0x80088708;
-STAGE_PERMALINK_TRIGGERS = 0x80088710; // type:s32 size:56
-LEN_STAGE_PERMALINK_TRIGGERS = 0x80088748; // type:s8 size:14
+LOCATION_PERMALINK_TRIGGERS = 0x80088710; // type:s32 size:56
+LEN_LOCATION_PERMALINK_TRIGGERS = 0x80088748; // type:s8 size:14
 
 // Array of shorts defining special days (day value is 1-indexed)
 SPECIAL_DAYS = 0x80088ccc; // type:s16 size:84

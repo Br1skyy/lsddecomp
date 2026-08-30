@@ -302,8 +302,8 @@ datastub  D_80090C5C
 datastub  D_80090C60
 datastub  D_80090C64
 datastub  DAT_1f801c0a
-datastub  Stage_AdjBaseOffsets
-datastub  Stage_AdjAltOffsets
+datastub  Location_AdjBaseOffsets
+datastub  Location_AdjAltOffsets
 datastub  ParticleGroundVelocity3
 datastub  DreamInterpParamBuf
 datastub  DreamSpawnPosData
@@ -330,7 +330,7 @@ datastub  VoiceSoundId
 datastub  VoiceProgramIdx
 datastub  VoiceChannel
 datastub  VoiceBankIdx
-datastub  VoiceStage
+datastub  VoiceLocation
 datastub  Spu_VoiceAgeSt
 datastub  VoiceStatus
 datastub  Spu_VolFadeActive
@@ -392,11 +392,11 @@ datastub  SpuMaxPrograms
 datastub  SpuCurrentProgramData
 datastub  Spu_UnknownE970
 datastub  SpuCurrentVoiceAttr
-datastub  Stage_CamMatrixRow0
-datastub  Stage_CamMatrixRow1
-datastub  Stage_CamMatrixRow2
-datastub  Stage_CamMatrixRow3
-datastub  Stage_CamMatrixTrans
+datastub  Location_CamMatrixRow0
+datastub  Location_CamMatrixRow1
+datastub  Location_CamMatrixRow2
+datastub  Location_CamMatrixRow3
+datastub  Location_CamMatrixTrans
 datastub  SpuVoiceCount
 datastub  Spu_InitFlag
 datastub  SpuOpenChannelMask

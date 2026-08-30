@@ -1168,7 +1168,7 @@ dlabel D_80089AD4
     /* 7A41C 80089C1C 64D80580 */ .word  func_8005d864 
     /* 7A420 80089C20 44D90580 */ .word Entity__GetMoodEffect
     /* 7A424 80089C24 5CD90580 */ .word Entity__GetUnlockEffect
-    /* 7A428 80089C28 94D90580 */ .word Entity__GetLinkStage
+    /* 7A428 80089C28 94D90580 */ .word Entity__GetLinkLocation
     /* 7A42C 80089C2C D0D90580 */ .word Entity__GetEventVideo
     /* 7A430 80089C30 F4D90580 */ .word  func_8005d9f4 
     /* 7A434 80089C34 3CDA0580 */ .word  func_8005da3c 

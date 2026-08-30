@@ -6,8 +6,8 @@
 */
 
 /* --- from auto_defsym_args.txt --- */
-.set Stage_AdjDirectionOffsets, D_800868A8
-.globl Stage_AdjDirectionOffsets
+.set Location_AdjDirectionOffsets, D_800868A8
+.globl Location_AdjDirectionOffsets
 .set DreamCamMotionAmp, D_80087E20
 .globl DreamCamMotionAmp
 .set Other_SoundTypeLookupTbl, D_80089A8C
@@ -38,12 +38,12 @@
 .globl Unk_ParticleBuf28
 .set Memory_ObjType11Vtable, D_8006F0B8
 .globl Memory_ObjType11Vtable
-.set MusicVolLineDataStage2, D_80087444
-.globl MusicVolLineDataStage2
-.set Stage_EntityVtable, D_80086B60
-.globl Stage_EntityVtable
-.set Stage_StageGridVtable, D_80086668
-.globl Stage_StageGridVtable
+.set MusicVolLineDataLocation2, D_80087444
+.globl MusicVolLineDataLocation2
+.set Location_EntityVtable, D_80086B60
+.globl Location_EntityVtable
+.set Location_GridVtable, D_80086668
+.globl Location_GridVtable
 .set DreamColourEffectData, D_80087E80
 .globl DreamColourEffectData
 .set CdDaUpdateLock, D_8008A88C
@@ -54,8 +54,8 @@
 .globl ParticleModeSubIndex
 .set Vtable_Entity3, D_80086F88
 .globl Vtable_Entity3
-.set PTR_StageSecondaryEntityTablePtr, D_800876B4
-.globl PTR_StageSecondaryEntityTablePtr
+.set PTR_LocationSecondaryEntityTablePtr, D_800876B4
+.globl PTR_LocationSecondaryEntityTablePtr
 .set ParticleGridTier, D_8008AB50
 .globl ParticleGridTier
 .set Scene_CurrentId, D_8008A8CC
@@ -76,8 +76,8 @@
 .globl SpuSeqTrackVtableB
 .set Memory_ObjType4Vtable, D_8006EC74
 .globl Memory_ObjType4Vtable
-.set Stage_ChunkSpawnCounts, D_80086170
-.globl Stage_ChunkSpawnCounts
+.set Location_ChunkSpawnCounts, D_80086170
+.globl Location_ChunkSpawnCounts
 .set ParticlePaletteDefault, D_8008726C
 .globl ParticlePaletteDefault
 .set DreamSymbolSequence, D_80087BD4
@@ -90,14 +90,14 @@
 .globl ParticleExtraChunkPtr
 .set GsGpuVtable, D_8006BEA0
 .globl GsGpuVtable
-.set Stage_McDeleteFilename, D_8008AAAC
-.globl Stage_McDeleteFilename
+.set Location_McDeleteFilename, D_8008AAAC
+.globl Location_McDeleteFilename
 .set Memory_ObjType19Vtable, D_8006F514
 .globl Memory_ObjType19Vtable
 .set CdReadSectorCount, D_8008A880
 .globl CdReadSectorCount
-.set Stage_AdjEdgeFlags, D_8008688C
-.globl Stage_AdjEdgeFlags
+.set Location_AdjEdgeFlags, D_8008688C
+.globl Location_AdjEdgeFlags
 .set Memory_ObjType20Vtable, D_8006F590
 .globl Memory_ObjType20Vtable
 .set Vtable_Entity4, D_80087034
@@ -122,8 +122,8 @@
 .globl Unk_DreamBuf58
 .set GpuCurrentDisplayList, D_8008A83C
 .globl GpuCurrentDisplayList
-.set StageChildObjects, D_8008AB98
-.globl StageChildObjects
+.set LocationChildObjects, D_8008AB98
+.globl LocationChildObjects
 .set CdDaCallbackActive, D_8008A89C
 .globl CdDaCallbackActive
 .set ParticleSecondarySlots, D_8008AC9C
@@ -156,12 +156,12 @@
 .globl Other_EntityListIter
 .set DreamStaircaseColourAC, D_80087EFC
 .globl DreamStaircaseColourAC
-.set Stage_StageChunkVtable, D_800865C8
-.globl Stage_StageChunkVtable
+.set Location_ChunkVtable, D_800865C8
+.globl Location_ChunkVtable
 .set ParticleSpawnAllocator, D_8008ACA8
 .globl ParticleSpawnAllocator
-.set Stage_NavChallengeBuf, D_8008AA1C
-.globl Stage_NavChallengeBuf
+.set Location_NavChallengeBuf, D_8008AA1C
+.globl Location_NavChallengeBuf
 .set Scene_TimelineVtable, D_8006DA34
 .globl Scene_TimelineVtable
 .set TimerSpinCounter, D_8006DC8C
@@ -170,12 +170,12 @@
 .globl CdOperationBusy
 .set Memory_ObjType15Vtable, D_8006F2C4
 .globl Memory_ObjType15Vtable
-.set Stage_ChunkDataTableVtable, D_80086AA0
-.globl Stage_ChunkDataTableVtable
+.set Location_ChunkDataTableVtable, D_80086AA0
+.globl Location_ChunkDataTableVtable
 .set CdStateMachine, D_8008A878
 .globl CdStateMachine
-.set MusicVolLineTargetStage2, D_80087450
-.globl MusicVolLineTargetStage2
+.set MusicVolLineTargetLocation2, D_80087450
+.globl MusicVolLineTargetLocation2
 .set SpuTransferInProgress, D_8006DCFC
 .globl SpuTransferInProgress
 .set ParticleTickTimer, D_8008ACAC
@@ -222,8 +222,8 @@
 .globl CdFileParam
 .set CdVsyncMode, D_8008A8A4
 .globl CdVsyncMode
-.set StageSecondaryEntityCount, D_800876EC
-.globl StageSecondaryEntityCount
+.set LocationSecondaryEntityCount, D_800876EC
+.globl LocationSecondaryEntityCount
 .set Other_SoundTypeDataTbl, D_80089A44
 .globl Other_SoundTypeDataTbl
 .set ParticleSysEntityPtr, D_8008AB4C
@@ -234,8 +234,8 @@
 .globl ParticleEntityScanIndex
 .set CdActiveFilePtr, D_8008A874
 .globl CdActiveFilePtr
-.set Stage_McSplitHalfSize, D_8008A97C
-.globl Stage_McSplitHalfSize
+.set Location_McSplitHalfSize, D_8008A97C
+.globl Location_McSplitHalfSize
 .set ParticleModeDenomTable, D_800873D8
 .globl ParticleModeDenomTable
 .set CdSeekSectorAddr, D_8008A87C
@@ -274,10 +274,10 @@
 .globl Memory_ObjType14Vtable
 .set Memory_SoundEffectOffsetTbl, D_800819E8
 .globl Memory_SoundEffectOffsetTbl
-.set MusicVolLineDataStage3, D_8008745C
-.globl MusicVolLineDataStage3
-.set StageChildTransform, D_8008AB94
-.globl StageChildTransform
+.set MusicVolLineDataLocation3, D_8008745C
+.globl MusicVolLineDataLocation3
+.set LocationChildTransform, D_8008AB94
+.globl LocationChildTransform
 .set EntityLayerRegisterFuncTable, D_800874B0
 .globl EntityLayerRegisterFuncTable
 .set Memory_ObjType24Vtable, D_80081940
@@ -288,8 +288,8 @@
 .globl Ptr_DreamParticle
 .set Unk_ParticleBufC4, D_800872C4
 .globl Unk_ParticleBufC4
-.set Stage_McSplitIoState, D_8008A978
-.globl Stage_McSplitIoState
+.set Location_McSplitIoState, D_8008A978
+.globl Location_McSplitIoState
 .set SpuSeqPlayerVtable, D_8006E48C
 .globl SpuSeqPlayerVtable
 .set DreamLinkActionFuncs, D_80087E3C
@@ -304,8 +304,8 @@
 .globl Cd_FilePathSuffixArea
 .set Ptr_Unk88c4c, D_80088C4C
 .globl Ptr_Unk88c4c
-.set Stage_McPathPrefix0, D_8008AAA4
-.globl Stage_McPathPrefix0
+.set Location_McPathPrefix0, D_8008AAA4
+.globl Location_McPathPrefix0
 .set SpuRegDefaults, D_8006DC5C
 .globl SpuRegDefaults
 .set Vtable_Entity2, D_80086ED0
@@ -316,8 +316,8 @@
 .globl Cd_ReadModeWidth
 .set CdJobListHead, D_8008A894
 .globl CdJobListHead
-.set ParticleStageObject, D_8008ACA4
-.globl ParticleStageObject
+.set ParticleLocationObject, D_8008ACA4
+.globl ParticleLocationObject
 .set ParticleDefVtableArray, D_8008730C
 .globl ParticleDefVtableArray
 .set Scene_Vtable, D_8006D940
@@ -330,18 +330,18 @@
 .globl Memory_SoundPathCdi
 .set EntityVisualColourSet, D_8008ABA4
 .globl EntityVisualColourSet
-.set Stage_MapChunkVtable, D_800866E8
-.globl Stage_MapChunkVtable
+.set Location_MapChunkVtable, D_800866E8
+.globl Location_MapChunkVtable
 .set Memory_ObjType9Vtable, D_8006EFAC
 .globl Memory_ObjType9Vtable
-.set ParticleStageIndex, D_8008AC6C
-.globl ParticleStageIndex
+.set ParticleLocationIndex, D_8008AC6C
+.globl ParticleLocationIndex
 .set CdDaVsyncInstalled, D_8008A890
 .globl CdDaVsyncInstalled
 .set SpuInitialized, D_8006E184
 .globl SpuInitialized
-.set ParticleStageDefTable, D_800873EC
-.globl ParticleStageDefTable
+.set ParticleLocationDefTable, D_800873EC
+.globl ParticleLocationDefTable
 .set Other_CurrentEntityPtr, D_8008ABFC
 .globl Other_CurrentEntityPtr
 .set DreamStaircaseTargetB, D_8008ABC8
@@ -374,8 +374,8 @@
 .globl Memory_ObjType2Vtable
 .set Memory_ObjType6Vtable, D_8006EE1C
 .globl Memory_ObjType6Vtable
-.set MusicVolLineTargetStage3, D_80087468
-.globl MusicVolLineTargetStage3
+.set MusicVolLineTargetLocation3, D_80087468
+.globl MusicVolLineTargetLocation3
 .set Other_SoundEffectVtableAlt, D_8006B5CC
 .globl Other_SoundEffectVtableAlt
 .set Memory_ObjType12Vtable, D_8006F13C
@@ -384,8 +384,8 @@
 .globl Other_SoundEntityParam2
 .set DreamStaircaseSpawnCount, D_80088CBC
 .globl DreamStaircaseSpawnCount
-.set Stage_MemoryCardVtable, D_80086DC4
-.globl Stage_MemoryCardVtable
+.set Location_MemoryCardVtable, D_80086DC4
+.globl Location_MemoryCardVtable
 .set DreamDefaultVisual, D_80087E08
 .globl DreamDefaultVisual
 .set PrimSfxVtable, D_8006D370
@@ -398,8 +398,8 @@
 .globl Memory_ObjType16Vtable
 .set Cd_ReadModeHeight, D_8008A8B4
 .globl Cd_ReadModeHeight
-.set Stage_McPathPrefix1, D_8008AA9C
-.globl Stage_McPathPrefix1
+.set Location_McPathPrefix1, D_8008AA9C
+.globl Location_McPathPrefix1
 .set DreamCamSwayLimit, D_80087E5C
 .globl DreamCamSwayLimit
 .set PrimCdDaVtable, D_8006D4E8
@@ -420,10 +420,10 @@
 .globl Other_RotationData
 .set Unk_ParticleBuf1C, D_8008721C
 .globl Unk_ParticleBuf1C
-.set Stage_McEventStatusResults, D_80086E78
-.globl Stage_McEventStatusResults
-.set Stage_ChunkDataVtable, D_800869D8
-.globl Stage_ChunkDataVtable
+.set Location_McEventStatusResults, D_80086E78
+.globl Location_McEventStatusResults
+.set Location_ChunkDataVtable, D_800869D8
+.globl Location_ChunkDataVtable
 .set TimerMode, D_8006DC90
 .globl TimerMode
 .set ParticleColourTable, D_80087174
@@ -448,14 +448,14 @@
 .globl TimerCallback_SpuSet
 .set TimerCallback_VSync, D_80032AD0
 .globl TimerCallback_VSync
-.set Stage_NavChallengeWord1, D_800114AC
-.globl Stage_NavChallengeWord1
-.set Stage_NavChallengeWord2, D_800114B0
-.globl Stage_NavChallengeWord2
-.set Stage_McEncodingData, D_80011550
-.globl Stage_McEncodingData
-.set Stage_McEncodingData2, D_80011551
-.globl Stage_McEncodingData2
+.set Location_NavChallengeWord1, D_800114AC
+.globl Location_NavChallengeWord1
+.set Location_NavChallengeWord2, D_800114B0
+.globl Location_NavChallengeWord2
+.set Location_McEncodingData, D_80011550
+.globl Location_McEncodingData
+.set Location_McEncodingData2, D_80011551
+.globl Location_McEncodingData2
 .set Vtable_EntitySubObject2, D_800879C4
 .globl Vtable_EntitySubObject2
 .set Unk_SpuBuf154, D_8008E154

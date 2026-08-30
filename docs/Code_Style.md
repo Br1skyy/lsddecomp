@@ -38,7 +38,7 @@ This document defines the coding standards and conventions for the LSD: Dream Em
 
 - **Global Variables**: PascalCase with module prefix
   ```c
-  DreamCurrentStage
+  DreamCurrentLocation
   GlobalTimer
   SystemHeapBase
   ```
@@ -71,7 +71,7 @@ This document defines the coding standards and conventions for the LSD: Dream Em
 - **Macros**: UPPER_SNAKE_CASE
   ```c
   #define MAX_ENTITIES 256
-  #define STAGE_COUNT 14
+  #define LOCATION_COUNT 14
   #define DREAM_BUFFER_SIZE 0x1000
   ```
 

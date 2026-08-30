@@ -38,32 +38,32 @@ The main game loop follows this pattern:
 5. **Audio Update** - Process sound and music
 6. **Memory Management** - Clean up unused resources
 
-## Stage System
+## Location System (Field System)
 
 ### World Structure
 
-The dream world is divided into 14 stages (STG00-STG13 on the disc; see STAGE_GRID_DIMENSIONS in StageGrid2.c). Each stage has its own grid dimensions:
+The dream world is divided into 14 stages (STG00-STG13 on the disc; see LOCATION_GRID_DIMENSIONS in LocationGrid2.c). Each stage has its own grid dimensions (canonical names per LSD: Dream Emulator Wiki - [Locations](https://dreamemulator.fandom.com/wiki/Locations)):
 
-| Stage | Grid (cols x rows) |
-|-------|--------------------|
-| Apartment | 1 x 5 |
-| Pit | 3 x 2 |
-| Kyoto | 6 x 6 |
-| Natural | 16 x 16 |
-| Happy | 6 x 5 |
-| Violence | 5 x 6 |
-| Tower | 1 x 6 |
-| Palace | 5 x 1 |
-| Flesh | 1 x 3 |
-| Clockwork | 1 x 2 |
-| Hallway | 3 x 1 |
-| Heaven | 4 x 3 |
-| Void | 4 x 5 |
-| Park | 2 x 2 |
+| Stage (Wiki Canonical) | STG ID | Grid (cols x rows) | Category |
+|------------------------|--------|--------------------|----------|
+| Bright Moon Cottage | STG00 | 1 x 5 | Main |
+| Pit & Temple | STG01 | 3 x 2 | Main |
+| Kyoto | STG02 | 6 x 6 | Main |
+| The Natural World | STG03 | 16 x 16 | Main |
+| Happy Town | STG04 | 6 x 5 | Main |
+| Violence District | STG05 | 5 x 6 | Main |
+| Moonlight Tower | STG06 | 1 x 6 | Secondary |
+| Temple Dojo | STG07 | 5 x 1 | Secondary |
+| Flesh Tunnels | STG08 | 1 x 3 | Secondary |
+| Clockwork Machines | STG09 | 1 x 2 | Secondary |
+| Long Hallway | STG10 | 3 x 1 | Secondary |
+| Sun Faces Heave | STG11 | 4 x 3 | Secondary |
+| Black Space | STG12 | 4 x 5 | Secondary |
+| Monument Park | STG13 | 2 x 2 | Secondary |
 
-### Stage Linking
+### Location Linking
 
-Stages are connected through various mechanisms:
+Locations (Fields) are connected through various mechanisms:
 
 - **Walking** - Natural boundaries and transitions
 - **Staircases** - Teleportation points with specific animations

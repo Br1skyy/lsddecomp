@@ -105,8 +105,8 @@ typedef struct {
 typedef struct {
     void *pVtbl;            /* 0x00 */
     int   nField_4;         /* 0x04 */
-    void *pStageGrid;       /* 0x08 */
-    void *pStageGridAlloc;  /* 0x0C */
+    void *pLocationGrid;       /* 0x08 */
+    void *pLocationGridAlloc;  /* 0x0C */
     void *pChunkData;       /* 0x10 */
     int   nField_14;        /* 0x14 */
     void *pField_18;        /* 0x18 */
@@ -119,24 +119,24 @@ typedef struct {
     void *pValueParam;      /* 0x34 */
     void *pValueParam2;     /* 0x38 */
     uint  dwModeFlags;      /* 0x3C */
-    void *pStageChunk;      /* 0x40 */
+    void *pLocationChunk;      /* 0x40 */
     void *pTexture;         /* 0x44 */
     void *pTmdModel;        /* 0x48 */
     int   nField_4c;        /* 0x4C */
 } RenderCtx;
 
-/* StageAlloc: stage allocation block (0x14 = 20 bytes)                */
-/* Passed as param_2 to Stage_Init                                     */
+/* LocationAlloc: stage allocation block (0x14 = 20 bytes)                */
+/* Passed as param_2 to Location_Init                                     */
 typedef struct {
     void *pVtbl;            /* 0x00 */
     int   field_0x04;       /* 0x04 */
-    void *pStageGrid;       /* 0x08 */
+    void *pLocationGrid;       /* 0x08 */
     void *pChunkList;       /* 0x0C */
     void *pChunkData;       /* 0x10 */
-} StageAlloc;
+} LocationAlloc;
 
-/* StageGridChannel: one channel in StageGrid (0x1C = 28 bytes)       */
-/* Channel array starts at offset 0xEC inside StageGrid, 7 entries    */
+/* LocationGridChannel: one channel in LocationGrid (0x1C = 28 bytes)       */
+/* Channel array starts at offset 0xEC inside LocationGrid, 7 entries    */
 typedef struct {
     int   field_0;          /* 0x00 */
     int   field_4;          /* 0x04 */
@@ -145,9 +145,9 @@ typedef struct {
     void *pField_10;        /* 0x10 */
     int   field_14;         /* 0x14 */
     int   field_18;         /* 0x18 */
-} StageGridChannel;
+} LocationGridChannel;
 
-/* StageGrid: extends EntityObj (first 59 fields 0x00-0xE8 shared)   */
+/* LocationGrid: extends EntityObj (first 59 fields 0x00-0xE8 shared)   */
 /* Channel data starts at 0xEC (overlapping EntityObj's last fields)  */
 /* Total size ~0x1E0 = 480 bytes                                      */
 typedef struct {
@@ -211,8 +211,8 @@ typedef struct {
     int   field_0xe0;       /* 0xE0 */
     int   field_0xe4;       /* 0xE4 */
     int   field_0xe8;       /* 0xE8 */
-    /* StageGrid-specific: 7 channels at 0xEC (overlaps EntityObj end) */
-    StageGridChannel channels[7]; /* 0xEC-0x1AF */
+    /* LocationGrid-specific: 7 channels at 0xEC (overlaps EntityObj end) */
+    LocationGridChannel channels[7]; /* 0xEC-0x1AF */
     /* Extension fields (0x1B0+) */
     int   sg_0x1B0;         /* 0x1B0 */
     int   sg_0x1B4;         /* 0x1B4 */
@@ -227,6 +227,6 @@ typedef struct {
     int   sg_0x1D8;         /* 0x1D8 */
     int   sg_0x1DC;         /* 0x1DC */
     int   sg_0x1E0;         /* 0x1E0 */
-} StageGrid;
+} LocationGrid;
 
 #endif /* LSDDE_STRUCTS_H */

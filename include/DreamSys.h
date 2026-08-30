@@ -74,7 +74,7 @@ typedef struct DreamSys {
 
 	MoodGraphContributor areaMoods;
 	MoodGraphContributor entityMoods;
-	s32 currentStage;
+	s32 currentLocation;
 	CinematicCall nextCinematic;
 	PlayerSpawnPoint linkCoordinates;
 	s32 unknown_sdata_0x178;
@@ -156,12 +156,12 @@ typedef enum DreamColors{
 	DREAM_COLOR_YELLOW, DREAM_COLOR_WHITE,
 }DreamColors;
 
-typedef struct StageSpawn{
+typedef struct LocationSpawn{
 	struct MapChunk chunk;
 	struct MapTile tile;
 	s8 adjustment;
 	s8 extra;
-}StageSpawn;
+}LocationSpawn;
 
 typedef struct StaticLinkTrigger{
 	struct MapChunk chunk;
@@ -176,13 +176,13 @@ typedef struct StaticLinkTrigger{
 // Jumptable holding all of DreamSys's "virtual" methods
 extern struct vtable_DreamSys DREAMSYS_METHODS;
 
-extern s16 STAGE_TIME_LIMITS[];
+extern s16 LOCATION_TIME_LIMITS[];
 extern struct RelativePos SPAWN_POS_ADJUST[];
-extern StageSpawn* STAGE_SPAWNPOINTS[];
-extern s8 LEN_STAGE_SPAWNPOINTS[];
-extern StageSpawn* STAGE_PERMALINK_SPAWNS[];
-extern StaticLinkTrigger* STAGE_PERMALINK_TRIGGERS[];
-extern s8 LEN_STAGE_PERMALINK_TRIGGERS[];
+extern LocationSpawn* LOCATION_SPAWNPOINTS[];
+extern s8 LEN_LOCATION_SPAWNPOINTS[];
+extern LocationSpawn* LOCATION_PERMALINK_SPAWNS[];
+extern StaticLinkTrigger* LOCATION_PERMALINK_TRIGGERS[];
+extern s8 LEN_LOCATION_PERMALINK_TRIGGERS[];
 extern s16 SPECIAL_DAYS[];
 extern s8 SPECIAL_COLORS[];
 
@@ -211,7 +211,7 @@ CinematicCall DreamSys__GetCinematic(DreamSys *this);
 
 void DreamSys__InitSpawnLoc(DreamSys *this);
 
-// Handles dynamic or instance links depending on currentStage
+// Handles dynamic or instance links depending on currentLocation
 void DreamSys__DynamicLink(DreamSys *this);
 
 /* 
@@ -273,7 +273,7 @@ s32 GenerateInitialSpawn(PlayerSpawnPoint *target, s32 *timeLimit, MoodGraphPoin
  * stg >= 0: dynamic link away from given stage
  * stg < 0:  semi-static link on stage (used by instances)
  * Both count toward the dynamic link penalty. */
-s32 GetRandomSpawnFromStage(PlayerSpawnPoint *target, s32 stg, s32 unused);
+s32 GetRandomSpawnFromLocation(PlayerSpawnPoint *target, s32 stg, s32 unused);
 
 // Checks for special days and loads a random cinematic if it is.
 // Returns mood graph contribution, or NULL if not special.

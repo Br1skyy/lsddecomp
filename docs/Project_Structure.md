@@ -160,14 +160,14 @@ Extracted game disc data (gitignored).
 
 1. **Dream System** (DreamSys.c)
    - State machine for dream progression
-   - Stage linking and navigation
+   - Location linking and navigation
    - Flashback system
 
 2. **Rendering** (Rendering_*.c)
    - World rendering
    - Entity rendering
    - UI rendering
-   - Stage rendering
+   - Location rendering
    - Chunk rendering
 
 3. **Entity System** (Entity*.c)

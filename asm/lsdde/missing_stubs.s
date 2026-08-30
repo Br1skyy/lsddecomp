@@ -495,8 +495,8 @@ EntityEventVideo:
 /* REMOVED (DATA): j _stub_ret */
 /* REMOVED (DATA): nop */
 
-.globl EntityLinkStage
-EntityLinkStage:
+.globl EntityLinkLocation
+EntityLinkLocation:
     j _stub_ret
     nop
 
@@ -652,7 +652,7 @@ func_8005c714:
     j _stub_ret
     nop
 
-/* REMOVED (DATA): LEN_STAGE_SPAWNPOINTS moved to .data section */
+/* REMOVED (DATA): LEN_LOCATION_SPAWNPOINTS moved to .data section */
 
 .globl LinkedListPopFront
 /* REMOVED: LinkedListPopFront: */
@@ -777,13 +777,13 @@ main_SBSS_START:
 
 /* REMOVED (PSYQ): MulMatrix2 provided by PsyQ library */
 
-/* REMOVED (DATA): .globl MusicVolLineDataStage2 */
-/* REMOVED (DATA): MusicVolLineDataStage2: */
+/* REMOVED (DATA): .globl MusicVolLineDataLocation2 */
+/* REMOVED (DATA): MusicVolLineDataLocation2: */
 /* REMOVED (DATA): j _stub_ret */
 /* REMOVED (DATA): nop */
 
-/* REMOVED (DATA): .globl MusicVolLineDataStage3 */
-/* REMOVED (DATA): MusicVolLineDataStage3: */
+/* REMOVED (DATA): .globl MusicVolLineDataLocation3 */
+/* REMOVED (DATA): MusicVolLineDataLocation3: */
 /* REMOVED (DATA): j _stub_ret */
 /* REMOVED (DATA): nop */
 
@@ -820,8 +820,8 @@ NavMenu_NewMenu:
 /* REMOVED:     j _stub_ret */
 /* REMOVED:     nop */
 /* REMOVED:  */
-.globl NewStageArea
-/* REMOVED: NewStageArea: */
+.globl NewLocationArea
+/* REMOVED: NewLocationArea: */
     j _stub_ret
     nop
 
@@ -1020,18 +1020,18 @@ NavMenu_NewMenu:
 /* REMOVED (DATA): j _stub_ret */
 /* REMOVED (DATA): nop */
 
-/* REMOVED (DATA): .globl ParticleStageDefTable */
-/* REMOVED (DATA): ParticleStageDefTable: */
+/* REMOVED (DATA): .globl ParticleLocationDefTable */
+/* REMOVED (DATA): ParticleLocationDefTable: */
 /* REMOVED (DATA): j _stub_ret */
 /* REMOVED (DATA): nop */
 
-/* REMOVED (DATA): .globl ParticleStageIndex */
-/* REMOVED (DATA): ParticleStageIndex: */
+/* REMOVED (DATA): .globl ParticleLocationIndex */
+/* REMOVED (DATA): ParticleLocationIndex: */
 /* REMOVED (DATA): j _stub_ret */
 /* REMOVED (DATA): nop */
 
-/* REMOVED (DATA): .globl ParticleStageObject */
-/* REMOVED (DATA): ParticleStageObject: */
+/* REMOVED (DATA): .globl ParticleLocationObject */
+/* REMOVED (DATA): ParticleLocationObject: */
 /* REMOVED (DATA): j _stub_ret */
 /* REMOVED (DATA): nop */
 
@@ -1403,144 +1403,144 @@ SpuCinema_Init:
     j _stub_ret
     nop
 
-/* REMOVED (DATA): .globl Stage_AdjDirectionOffsets */
-/* REMOVED (DATA): Stage_AdjDirectionOffsets: */
+/* REMOVED (DATA): .globl Location_AdjDirectionOffsets */
+/* REMOVED (DATA): Location_AdjDirectionOffsets: */
 /* REMOVED (DATA): j _stub_ret */
 /* REMOVED (DATA): nop */
 
-/* REMOVED (DATA): .globl Stage_AdjEdgeFlags */
-/* REMOVED (DATA): Stage_AdjEdgeFlags: */
+/* REMOVED (DATA): .globl Location_AdjEdgeFlags */
+/* REMOVED (DATA): Location_AdjEdgeFlags: */
 /* REMOVED (DATA): j _stub_ret */
 /* REMOVED (DATA): nop */
 
-/* REMOVED (DATA): .globl Stage_ChunkDataTableVtable */
-/* REMOVED (DATA): Stage_ChunkDataTableVtable: */
+/* REMOVED (DATA): .globl Location_ChunkDataTableVtable */
+/* REMOVED (DATA): Location_ChunkDataTableVtable: */
 /* REMOVED (DATA): j _stub_ret */
 /* REMOVED (DATA): nop */
 
-/* REMOVED (DATA): .globl Stage_ChunkDataVtable */
-/* REMOVED (DATA): Stage_ChunkDataVtable: */
+/* REMOVED (DATA): .globl Location_ChunkDataVtable */
+/* REMOVED (DATA): Location_ChunkDataVtable: */
 /* REMOVED (DATA): j _stub_ret */
 /* REMOVED (DATA): nop */
 
-/* REMOVED (DATA): .globl Stage_ChunkSpawnCounts */
-/* REMOVED (DATA): Stage_ChunkSpawnCounts: */
+/* REMOVED (DATA): .globl Location_ChunkSpawnCounts */
+/* REMOVED (DATA): Location_ChunkSpawnCounts: */
 /* REMOVED (DATA): j _stub_ret */
 /* REMOVED (DATA): nop */
 
-/* REMOVED (DATA): .globl Stage_EntityVtable */
-/* REMOVED (DATA): Stage_EntityVtable: */
+/* REMOVED (DATA): .globl Location_EntityVtable */
+/* REMOVED (DATA): Location_EntityVtable: */
 /* REMOVED (DATA): j _stub_ret */
 /* REMOVED (DATA): nop */
 
-.globl Stage_GetChunkVtable
-/* REMOVED: Stage_GetChunkVtable: */
+.globl Location_GetChunkVtable
+/* REMOVED: Location_GetChunkVtable: */
     j _stub_ret
     nop
 
-/* REMOVED (DATA): .globl Stage_MapChunkVtable */
-/* REMOVED (DATA): Stage_MapChunkVtable: */
+/* REMOVED (DATA): .globl Location_MapChunkVtable */
+/* REMOVED (DATA): Location_MapChunkVtable: */
 /* REMOVED (DATA): j _stub_ret */
 /* REMOVED (DATA): nop */
 
-/* REMOVED (DATA): .globl Stage_McDeleteFilename */
-/* REMOVED (DATA): Stage_McDeleteFilename: */
+/* REMOVED (DATA): .globl Location_McDeleteFilename */
+/* REMOVED (DATA): Location_McDeleteFilename: */
 /* REMOVED (DATA): j _stub_ret */
 /* REMOVED (DATA): nop */
 
-/* REMOVED (DATA): .globl Stage_McEventStatusResults */
-/* REMOVED (DATA): Stage_McEventStatusResults: */
+/* REMOVED (DATA): .globl Location_McEventStatusResults */
+/* REMOVED (DATA): Location_McEventStatusResults: */
 /* REMOVED (DATA): j _stub_ret */
 /* REMOVED (DATA): nop */
 
-/* REMOVED (DATA): .globl Stage_McPathPrefix0 */
-/* REMOVED (DATA): Stage_McPathPrefix0: */
+/* REMOVED (DATA): .globl Location_McPathPrefix0 */
+/* REMOVED (DATA): Location_McPathPrefix0: */
 /* REMOVED (DATA): j _stub_ret */
 /* REMOVED (DATA): nop */
 
-/* REMOVED (DATA): .globl Stage_McPathPrefix1 */
-/* REMOVED (DATA): Stage_McPathPrefix1: */
+/* REMOVED (DATA): .globl Location_McPathPrefix1 */
+/* REMOVED (DATA): Location_McPathPrefix1: */
 /* REMOVED (DATA): j _stub_ret */
 /* REMOVED (DATA): nop */
 
-/* REMOVED (DATA): .globl Stage_McSplitHalfSize */
-/* REMOVED (DATA): Stage_McSplitHalfSize: */
+/* REMOVED (DATA): .globl Location_McSplitHalfSize */
+/* REMOVED (DATA): Location_McSplitHalfSize: */
 /* REMOVED (DATA): j _stub_ret */
 /* REMOVED (DATA): nop */
 
-/* REMOVED (DATA): .globl Stage_McSplitIoState */
-/* REMOVED (DATA): Stage_McSplitIoState: */
+/* REMOVED (DATA): .globl Location_McSplitIoState */
+/* REMOVED (DATA): Location_McSplitIoState: */
 /* REMOVED (DATA): j _stub_ret */
 /* REMOVED (DATA): nop */
 
-/* REMOVED (DATA): .globl Stage_MemoryCardVtable */
-/* REMOVED (DATA): Stage_MemoryCardVtable: */
+/* REMOVED (DATA): .globl Location_MemoryCardVtable */
+/* REMOVED (DATA): Location_MemoryCardVtable: */
 /* REMOVED (DATA): j _stub_ret */
 /* REMOVED (DATA): nop */
 
-/* REMOVED (DATA): .globl Stage_NavChallengeBuf */
-/* REMOVED (DATA): Stage_NavChallengeBuf: */
+/* REMOVED (DATA): .globl Location_NavChallengeBuf */
+/* REMOVED (DATA): Location_NavChallengeBuf: */
 /* REMOVED (DATA): j _stub_ret */
 /* REMOVED (DATA): nop */
 
-/* REMOVED: STAGE_SPAWNPOINTS is defined by the real data table in data/DreamSys.data.s. */
+/* REMOVED: LOCATION_SPAWNPOINTS is defined by the real data table in data/DreamSys.data.s. */
 
-/* REMOVED (DATA): .globl Stage_StageChunkVtable */
-/* REMOVED (DATA): Stage_StageChunkVtable: */
+/* REMOVED (DATA): .globl Location_ChunkVtable */
+/* REMOVED (DATA): Location_ChunkVtable: */
 /* REMOVED (DATA): j _stub_ret */
 /* REMOVED (DATA): nop */
 
-/* REMOVED (DATA): .globl Stage_StageGridVtable */
-/* REMOVED (DATA): Stage_StageGridVtable: */
+/* REMOVED (DATA): .globl Location_GridVtable */
+/* REMOVED (DATA): Location_GridVtable: */
 /* REMOVED (DATA): j _stub_ret */
 /* REMOVED (DATA): nop */
 
-/* REMOVED: STAGE_TIME_LIMITS is defined by the real data table in data/DreamSys.data.s. */
+/* REMOVED: LOCATION_TIME_LIMITS is defined by the real data table in data/DreamSys.data.s. */
 
-/* REMOVED (DATA): .globl StageChildObjects */
-/* REMOVED (DATA): StageChildObjects: */
+/* REMOVED (DATA): .globl LocationChildObjects */
+/* REMOVED (DATA): LocationChildObjects: */
 /* REMOVED (DATA): j _stub_ret */
 /* REMOVED (DATA): nop */
 
-/* REMOVED (DATA): .globl StageChildTransform */
-/* REMOVED (DATA): StageChildTransform: */
+/* REMOVED (DATA): .globl LocationChildTransform */
+/* REMOVED (DATA): LocationChildTransform: */
 /* REMOVED (DATA): j _stub_ret */
 /* REMOVED (DATA): nop */
 
-.globl StageChunk_New
-StageChunk_New:
+.globl LocationChunk_New
+LocationChunk_New:
     j _stub_ret
     nop
 
-.globl StageEntity_Alloc
-/* REMOVED: StageEntity_Alloc: */
+.globl LocationEntity_Alloc
+/* REMOVED: LocationEntity_Alloc: */
     j _stub_ret
     nop
 
-.globl StageEntity_SetDreamFlag
-/* REMOVED: StageEntity_SetDreamFlag: */
+.globl LocationEntity_SetDreamFlag
+/* REMOVED: LocationEntity_SetDreamFlag: */
     j _stub_ret
     nop
 
-.globl StageGrid_Alloc
-/* REMOVED: StageGrid_Alloc: */
+.globl LocationGrid_Alloc
+/* REMOVED: LocationGrid_Alloc: */
     j _stub_ret
     nop
 
-/* REMOVED: StageGrid_GetDataPtr replaced by implementation in Sound.c */
+/* REMOVED: LocationGrid_GetDataPtr replaced by implementation in Sound.c */
 
-.globl StageGrid_New
-StageGrid_New:
+.globl LocationGrid_New
+LocationGrid_New:
     j _stub_ret
     nop
 
-.globl StageRow_New
-StageRow_New:
+.globl LocationRow_New
+LocationRow_New:
     j _stub_ret
     nop
 
-/* REMOVED (DATA): .globl StageSecondaryEntityCount */
-/* REMOVED (DATA): StageSecondaryEntityCount: */
+/* REMOVED (DATA): .globl LocationSecondaryEntityCount */
+/* REMOVED (DATA): LocationSecondaryEntityCount: */
 /* REMOVED (DATA): j _stub_ret */
 /* REMOVED (DATA): nop */
 
@@ -2016,8 +2016,8 @@ gEffectOffsetTbl:
 gEffectParamTbl:
 .word 0
 
-.globl gEffectStageTbl
-gEffectStageTbl:
+.globl gEffectLocationTbl
+gEffectLocationTbl:
 .word 0
 
 .globl GetCdDaModeVtable
@@ -2044,8 +2044,8 @@ GetCdDaModeVtableEx:
 GetGpuDisplayList:
 .word 0
 
-.globl GetMoodFromStageChunk
-/* REMOVED: GetMoodFromStageChunk: */
+.globl GetMoodFromLocationChunk
+/* REMOVED: GetMoodFromLocationChunk: */
 /* REMOVED: .word 0 */
 /* REMOVED:  */
 
@@ -2057,7 +2057,7 @@ GetParticleModeBit:
 /* REMOVED: .word 0 */
 /* REMOVED:  */
 
-/* REMOVED: GetRandomSpawnFromStage: */
+/* REMOVED: GetRandomSpawnFromLocation: */
 /* REMOVED: .word 0 */
 /* REMOVED:  */
 .globl GetRandomValue
@@ -2068,16 +2068,16 @@ GetParticleModeBit:
 GetSoundEffectVtablePtr:
 .word 0
 
-.globl GetStageChunkFromMood
-/* REMOVED: GetStageChunkFromMood: */
+.globl GetLocationChunkFromMood
+/* REMOVED: GetLocationChunkFromMood: */
 /* REMOVED: .word 0 */
 /* REMOVED:  */
 
-/* REMOVED: GetStageDataTable: */
+/* REMOVED: GetLocationDataTable: */
 /* REMOVED: .word 0 */
 /* REMOVED:  */
-.globl GetStageGridVtable
-/* REMOVED: GetStageGridVtable: */
+.globl GetLocationGridVtable
+/* REMOVED: GetLocationGridVtable: */
 /* REMOVED: .word 0 */
 /* REMOVED:  */
 
@@ -2124,8 +2124,8 @@ gLinkDirIdx:
 gLinkInnerIdx:
 .word 0
 
-.globl gLinkStage
-gLinkStage:
+.globl gLinkLocation
+gLinkLocation:
 .word 0
 
 .globl gPosCalcStored
@@ -2268,8 +2268,8 @@ gStairDefaultData:
 gStairDirPtr:
 .word 0
 
-.globl gStairStagePtr
-gStairStagePtr:
+.globl gStairLocationPtr
+gStairLocationPtr:
 .word 0
 
 .globl gStairTypePtr
@@ -2424,8 +2424,8 @@ GteTransformTest:
 gTunnelDirPtr:
 .word 0
 
-.globl gTunnelStagePtr
-gTunnelStagePtr:
+.globl gTunnelLocationPtr
+gTunnelLocationPtr:
 .word 0
 
 .globl LAB_800196D4
@@ -2574,8 +2574,8 @@ PTR_Ptr_DreamParticle:
 PTR_Ptr_SecondEntity:
 .word 0
 
-.globl PTR_PTR_StageSecondaryEntityTablePtr
-PTR_PTR_StageSecondaryEntityTablePtr:
+.globl PTR_PTR_LocationSecondaryEntityTablePtr
+PTR_PTR_LocationSecondaryEntityTablePtr:
 .word 0
 
 .globl PTR_s_ETC_FONTICON_TIM_80086d44
@@ -2798,12 +2798,12 @@ Rendering_Spu98:
 Rendering_Spu9c:
 .word 0
 
-.globl Rendering_StageGrid50
-Rendering_StageGrid50:
+.globl Rendering_LocationGrid50
+Rendering_LocationGrid50:
 .word 0
 
-.globl Rendering_StageGrid5c
-Rendering_StageGrid5c:
+.globl Rendering_LocationGrid5c
+Rendering_LocationGrid5c:
 .word 0
 
 .globl Rendering_StrBuf80011464
@@ -3434,12 +3434,12 @@ Memory_SoundEffectOffsetTbl:
 Memory_SoundPathCdi:
     .word 0
 
-.globl MusicVolLineDataStage2
-MusicVolLineDataStage2:
+.globl MusicVolLineDataLocation2
+MusicVolLineDataLocation2:
     .word 0
 
-.globl MusicVolLineDataStage3
-MusicVolLineDataStage3:
+.globl MusicVolLineDataLocation3
+MusicVolLineDataLocation3:
     .word 0
 
 .globl Other_AmbientEventData
@@ -3571,16 +3571,16 @@ ParticleSecondarySlots:
 ParticleSpawnAllocator:
     .word 0
 
-.globl ParticleStageDefTable
-ParticleStageDefTable:
+.globl ParticleLocationDefTable
+ParticleLocationDefTable:
     .word 0
 
-.globl ParticleStageIndex
-ParticleStageIndex:
+.globl ParticleLocationIndex
+ParticleLocationIndex:
     .word 0
 
-.globl ParticleStageObject
-ParticleStageObject:
+.globl ParticleLocationObject
+ParticleLocationObject:
     .word 0
 
 .globl ParticleSysEntityPtr
@@ -3611,84 +3611,84 @@ SecondaryEntityRangeTable:
 SpuFrameCounter:
     .word 0
 
-.globl StageChildObjects
-StageChildObjects:
+.globl LocationChildObjects
+LocationChildObjects:
     .word 0
 
-.globl StageChildTransform
-StageChildTransform:
+.globl LocationChildTransform
+LocationChildTransform:
     .word 0
 
-.globl StageSecondaryEntityCount
-StageSecondaryEntityCount:
+.globl LocationSecondaryEntityCount
+LocationSecondaryEntityCount:
     .word 0
 
-.globl Stage_AdjDirectionOffsets
-Stage_AdjDirectionOffsets:
+.globl Location_AdjDirectionOffsets
+Location_AdjDirectionOffsets:
     .word 0
 
-.globl Stage_AdjEdgeFlags
-Stage_AdjEdgeFlags:
+.globl Location_AdjEdgeFlags
+Location_AdjEdgeFlags:
     .word 0
 
-.globl Stage_ChunkDataTableVtable
-Stage_ChunkDataTableVtable:
+.globl Location_ChunkDataTableVtable
+Location_ChunkDataTableVtable:
     .word 0
 
-.globl Stage_ChunkDataVtable
-Stage_ChunkDataVtable:
+.globl Location_ChunkDataVtable
+Location_ChunkDataVtable:
     .word 0
 
-.globl Stage_ChunkSpawnCounts
-Stage_ChunkSpawnCounts:
+.globl Location_ChunkSpawnCounts
+Location_ChunkSpawnCounts:
     .word 0
 
-.globl Stage_EntityVtable
-Stage_EntityVtable:
+.globl Location_EntityVtable
+Location_EntityVtable:
     .word 0
 
-.globl Stage_MapChunkVtable
-Stage_MapChunkVtable:
+.globl Location_MapChunkVtable
+Location_MapChunkVtable:
     .word 0
 
-.globl Stage_McDeleteFilename
-Stage_McDeleteFilename:
+.globl Location_McDeleteFilename
+Location_McDeleteFilename:
     .word 0
 
-.globl Stage_McEventStatusResults
-Stage_McEventStatusResults:
+.globl Location_McEventStatusResults
+Location_McEventStatusResults:
     .word 0
 
-.globl Stage_McPathPrefix0
-Stage_McPathPrefix0:
+.globl Location_McPathPrefix0
+Location_McPathPrefix0:
     .word 0
 
-.globl Stage_McPathPrefix1
-Stage_McPathPrefix1:
+.globl Location_McPathPrefix1
+Location_McPathPrefix1:
     .word 0
 
-.globl Stage_McSplitHalfSize
-Stage_McSplitHalfSize:
+.globl Location_McSplitHalfSize
+Location_McSplitHalfSize:
     .word 0
 
-.globl Stage_McSplitIoState
-Stage_McSplitIoState:
+.globl Location_McSplitIoState
+Location_McSplitIoState:
     .word 0
 
-.globl Stage_MemoryCardVtable
-Stage_MemoryCardVtable:
+.globl Location_MemoryCardVtable
+Location_MemoryCardVtable:
     .word 0
 
-.globl Stage_NavChallengeBuf
-Stage_NavChallengeBuf:
+.globl Location_NavChallengeBuf
+Location_NavChallengeBuf:
     .word 0
 
-.globl Stage_StageChunkVtable
-Stage_StageChunkVtable:
+.globl Location_ChunkVtable
+Location_ChunkVtable:
     .word 0
 
-.globl Stage_StageGridVtable
-Stage_StageGridVtable:
+.globl Location_GridVtable
+Location_GridVtable:
     .word 0
 
 .globl SubType0AnimFrameTable

@@ -1,33 +1,13 @@
 #ifndef STAGE_GRID
 #define STAGE_GRID
-
-typedef struct StageGridDimensions{
-    s16 columns;
-    s16 rows;
-    bool isVertical;
-}StageGridDimensions;
-
-typedef struct StageChunk{
-    s8 column;
-    s8 row;
-}StageChunk;
-
-struct simplePair{
-    s8 x; s8 y;
-};
-
-extern StageGridDimensions STAGE_GRID_DIMENSIONS[];
-
-extern MoodGraphPoint* STAGE_CHUNK_MOODS[];
-
-extern StageGridDimensions *GetStageGridDimensionsTable(s32 *unknown);
-
-extern StageGridDimensions *GetStageGridDimensions(s32 index);
-
-// Gets the stage + chunk for a mood graph point. Returns stage index.
-extern s32 GetStageChunkFromMood(StageChunk *ret, MoodGraphPoint *mood);
-
-// Gets the mood contribution for a given stage and chunk.
-extern MoodGraphPoint *GetMoodFromStageChunk(s32 stage, StageChunk *chunk);
-
+// Deprecated shim - use LocationGrid.h (wiki canonical: Locations/Fields)
+// This file is kept for backward compatibility and will be removed.
+#include "LocationGrid.h"
+// Provide backward compat aliases
+#ifndef LOCATION_GRID_SHIM
+#define StageGridDimensions LocationGridDimensions
+#define StageChunk LocationChunk
+#define STAGE_GRID_DIMENSIONS LOCATION_GRID_DIMENSIONS
+#define STAGE_CHUNK_MOODS LOCATION_CHUNK_MOODS
+#endif
 #endif

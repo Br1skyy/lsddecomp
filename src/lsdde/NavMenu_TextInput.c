@@ -169,12 +169,12 @@ void  Font_Init (int *obj,int *arg2,int arg3)
   iVar1 = arg2[2];
   iVar3 = *obj;
   if (iVar1 == 0) {
-    iVar1 =  StageGrid_New ();
+    iVar1 =  LocationGrid_New ();
   }
   obj[4] = iVar1;
   iVar1 = arg2[3];
   if (iVar1 == 0) {
-    iVar1 =  StageRow_New ();
+    iVar1 =  LocationRow_New ();
   }
   obj[5] = iVar1;
   iVar1 = arg2[4];

@@ -88,7 +88,7 @@ segments:
       - [0x3197c, asm, psyq_memset]
 
       - [0x39c80, asm, psyq_rand]
-      - [0x39cb4, c, StageGrid]
+      - [0x39cb4, c, LocationGrid]
       - [0x39e08, asm, class_39e08]
 
       - [0x48F74, c, DreamSys]
@@ -97,7 +97,7 @@ segments:
       - [0x55DD4, asm] #class
 
       - [0x57070, data]
-      - [0x769D4, .data, StageGrid]
+      - [0x769D4, .data, LocationGrid]
       - [0x76DC8, data] #class_39e08
       - [0x783dc, data, DreamSys] # DreamSys
       - [0x79528, data]

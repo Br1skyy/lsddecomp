@@ -1,15 +1,15 @@
 #include "common.h"
 #include "DreamSys.h"
-#include "StageGrid.h"
+#include "LocationGrid.h"
 #include "MEMORY.H"
 /* ========================================================================
-   StageGrid2.c - Stage grid chunk management, entity spawning, visibility,
+   LocationGrid2.c - Stage grid chunk management, entity spawning, visibility,
                   memory card I/O, and navigation challenge support.
    ======================================================================== */
 /* ---------- external helpers (defined in other translation units) ------- */
 extern void  *MemAlloc(int size);
 extern u32    MemFree(int ptr, int heapFallback);
-extern int    GetStageDataTable(int *outSize);
+extern int    GetLocationDataTable(int *outSize);
 extern u32    GetRandomValue(void);
 extern int    CreateRenderObject(int chunkCol, int tileCol, int tileRow, int pos, int arg5);
 extern s32    CardWriteRead(int base, int size);
@@ -39,34 +39,34 @@ extern int EnableEvent(int ev);
 extern int DisableEvent(int ev);
 extern int WaitForMemoryCardEvent(int slot);
 /* ---------- global data (defined in other translation units) ------------ */
-extern u32  Stage_ChunkSpawnCounts;
-extern s32  Stage_McSplitIoState;
-extern s32  Stage_McSplitHalfSize;
-extern s32  Stage_NavChallengeBuf;
-extern s32  Stage_NavChallengeWord1;
-extern s32  Stage_NavChallengeWord2;
-extern u8   Stage_CamMatrixRow0[];
-extern u8   Stage_CamMatrixRow1[];
-extern u8   Stage_CamMatrixRow2[];
-extern u8   Stage_CamMatrixRow3[];
-extern s32  Stage_CamMatrixTrans;
-extern u8   Stage_McEncodingData[];
-extern u8   Stage_McEncodingData2[];
-extern u32  Stage_McEventStatusResults;
-extern u32  Stage_AdjEdgeFlags;
-extern u32  Stage_AdjDirectionOffsets;
-extern u32  Stage_AdjBaseOffsets;
-extern u32  Stage_AdjAltOffsets;
-extern s32  Stage_StageChunkVtable;
-extern s32  Stage_StageGridVtable;
-extern s32  Stage_MapChunkVtable;
-extern s32  Stage_ChunkDataVtable;
-extern s32  Stage_ChunkDataTableVtable;
-extern s32  Stage_EntityVtable;
-extern s32  Stage_MemoryCardVtable;
-extern char Stage_McPathPrefix1[];
-extern char Stage_McPathPrefix0[];
-extern char Stage_McDeleteFilename[];
+extern u32  Location_ChunkSpawnCounts;
+extern s32  Location_McSplitIoState;
+extern s32  Location_McSplitHalfSize;
+extern s32  Location_NavChallengeBuf;
+extern s32  Location_NavChallengeWord1;
+extern s32  Location_NavChallengeWord2;
+extern u8   Location_CamMatrixRow0[];
+extern u8   Location_CamMatrixRow1[];
+extern u8   Location_CamMatrixRow2[];
+extern u8   Location_CamMatrixRow3[];
+extern s32  Location_CamMatrixTrans;
+extern u8   Location_McEncodingData[];
+extern u8   Location_McEncodingData2[];
+extern u32  Location_McEventStatusResults;
+extern u32  Location_AdjEdgeFlags;
+extern u32  Location_AdjDirectionOffsets;
+extern u32  Location_AdjBaseOffsets;
+extern u32  Location_AdjAltOffsets;
+extern s32  Location_ChunkVtable;
+extern s32  Location_GridVtable;
+extern s32  Location_MapChunkVtable;
+extern s32  Location_ChunkDataVtable;
+extern s32  Location_ChunkDataTableVtable;
+extern s32  Location_EntityVtable;
+extern s32  Location_MemoryCardVtable;
+extern char Location_McPathPrefix1[];
+extern char Location_McPathPrefix0[];
+extern char Location_McDeleteFilename[];
 /* PS1 SDK types */
 typedef struct { s16 vx, vy, vz; short pad; } SVECTOR;
 typedef struct { s32 m[3][3]; s32 t[3]; } MATRIX;
@@ -79,7 +79,7 @@ extern void ApplyMatrixLV(MATRIX *m, VECTOR *src, VECTOR *dst);
 /* Get base address of chunk spawn data for the current stage */
 int GetChunkSpawnTable(void)
 {
-    return GetStageDataTable(NULL) + 0xfc;
+    return GetLocationDataTable(NULL) + 0xfc;
 }
 /* Get address of a specific spawn-point entry (SPAWN_ENTRY_STRIDE = 28 bytes each) */
 int GetChunkSpawnEntry(int stage, int index)
@@ -110,7 +110,7 @@ int GetAmbientSoundBase(s32 *outSize)
     if (outSize != NULL) {
         *outSize = 0;
     }
-    return GetStageDataTable(NULL) + 0x3d40;
+    return GetLocationDataTable(NULL) + 0x3d40;
 }
 /* Get address of a random ambient sound from the 7-entry table */
 int GetRandomAmbientSound(s32 *outIndex)
@@ -134,7 +134,7 @@ int GetEntityData7(s32 *outCount)
     if (outCount != NULL) {
         *outCount = 7;
     }
-    return GetStageDataTable(NULL) + 0x3e04;
+    return GetLocationDataTable(NULL) + 0x3e04;
 }
 /* Wrapper that also returns the entry count */
 int GetEntityData7Ex(s32 *outCount)
@@ -153,7 +153,7 @@ int GetEntityData8(s32 *outCount)
     if (outCount != NULL) {
         *outCount = 8;
     }
-    return GetStageDataTable(NULL) + 0x3e20;
+    return GetLocationDataTable(NULL) + 0x3e20;
 }
 /* Get address of entity data entry by index within the 8-entry table */
 int GetEntityData8Entry(s32 *outIndex, int index)
@@ -175,7 +175,7 @@ int GetSpawnDataEntry(s32 *outEntry, int index)
     if (outEntry != NULL) {
         *outEntry = index * 2 + 0xe;
     }
-    return GetStageDataTable(NULL) + 0x3ec8 + index * 0xa8;
+    return GetLocationDataTable(NULL) + 0x3ec8 + index * 0xa8;
 }
 /* Get spawn data using packed stage/mode parameter.
    Low 16 bits: stage index (negative = use entity table, positive = use spawn table)
@@ -209,7 +209,7 @@ int GetSpawnDataByMode(s32 *outEntry, s32 packedParam)
 /* Get the spawn count for a specific chunk from the lookup table */
 int GetChunkSpawnCount(int chunkIndex)
 {
-    return (int)*(s16 *)(&Stage_ChunkSpawnCounts + chunkIndex * 2);
+    return (int)*(s16 *)(&Location_ChunkSpawnCounts + chunkIndex * 2);
 }
 /* Calculate total number of spawn points for a range of chunks */
 int CalcChunkSpawnTotal(s32 *outTotal, int stage, int chunkCount)
@@ -221,7 +221,7 @@ int CalcChunkSpawnTotal(s32 *outTotal, int stage, int chunkCount)
     *outTotal = 0;
     endIdx = chunkCount * 2 + spawnBase;
     if (spawnBase < endIdx) {
-        spawnCounts = (s16 *)(&Stage_ChunkSpawnCounts + spawnBase * 2);
+        spawnCounts = (s16 *)(&Location_ChunkSpawnCounts + spawnBase * 2);
         do {
             s16 count = *spawnCounts;
             spawnCounts++;
@@ -233,14 +233,14 @@ int CalcChunkSpawnTotal(s32 *outTotal, int stage, int chunkCount)
     return spawnBase;
 }
 /* -----------------------------------------------------------------------
-   StageChunk object management
+   LocationChunk object management
    ----------------------------------------------------------------------- */
-/* Create a new StageChunk object (SIZEOF_STAGE_CHUNK = 80 bytes) */
-int CreateStageChunk(int stage, s32 initParam1, s32 initParam2)
+/* Create a new LocationChunk object (SIZEOF_LOCATION_CHUNK = 80 bytes) */
+int CreateLocationChunk(int stage, s32 initParam1, s32 initParam2)
 {
     void *obj;
     int vtable;
-    obj = MemAlloc(SIZEOF_STAGE_CHUNK);
+    obj = MemAlloc(SIZEOF_LOCATION_CHUNK);
     vtable = 0;
     if (obj != 0) {
         vtable = (int)GetChunkVtable();
@@ -250,7 +250,7 @@ int CreateStageChunk(int stage, s32 initParam1, s32 initParam2)
     return vtable;
 }
 /* -----------------------------------------------------------------------
-   StageGrid entity management
+   LocationGrid entity management
    ----------------------------------------------------------------------- */
 /* Position an entity within a chunk and initialize its render state */
 void SetEntityChunkPosition(int *grid, s32 renderObjParam5)
@@ -266,10 +266,10 @@ void SetEntityChunkPosition(int *grid, s32 renderObjParam5)
     );
     grid[0xf] = 2;
 }
-/* Return vtable address for the StageChunk object type */
+/* Return vtable address for the LocationChunk object type */
 int GetChunkVtable(void)
 {
-    return (int)&Stage_StageChunkVtable;
+    return (int)&Location_ChunkVtable;
 }
 /* -----------------------------------------------------------------------
    Memory card split-file save/load
@@ -282,40 +282,40 @@ void HandleSplitCardIO(int isSave)
     int slotState;
     int halfSize;
     (void)halfSize;
-    base = GetStageDataTable(&tableSize);
-    slotState = Stage_McSplitIoState + 1;
+    base = GetLocationDataTable(&tableSize);
+    slotState = Location_McSplitIoState + 1;
     if (slotState == 1) {
-        Stage_McSplitIoState = Stage_McSplitIoState + 2;
+        Location_McSplitIoState = Location_McSplitIoState + 2;
         if (isSave == 0) {
-            Stage_McSplitHalfSize = tableSize / 2;
-            Stage_McSplitIoState = slotState;
-            tableSize = Stage_McSplitHalfSize;
+            Location_McSplitHalfSize = tableSize / 2;
+            Location_McSplitIoState = slotState;
+            tableSize = Location_McSplitHalfSize;
         }
     } else if (slotState == 2) {
-        tableSize = tableSize - Stage_McSplitHalfSize;
-        Stage_McSplitIoState = slotState;
+        tableSize = tableSize - Location_McSplitHalfSize;
+        Location_McSplitIoState = slotState;
     } else {
         tableSize = 0;
-        Stage_McSplitIoState = slotState;
+        Location_McSplitIoState = slotState;
     }
     do {
         slotState = CardWriteRead(base, tableSize);
     } while (slotState == 0);
 }
 /* -----------------------------------------------------------------------
-   StageGrid object management
+   LocationGrid object management
    ----------------------------------------------------------------------- */
-/* Return vtable address for the StageGrid object type */
+/* Return vtable address for the LocationGrid object type */
 int GetGridVtable(void)
 {
-    return (int)&Stage_StageGridVtable;
+    return (int)&Location_GridVtable;
 }
-/* Create a new StageGrid object (SIZEOF_STAGE_GRID = 488 bytes) */
-int CreateStageGrid(s32 initParam1, s32 initParam2)
+/* Create a new LocationGrid object (SIZEOF_LOCATION_GRID = 488 bytes) */
+int CreateLocationGrid(s32 initParam1, s32 initParam2)
 {
     void *obj;
     int vtable;
-    obj = MemAlloc(SIZEOF_STAGE_GRID);
+    obj = MemAlloc(SIZEOF_LOCATION_GRID);
     vtable = 0;
     if (obj != 0) {
         vtable = (int)GetMapChunkVtable();
@@ -547,21 +547,21 @@ s32 TryLinkAdjacentChunk(
     int adjTableOffset;
     int adjData;
     linkResult = 0;
-    if ((edgeFlags & *(u32 *)(&Stage_AdjEdgeFlags + edgeIndex * 4)) == 0) {
+    if ((edgeFlags & *(u32 *)(&Location_AdjEdgeFlags + edgeIndex * 4)) == 0) {
         *outLink = 0;
     } else {
         calcIndex = baseIndex + edgeIndex;
         if (*(int *)(*(int *)(gridData + 0x68) + 4) == 0) {
             adjTableOffset = edgeIndex * COLOR_TABLE_STRIDE;
-            if (*(int *)(&Stage_AdjDirectionOffsets + adjTableOffset) == 0) {
-                calcIndex = baseIndex + *(int *)(&Stage_AdjBaseOffsets + adjTableOffset);
+            if (*(int *)(&Location_AdjDirectionOffsets + adjTableOffset) == 0) {
+                calcIndex = baseIndex + *(int *)(&Location_AdjBaseOffsets + adjTableOffset);
             } else {
                 if (useAltOffset == 0) {
-                    adjData = *(int *)(&Stage_AdjAltOffsets + adjTableOffset);
+                    adjData = *(int *)(&Location_AdjAltOffsets + adjTableOffset);
                 } else {
-                    adjData = *(int *)(&Stage_AdjBaseOffsets + adjTableOffset);
+                    adjData = *(int *)(&Location_AdjBaseOffsets + adjTableOffset);
                 }
-                calcIndex = baseIndex + direction * *(int *)(&Stage_AdjDirectionOffsets + adjTableOffset) + adjData;
+                calcIndex = baseIndex + direction * *(int *)(&Location_AdjDirectionOffsets + adjTableOffset) + adjData;
             }
         }
         outLink[1] = calcIndex;
@@ -628,15 +628,15 @@ void CalcChunkCameraOffset(int *grid, int targetX, int targetY)
     if (rotation < 0) {
         rotation += 0x1000;
     }
-    localMatrix[0] = Stage_CamMatrixRow0[0];
-    localMatrix[1] = Stage_CamMatrixRow0[1];
-    localMatrix[2] = Stage_CamMatrixRow1[0];
-    localMatrix[3] = Stage_CamMatrixRow1[1];
-    localMatrix[4] = Stage_CamMatrixRow2[0];
-    localMatrix[5] = Stage_CamMatrixRow2[1];
-    localMatrix[6] = Stage_CamMatrixRow3[0];
-    localMatrix[7] = Stage_CamMatrixRow3[1];
-    *(int *)(localMatrix + 8) = Stage_CamMatrixTrans;
+    localMatrix[0] = Location_CamMatrixRow0[0];
+    localMatrix[1] = Location_CamMatrixRow0[1];
+    localMatrix[2] = Location_CamMatrixRow1[0];
+    localMatrix[3] = Location_CamMatrixRow1[1];
+    localMatrix[4] = Location_CamMatrixRow2[0];
+    localMatrix[5] = Location_CamMatrixRow2[1];
+    localMatrix[6] = Location_CamMatrixRow3[0];
+    localMatrix[7] = Location_CamMatrixRow3[1];
+    *(int *)(localMatrix + 8) = Location_CamMatrixTrans;
     *(int *)(localMatrix + 12) = 0;
     matrixResult = 0;
     unused = grid[0x1d];
@@ -966,7 +966,7 @@ void ProcessChunkEntityData(s32 grid, void (*callback)(s32, s32), int chunkData)
 /* Return vtable address for the MapChunk object type */
 int GetMapChunkVtable(void)
 {
-    return (int)&Stage_MapChunkVtable;
+    return (int)&Location_MapChunkVtable;
 }
 /* Create a new MapChunk object (0xdc = 220 bytes) */
 int CreateMapChunk(void)
@@ -985,7 +985,7 @@ int CreateMapChunk(void)
 /* Return vtable address for the ChunkData object type */
 int GetChunkDataVtable(void)
 {
-    return (int)&Stage_ChunkDataVtable;
+    return (int)&Location_ChunkDataVtable;
 }
 /* Create a new ChunkData object (0x3c = 60 bytes) */
 int CreateChunkData(void)
@@ -1004,7 +1004,7 @@ int CreateChunkData(void)
 /* Return vtable address for the ChunkDataTable object type */
 int GetChunkDataTableVtable(void)
 {
-    return (int)&Stage_ChunkDataTableVtable;
+    return (int)&Location_ChunkDataTableVtable;
 }
 /* -----------------------------------------------------------------------
    Dream time spawn eligibility check
@@ -1025,9 +1025,9 @@ void CalcDreamTimeSpawnFlag(int gridData, int outputData)
 /* Initialize navigation challenge data with formatted string */
 void InitNavigationChallenges(s32 navValue)
 {
-    FormatIntToString((char *)&Stage_NavChallengeBuf, navValue, 3, 0);
-    Stage_NavChallengeWord1 = Stage_NavChallengeWord1 & 0xffff | 0x36370000;
-    Stage_NavChallengeWord2 = 0x32333435;
+    FormatIntToString((char *)&Location_NavChallengeBuf, navValue, 3, 0);
+    Location_NavChallengeWord1 = Location_NavChallengeWord1 & 0xffff | 0x36370000;
+    Location_NavChallengeWord2 = 0x32333435;
 }
 /* -----------------------------------------------------------------------
    Entity object management
@@ -1035,7 +1035,7 @@ void InitNavigationChallenges(s32 navValue)
 /* Return vtable address for the Entity object type */
 int GetEntityVtable(void)
 {
-    return (int)&Stage_EntityVtable;
+    return (int)&Location_EntityVtable;
 }
 /* Create a new Entity object (0x84 = 132 bytes) */
 int CreateEntity(s32 initParam1, s32 initParam2)
@@ -1144,7 +1144,7 @@ bool TestAndDeleteFile(int slot, s32 unused, int fileSize)
 {
     s32 path;
     int fd;
-    path = BuildMemoryCardPath((char *)&path, *(s32 *)(slot + 0xc), &Stage_McDeleteFilename);
+    path = BuildMemoryCardPath((char *)&path, *(s32 *)(slot + 0xc), &Location_McDeleteFilename);
     fd = open((const char *)path, (fileSize + 0x21ffU >> 0xd) << 0x10 | 0x200);
     if (fd != -1) {
         close(fd);
@@ -1248,9 +1248,9 @@ char *BuildMemoryCardPath(char *outPath, int slotId, char *filename)
     u32 *prefixData;
     u32 swapVal;
     if (slotId != 0) {
-        prefixData = (u32 *)&Stage_McPathPrefix1;
+        prefixData = (u32 *)&Location_McPathPrefix1;
     } else {
-        prefixData = (u32 *)&Stage_McPathPrefix0;
+        prefixData = (u32 *)&Location_McPathPrefix0;
     }
     u32 prefix0 = prefixData[0];
     u32 prefix1 = prefixData[1];
@@ -1326,7 +1326,7 @@ s32 HandleMemoryCardEventDone(s32 *eventSlots, int slotCount)
         do {
             eventStatus = TestEvent(*slotPtr);
             if (eventStatus != 0) {
-                return (s32)(&Stage_McEventStatusResults)[i];
+                return (s32)(&Location_McEventStatusResults)[i];
             }
             i++;
             slotPtr++;
@@ -1420,7 +1420,7 @@ DONE:
 /* Return vtable address for the MemoryCard object type */
 int GetMemoryCardVtable(void)
 {
-    return (int)&Stage_MemoryCardVtable;
+    return (int)&Location_MemoryCardVtable;
 }
 /* Write memory card sector data with proper byte alignment */
 void WriteMemoryCardSector(int buffer, int mode)
@@ -1472,8 +1472,8 @@ void WriteMemoryCardSector(int buffer, int mode)
                       (-0x667d7e7e << swapVal * 8);
         adjSize = atoi((char *)(mode + adjSize));
         adjSize = (adjSize - 1) * 2;
-        *(u8 *)(buffer + 8) = Stage_McEncodingData[adjSize];
-        *(u8 *)(buffer + 9) = Stage_McEncodingData2[adjSize];
+        *(u8 *)(buffer + 8) = Location_McEncodingData[adjSize];
+        *(u8 *)(buffer + 9) = Location_McEncodingData2[adjSize];
     }
 }
 /* Create a new MemoryCard object (0x4c = 76 bytes) */
@@ -1498,23 +1498,23 @@ void ResetMemoryCardState(int slot)
     *(s32 *)(slot + 0x48) = 0;
 }
 
-/* ===== Merged from StageGrid.c ===== */
-#define STAGE_COUNT 14
-StageGridDimensions STAGE_GRID_DIMENSIONS[STAGE_COUNT] = {
-    {1,5,true},     // Apartment
-    {3,2,false},    // Pit
-    {6,6,false},    // Kyoto
-    {16,16,false},  // Natural
-    {6,5,false},    // Happy
-    {5,6,false},    // Violence
-    {1,6,true},     // Tower
-    {5,1,false},    // Palace
-    {1,3,false},    // Flesh
-    {1,2,false},    // Clockwork
-    {3,1,false},    // Hallway
-    {4,3,false},    // Heaven
-    {4,5,false},    // Void
-    {2,2,false}     // Park
+/* ===== Merged from LocationGrid.c ===== */
+#define LOCATION_COUNT 14
+LocationGridDimensions LOCATION_GRID_DIMENSIONS[LOCATION_COUNT] = {
+    {1,5,true},     // STG00 Bright Moon Cottage
+    {3,2,false},    // STG01 Pit & Temple
+    {6,6,false},    // STG02 Kyoto
+    {16,16,false},  // STG03 The Natural World
+    {6,5,false},    // STG04 Happy Town
+    {5,6,false},    // STG05 Violence District
+    {1,6,true},     // STG06 Moonlight Tower
+    {5,1,false},    // STG07 Temple Dojo
+    {1,3,false},    // STG08 Flesh Tunnels
+    {1,2,false},    // STG09 Clockwork Machines
+    {3,1,false},    // STG10 Long Hallway
+    {4,3,false},    // STG11 Sun Faces Heave
+    {4,5,false},    // STG12 Black Space
+    {2,2,false}     // STG13 Monument Park
 };
 struct simplePair STG00_CHUNK_MOODS[] = {
     { 0,-3},
@@ -1623,7 +1623,7 @@ struct simplePair STG13_CHUNK_MOODS[] = {
     {-1, 3},{ 9, 0},
     {-1, 2},{-2, 2},
 };
-MoodGraphPoint* STAGE_CHUNK_MOODS[] = {
+MoodGraphPoint* LOCATION_CHUNK_MOODS[] = {
     (MoodGraphPoint*) STG00_CHUNK_MOODS,
     (MoodGraphPoint*) STG01_CHUNK_MOODS,
     (MoodGraphPoint*) STG02_CHUNK_MOODS,
@@ -1640,36 +1640,36 @@ MoodGraphPoint* STAGE_CHUNK_MOODS[] = {
     (MoodGraphPoint*) STG13_CHUNK_MOODS
 };
 /// Returns the total number of stage grid definitions.
-s32 GetStageGridCount(void) {
-    return STAGE_COUNT;
+s32 GetLocationGridCount(void) {
+    return LOCATION_COUNT;
 }
 /// Returns the stage grid dimensions table, optionally writing the count.
-StageGridDimensions *GetStageGridDimensionsTable(s32 *count) {
+LocationGridDimensions *GetLocationGridDimensionsTable(s32 *count) {
     if (count != NULL) {
-        *count = STAGE_COUNT;
+        *count = LOCATION_COUNT;
     }
-    return STAGE_GRID_DIMENSIONS;
+    return LOCATION_GRID_DIMENSIONS;
 }
 /// Returns the grid dimensions for a specific stage index.
-StageGridDimensions *GetStageGridDimensions(s32 index) {
-    return GetStageGridDimensionsTable(NULL) + index;
+LocationGridDimensions *GetLocationGridDimensions(s32 index) {
+    return GetLocationGridDimensionsTable(NULL) + index;
 }
 /**
  * Searches all stages for a chunk whose mood matches the given mood graph point.
  * Returns the stage index on success, or -1 if not found.
  * On success, writes the chunk's column/row coordinates into ret.
  */
-s32 GetStageChunkFromMood(StageChunk *ret, MoodGraphPoint *mood) {
+s32 GetLocationChunkFromMood(LocationChunk *ret, MoodGraphPoint *mood) {
     s32 stageIdx;
     s32 row, col;
     MoodGraphPoint **moodTable;
     short *moodEntry;
     stageIdx = 0;
-    moodTable = STAGE_CHUNK_MOODS;
+    moodTable = LOCATION_CHUNK_MOODS;
     do {
         moodEntry = (short *)*moodTable;
-        for (row = 0; row < STAGE_GRID_DIMENSIONS[stageIdx].rows; row++) {
-            for (col = 0; col < STAGE_GRID_DIMENSIONS[stageIdx].columns; col++) {
+        for (row = 0; row < LOCATION_GRID_DIMENSIONS[stageIdx].rows; row++) {
+            for (col = 0; col < LOCATION_GRID_DIMENSIONS[stageIdx].columns; col++) {
                 if (mood->value == *moodEntry) {
                     ret->column = (s8)col;
                     ret->row = (s8)row;
@@ -1680,13 +1680,13 @@ s32 GetStageChunkFromMood(StageChunk *ret, MoodGraphPoint *mood) {
         }
         stageIdx++;
         moodTable++;
-    } while (stageIdx < STAGE_COUNT);
+    } while (stageIdx < LOCATION_COUNT);
     return -1;
 }
 /**
  * Looks up the mood contribution for a given stage and chunk coordinate.
  */
-MoodGraphPoint *GetMoodFromStageChunk(s32 stage, StageChunk *chunk) {
-    return &STAGE_CHUNK_MOODS[stage][chunk->column + chunk->row * STAGE_GRID_DIMENSIONS[stage].columns];
+MoodGraphPoint *GetMoodFromLocationChunk(s32 stage, LocationChunk *chunk) {
+    return &LOCATION_CHUNK_MOODS[stage][chunk->column + chunk->row * LOCATION_GRID_DIMENSIONS[stage].columns];
 }
 

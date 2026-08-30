@@ -2609,8 +2609,8 @@ void FormatIntToString(char *dst, int val, int pad, int mode) {
 }
 
 /* === migrated from stubs.c === */
-/* GetStageDataTable */
-void *GetStageDataTable(int *outSize)
+/* GetLocationDataTable */
+void *GetLocationDataTable(int *outSize)
 {
     static int stageDataCreated;
     static char stageData[0x4000];

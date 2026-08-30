@@ -51,8 +51,8 @@ definitions were removed:
 | `D_800878D4` | `.word 0` in `.text` | GameManager data, `data/76DC8.data.s` |
 | `SPAWN_POS_ADJUST` | `.word 0` in `.text` | spawn table, `data/DreamSys.data.s` |
 | `SPECIAL_DAYS` | `j _stub_ret` in `.text` | `data/DreamSys.data.s` |
-| `STAGE_SPAWNPOINTS` | `j _stub_ret` in `.text` | `data/DreamSys.data.s` |
-| `STAGE_TIME_LIMITS` | `j _stub_ret` in `.text` | `data/DreamSys.data.s` |
+| `LOCATION_SPAWNPOINTS` | `j _stub_ret` in `.text` | `data/DreamSys.data.s` |
+| `LOCATION_TIME_LIMITS` | `j _stub_ret` in `.text` | `data/DreamSys.data.s` |
 
 Impact while the bug was live:
 

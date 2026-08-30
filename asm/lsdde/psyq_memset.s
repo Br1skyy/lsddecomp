@@ -9877,7 +9877,7 @@ glabel  func_80049098
     /* 398A8 800490A8 2190A000 */  addu       $s2, $a1, $zero
     /* 398AC 800490AC 1000B0AF */  sw         $s0, 0x10($sp)
     /* 398B0 800490B0 1C00BFAF */  sw         $ra, 0x1C($sp)
-    /* 398B4 800490B4 3625010C */  jal        GetStageGridDimensions
+    /* 398B4 800490B4 3625010C */  jal        GetLocationGridDimensions
     /* 398B8 800490B8 2180C000 */   addu      $s0, $a2, $zero
     /* 398BC 800490BC 00004284 */  lh         $v0, 0x0($v0)
     /* 398C0 800490C0 00000000 */  nop

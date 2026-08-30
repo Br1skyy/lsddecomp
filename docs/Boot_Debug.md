@@ -133,7 +133,7 @@ Fixed (source edits only, needs a Windows build to verify):
   keeps the first definition, so the stubs won. Affected symbols:
   `DREAMSYS_METHODS` (DreamSys vtable), `D_800878D4` (GameManager data
   behind `GetGameManager()`), `SPAWN_POS_ADJUST`, `SPECIAL_DAYS`,
-  `STAGE_SPAWNPOINTS`, `STAGE_TIME_LIMITS`. While the bug was live,
+  `LOCATION_SPAWNPOINTS`, `LOCATION_TIME_LIMITS`. While the bug was live,
   `New_DreamSys` and `DreamSys__DreamSys` called `*(vt+8)` / `*(gm+8)`
   through instruction bytes, and gameplay code read instruction
   encodings as table values. The stub definitions were removed from

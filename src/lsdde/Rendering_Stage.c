@@ -1,4 +1,4 @@
-/* Rendering_Stage.c -- split from Rendering.c */
+/* Rendering_Location.c (formerly Rendering_Stage.c) -- Location/Field rendering per wiki: https://dreamemulator.fandom.com/wiki/Locations -- split from Rendering.c */
 #include "Rendering_Shared.h"
 /* Extern declarations for private globals */
 extern void *GetPrimitiveBaseTable(void);
@@ -7,8 +7,8 @@ extern u32 Rendering_Unk11474;
 extern u32 Rendering_Unk1149c;
 extern u32 Rendering_Unk114b4;
 extern u32 Rendering_Unk66841;
-extern u32 Rendering_StageGrid50;
-extern u32 Rendering_StageGrid5c;
+extern u32 Rendering_LocationGrid50;
+extern u32 Rendering_LocationGrid5c;
 extern u32 Rendering_Adj38;
 extern u32 Rendering_Adj3c;
 extern u32 Rendering_Adj40;
@@ -84,8 +84,8 @@ extern u32 Unk_ParticleBuf28;
 extern u32 ParticlePaletteAlt;
 extern u32 ParticlePaletteDefault;
 extern u32 ParticleModeIndexTable;
-extern u32 MusicVolLineTargetStage2;
-extern u32 MusicVolLineTargetStage3;
+extern u32 MusicVolLineTargetLocation2;
+extern u32 MusicVolLineTargetLocation3;
 extern u32 SubType2StateArray;
 extern u32 ParticleEffectParam2;
 extern u32 ParticleEffectObjectType;
@@ -98,28 +98,28 @@ typedef unsigned long ulong;
 extern volatile unsigned int Rendering_McSavePath;
 extern volatile unsigned int PTR_Ptr_DreamParticle;
 extern volatile unsigned int PTR_Ptr_SecondEntity;
-extern volatile unsigned int PTR_PTR_StageSecondaryEntityTablePtr;
+extern volatile unsigned int PTR_PTR_LocationSecondaryEntityTablePtr;
 extern volatile unsigned int PTR_s_ETC_FONTICON_TIM_80086d44;
 extern volatile unsigned int DMA_CDROM_CHCR;
 extern volatile unsigned int CD_VOL_R;
 /* Forward declarations for functions defined later in this file */
-void * GetStageChunkVtable(void);
-void * GetStageGridVtable(void);
-uint StageGrid_GetVisMask(int id,int type,int flags);
-uint StageGrid_GetChunkEntry(int index,uint *type,int value,int arg2,int arg3,uint id,int arg5);
-int StageGrid_Alloc(uint id,uint type);
-int StageGrid_CountActiveChannels(int index);
-void StageGrid_DrawTiles(void);
-extern int StageGrid_New(void);
-extern int StageGrid_GetDataPtr(void);
+void * GetLocationChunkVtable(void);
+void * GetLocationGridVtable(void);
+uint LocationGrid_GetVisMask(int id,int type,int flags);
+uint LocationGrid_GetChunkEntry(int index,uint *type,int value,int arg2,int arg3,uint id,int arg5);
+int LocationGrid_Alloc(uint id,uint type);
+int LocationGrid_CountActiveChannels(int index);
+void LocationGrid_DrawTiles(void);
+extern int LocationGrid_New(void);
+extern int LocationGrid_GetDataPtr(void);
 extern int Prim_DrawTiles(int *ptr,int count,int arg2);
 bool Prim_IsPointInRect(short *id,char *type);
 void ChunkData_ApplyFade(int *index,int index_2);
 void Chunk_RenderFadeScreen(uint *id,int *index);
-void * Stage_GetChunkVtable(void);
-void * Stage_GetChunkDataVtable(void);
-void * Stage_GetChunkDataTableVtable(void);
-void StageEntity_SetDreamFlag(int id,int type);
+void * Location_GetChunkVtable(void);
+void * Location_GetChunkDataVtable(void);
+void * Location_GetChunkDataTableVtable(void);
+void LocationEntity_SetDreamFlag(int id,int type);
 void * MemoryCard_GetVtable(void);
 uint MemoryCard_DetectCard(int id,uint *type,uint *flags);
 uint MemoryCard_LoadCardData(int id,uint *type,uint *flags);
@@ -130,7 +130,7 @@ uint MemoryCard_WriteFileSaveData(int index,uint id,char *flags,byte val,int val
 char * MemoryCard_BuildPath(char *id,int type,char *flags);
 uint MemoryCard_PollEvents(uint *id,int type);
 uint NavMenu_CardCheckState(int *id);
-void * MemoryCardStage_GetVtable(void);
+void * MemoryCardLocation_GetVtable(void);
 uint todigit(char id);
 void * Entity2_GetVtable(void);
 uchar * TextInput_FormatLine(int index,uchar *arg0,int *value,int arg2,int arg3);
@@ -157,8 +157,8 @@ void * GetRenderStateVtable(void);
 void * GetGameManagerAlias(void);
 void * GetNngVtable(void);
 uint RenderUtils_GetDisplay(int *id);
-uint StageArea_NumToPos(int index,int value);
-void * GetStageAreaVtable(void);
+uint LocationArea_NumToPos(int index,int value);
+void * GetLocationAreaVtable(void);
 uint Entity_SoundInit(int *id,int type);
 uint Entity_ParticleInit(int id);
 extern char LAB_80087204[];
@@ -169,14 +169,14 @@ int EntityAlloc50(uint id,uint type,uint flags)
   iVar1 = MemAllocImpl(SIZEOF_RENDER_CTX);
   iVar2 = 0;
   if (iVar1 != 0) {
-    iVar2 = GetStageChunkVtable();
+    iVar2 = GetLocationChunkVtable();
     ((int (*)(int,int,int,int))(*(void **)(iVar2 + 8)))(iVar1,id,type,flags);
     iVar2 = iVar1;
   }
   return iVar2;
 }
 
-void Stage_Init(int *index,int index2,int *value,int value2)
+void Location_Init(int *index,int index2,int *value,int value2)
 {
   uint uVar1;
   int iVar2;
@@ -184,9 +184,9 @@ void Stage_Init(int *index,int index2,int *value,int value2)
   uint local_28;
   char *local_24;
   uVar1 = Snd_GetCurrentAmbient(0);
-  iVar2 = GetStageGridVtable();
+  iVar2 = GetLocationGridVtable();
   ((int (*)(int,int,int))(*(void **)(iVar2 + 8)))(index,uVar1,0);
-  iVar2 = GetStageChunkVtable();
+  iVar2 = GetLocationChunkVtable();
   *index = iVar2;
   SpuCinema_Init();
   piVar3 = (int *)Texture_New("ETC\\ETC.TIM");
@@ -198,17 +198,17 @@ void Stage_Init(int *index,int index2,int *value,int value2)
   iVar2 = Tmd_New(&local_28);
 ((RenderCtx *)index)->pTmdModel = (void *)iVar2;
   uVar1 = Snd_SelectAmbient(0);
-  iVar2 = StageChunk_New(uVar1,0,1);
-((RenderCtx *)index)->pStageChunk = (void *)iVar2;
+  iVar2 = LocationChunk_New(uVar1,0,1);
+((RenderCtx *)index)->pLocationChunk = (void *)iVar2;
   Cd_SplitStreamRead(1);
   CdModeSubE(value == 0,1,1);
-  ((RenderCtx *)index)->pStageGridAlloc = index;
+  ((RenderCtx *)index)->pLocationGridAlloc = index;
   uVar1 = ChunkData_Alloc();
 ((RenderCtx *)index)->pChunkData = (void *)uVar1;
-  uVar1 = StageGrid_New();
-((RenderCtx *)index)->pStageGrid = (void *)uVar1;
-  uVar1 = StageGrid_Alloc(0,1);
-((RenderCtx *)index)->pStageGridAlloc = (void *)uVar1;
+  uVar1 = LocationGrid_New();
+((RenderCtx *)index)->pLocationGrid = (void *)uVar1;
+  uVar1 = LocationGrid_Alloc(0,1);
+((RenderCtx *)index)->pLocationGridAlloc = (void *)uVar1;
   ((RenderCtx *)index)->pValueParam2 = (int)value;
   ((int (*)(int,int))(*(void **)(*index + 0x10)))(index,value);
   ((int (*)(int,int))(*(void **)(*value + 0x10c)))(value,((RenderCtx *)index)->pValueParam);
@@ -216,11 +216,11 @@ void Stage_Init(int *index,int index2,int *value,int value2)
   ((int (*)(int))(*(void **)(*index + 0x40)))(index);
 }
 
-void Stage_Destroy(int *index)
+void Location_Destroy(int *index)
 {
   uint uVar1;
   int iVar2;
-  iVar2 = ((RenderCtx *)index)->pStageGridAlloc;
+  iVar2 = ((RenderCtx *)index)->pLocationGridAlloc;
   ((int (*)(int,int))(*(void **)(*index + 0x14)))(index,((RenderCtx *)index)->pValueParam2);
   uVar1 = ((int (*)(void))(*(void **)(**(int **)(iVar2 + 0xc) + 4)))();
   *(uint *)(iVar2 + 0xc) = uVar1;
@@ -228,19 +228,19 @@ void Stage_Destroy(int *index)
   *(uint *)(iVar2 + 8) = uVar1;
   uVar1 = ((int (*)(void))(*(void **)(**(int **)(iVar2 + 0x10) + 4)))();
   *(uint *)(iVar2 + 0x10) = uVar1;
-  ((int (*)(void))(*(void **)(*(int *)((RenderCtx *)index)->pStageChunk + 4)))();
+  ((int (*)(void))(*(void **)(*(int *)((RenderCtx *)index)->pLocationChunk + 4)))();
   ((int (*)(void))(*(void **)(*(int *)((RenderCtx *)index)->pTmdModel + 4)))();
   ((int (*)(void))(*(void **)(*(int *)((RenderCtx *)index)->pTexture + 4)))();
   SpuCinema_Free();
-  iVar2 = GetStageGridVtable();
+  iVar2 = GetLocationGridVtable();
   ((int (*)(int))(*(void **)(iVar2 + 0xc)))(index);
 }
 
-void Stage_HandleMessage(int *index,uint *id,uint idVal)
+void Location_HandleMessage(int *index,uint *id,uint idVal)
 {
   int iVar1;
   code *pcVar2;
-  iVar1 = GetStageGridVtable();
+  iVar1 = GetLocationGridVtable();
   ((int (*)(int,int,int))(*(void **)(iVar1 + 0x38)))(index,id,idVal);
   if ((*(uint *)*id & 0xffff) == 0x1f34) {
     pcVar2 = *(code **)(*index + 0x80);
@@ -254,52 +254,52 @@ void Stage_HandleMessage(int *index,uint *id,uint idVal)
   ((int (*)(...))(pcVar2))(index,id,idVal);
 }
 
-void Stage_ResetState(int index)
+void Location_ResetState(int index)
 {
   ((RenderCtx *)index)->dwModeFlags = 0;
 }
 
-void Stage_Update(int index)
+void Location_Update(int index)
 {
   int iVar1;
   int *piVar2;
   piVar2 = ((RenderCtx *)index)->pValueParam2;
-  ((int (*)(int,int))(*(void **)(*piVar2 + 0x10)))(piVar2,*(uint *)(((RenderCtx *)index)->pStageGridAlloc + 4));
-  ((int (*)(int,int))(*(void **)(*piVar2 + 0x10)))(piVar2,*(uint *)(((RenderCtx *)index)->pStageGridAlloc + 8));
-  ((int (*)(int,int))(*(void **)(*piVar2 + 0x110)))(piVar2,*(uint *)(((RenderCtx *)index)->pStageGridAlloc + 0x10));
-  iVar1 = GetStageGridVtable();
-  ((int (*)(int,int,int))(*(void **)(iVar1 + 0x44)))(index,((RenderCtx *)index)->pStageGridAlloc,0);
+  ((int (*)(int,int))(*(void **)(*piVar2 + 0x10)))(piVar2,*(uint *)(((RenderCtx *)index)->pLocationGridAlloc + 4));
+  ((int (*)(int,int))(*(void **)(*piVar2 + 0x10)))(piVar2,*(uint *)(((RenderCtx *)index)->pLocationGridAlloc + 8));
+  ((int (*)(int,int))(*(void **)(*piVar2 + 0x110)))(piVar2,*(uint *)(((RenderCtx *)index)->pLocationGridAlloc + 0x10));
+  iVar1 = GetLocationGridVtable();
+  ((int (*)(int,int,int))(*(void **)(iVar1 + 0x44)))(index,((RenderCtx *)index)->pLocationGridAlloc,0);
 }
 
-void Stage_Draw(int index)
+void Location_Draw(int index)
 {
   int iVar1;
   int *piVar2;
   piVar2 = ((RenderCtx *)index)->pValueParam2;
-  iVar1 = GetStageGridVtable();
+  iVar1 = GetLocationGridVtable();
   ((int (*)(int))(*(void **)(iVar1 + 0x48)))(index);
   ((int (*)(int,int))(*(void **)(*piVar2 + 0x110)))(piVar2,0);
-  ((int (*)(int,int))(*(void **)(*piVar2 + 0x14)))(piVar2,*(uint *)(((RenderCtx *)index)->pStageGridAlloc + 4));
+  ((int (*)(int,int))(*(void **)(*piVar2 + 0x14)))(piVar2,*(uint *)(((RenderCtx *)index)->pLocationGridAlloc + 4));
   ((int (*)(int,int))(*(void **)(*piVar2 + 0x14)))(piVar2,((RenderCtx *)index)->pChunkData);
 }
 
-void Stage_SetupRender(int index)
+void Location_SetupRender(int index)
 {
   uint uVar1;
   int *piVar2;
   int *piVar3;
   piVar3 = ((RenderCtx *)index)->pField_18;
-  uVar1 = ((int (*)(int,int))(*(void **)(*(int *)*(uint **)((RenderCtx *)index)->pStageGridAlloc + 0x7c)))((int *)*(uint **)((RenderCtx *)index)->pStageGridAlloc,0);
+  uVar1 = ((int (*)(int,int))(*(void **)(*(int *)*(uint **)((RenderCtx *)index)->pLocationGridAlloc + 0x7c)))((int *)*(uint **)((RenderCtx *)index)->pLocationGridAlloc,0);
   ((int (*)(int,int))(*(void **)(*piVar3 + 0x44)))(piVar3,uVar1);
   piVar2 = (int *)((int (*)(int))(*(void **)(*piVar3 + 0xac)))(piVar3);
   ((int (*)(int,int))(*(void **)(*piVar2 + 0x60)))(piVar2,1);
   ((int (*)(int,int))(*(void **)(*piVar3 + 0x4c)))(piVar3,OT_DEPTH_DEFAULT);
-  ((int (*)(int,int,int,int,int))(*(void **)(*piVar3 + 0x70)))(piVar3,((RenderCtx *)index)->pValueParam2,&Rendering_StageGrid50,&Rendering_StageGrid5c,0);
+  ((int (*)(int,int,int,int,int))(*(void **)(*piVar3 + 0x70)))(piVar3,((RenderCtx *)index)->pValueParam2,&Rendering_LocationGrid50,&Rendering_LocationGrid5c,0);
   ((int (*)(int))(*(void **)(*piVar3 + 0x8c)))(piVar3);
   ((RenderCtx *)index)->dwModeFlags = 1;
 }
 
-void Stage_Release(int index)
+void Location_Release(int index)
 {
   int *piVar1;
   piVar1 = ((RenderCtx *)index)->pField_18;
@@ -307,10 +307,10 @@ void Stage_Release(int index)
   ((int (*)(int))(*(void **)(*piVar1 + 0x74)))(piVar1);
 }
 
-void Stage_HandleState(int *index, uint id, int index_2)
+void Location_HandleState(int *index, uint id, int index_2)
 {
   int iVar1;
-  iVar1 = GetStageGridVtable();
+  iVar1 = GetLocationGridVtable();
   ((int (*)(int,int,int))(*(void **)(iVar1 + 0x54)))(index,id,index_2);
   if (index_2 == 2) {
     iVar1 = ((RenderCtx *)index)->dwModeFlags;
@@ -335,30 +335,30 @@ void Stage_HandleState(int *index, uint id, int index_2)
         ((int (*)(void))(*(void **)(*(int *)((RenderCtx *)index)->nField_4c + 4)))();
         iVar1 = ((int (*)(void))(*(void **)(*(int *)((RenderCtx *)index)->pValueParam2 + 0x1e0)))();
       }
-      Stage_CreateToken(index,iVar1);
+      Location_CreateToken(index,iVar1);
     }
   }
 }
 
-void Stage_CreateToken(int *index,uint id)
+void Location_CreateToken(int *index,uint id)
 {
   int iVar1;
-  iVar1 = TextInput_CreateToken(((RenderCtx *)index)->pValueParam,((RenderCtx *)index)->pStageChunk,((RenderCtx *)index)->pTexture,((RenderCtx *)index)->pTmdModel,id);
+  iVar1 = TextInput_CreateToken(((RenderCtx *)index)->pValueParam,((RenderCtx *)index)->pLocationChunk,((RenderCtx *)index)->pTexture,((RenderCtx *)index)->pTmdModel,id);
   ((RenderCtx *)index)->nField_4c = iVar1;
   ((int (*)(int,int))(*(void **)(*index + 0x10)))(index,iVar1);
-  ((int (*)(int,int,int))(*(void **)(*(int *)((RenderCtx *)index)->nField_4c + 0x44)))((int *)((RenderCtx *)index)->nField_4c,((RenderCtx *)index)->pStageGridAlloc,((RenderCtx *)index)->pValueParam2);
+  ((int (*)(int,int,int))(*(void **)(*(int *)((RenderCtx *)index)->nField_4c + 0x44)))((int *)((RenderCtx *)index)->nField_4c,((RenderCtx *)index)->pLocationGridAlloc,((RenderCtx *)index)->pValueParam2);
   ((RenderCtx *)index)->dwModeFlags = 2;
 }
 
-void Stage_Nop(void)
+void Location_Nop(void)
 {
 }
 
-void Stage_Nop2(void)
+void Location_Nop2(void)
 {
 }
 
-void Stage_HandleTransition(int *index, uint id, int index_2)
+void Location_HandleTransition(int *index, uint id, int index_2)
 {
   int iVar1;
   code *pcVar2;
@@ -407,9 +407,9 @@ void Stage_HandleTransition(int *index, uint id, int index_2)
   ((int (*)(...))(pcVar2))(index,3);
 switchD_80049ef0_caseD_9:
 }
-void * GetStageChunkVtable(void)
+void * GetLocationChunkVtable(void)
 {
-  return &Stage_StageChunkVtable;
+  return &Location_ChunkVtable;
 }
 
 void Cd_SplitStreamRead(int index)
@@ -418,48 +418,48 @@ void Cd_SplitStreamRead(int index)
   int iVar2;
   int local_18 [2];
   uVar1 = Snd_GetAmbientPath(local_18);
-  iVar2 = Stage_McSplitIoState + 1;
+  iVar2 = Location_McSplitIoState + 1;
   if (iVar2 == 1) {
-    Stage_McSplitIoState = Stage_McSplitIoState + 2;
+    Location_McSplitIoState = Location_McSplitIoState + 2;
     if (index == 0) {
-      Stage_McSplitHalfSize = local_18[0] / 2;
-      Stage_McSplitIoState = iVar2;
-      local_18[0] = Stage_McSplitHalfSize;
+      Location_McSplitHalfSize = local_18[0] / 2;
+      Location_McSplitIoState = iVar2;
+      local_18[0] = Location_McSplitHalfSize;
     }
   }
   else if (iVar2 == 2) {
-    local_18[0] = local_18[0] - Stage_McSplitHalfSize;
-    Stage_McSplitIoState = iVar2;
+    local_18[0] = local_18[0] - Location_McSplitHalfSize;
+    Location_McSplitIoState = iVar2;
   }
   else {
     local_18[0] = 0;
-    Stage_McSplitIoState = iVar2;
+    Location_McSplitIoState = iVar2;
   }
   do {
     iVar2 = CdModeSubF(uVar1,local_18[0]);
   } while (iVar2 == 0);
 }
 
-int StageSub_Alloc(uint id,uint type)
+int LocationSub_Alloc(uint id,uint type)
 {
   int iVar1;
   int iVar2;
   iVar1 = MemAllocImpl(SIZEOF_RENDER_SUB);
   iVar2 = 0;
   if (iVar1 != 0) {
-    iVar2 = GetStageGridVtable();
+    iVar2 = GetLocationGridVtable();
     ((int (*)(int,int,int))(*(void **)(iVar2 + 8)))(iVar1,id,type);
     iVar2 = iVar1;
   }
   return iVar2;
 }
 
-void StageSub_Init(int *index, int index_2, int value)
+void LocationSub_Init(int *index, int index_2, int value)
 {
   int iVar1;
   iVar1 = Font_GetDataPtr();
   ((int (*)(int))(*(void **)(iVar1 + 8)))(index);
-  iVar1 = GetStageGridVtable();
+  iVar1 = GetLocationGridVtable();
   *index = iVar1;
   if (index_2 == 0) {
     ((EntityObj *)index)->nField_34 = value;
@@ -472,7 +472,7 @@ void StageSub_Init(int *index, int index_2, int value)
   ((int (*)(int))(*(void **)(*index + 0x40)))(index);
 }
 
-void StageSub_Destroy(int index)
+void LocationSub_Destroy(int index)
 {
   int iVar1;
   if (((EntityObj *)index)->nField_30 != 0) {
@@ -482,12 +482,12 @@ void StageSub_Destroy(int index)
   ((int (*)(int))(*(void **)(iVar1 + 0xc)))(index);
 }
 
-void StageSub_Reset(int *index)
+void LocationSub_Reset(int *index)
 {
   ((int (*)(int,int))(*(void **)(*index + 0x6c)))(index,0xffffffff);
 }
 
-uint StageSub_Process(int index,uint id,uint type)
+uint LocationSub_Process(int index,uint id,uint type)
 {
   int iVar1;
   ((EntityObj *)index)->nConfig = 0;
@@ -496,18 +496,18 @@ uint StageSub_Process(int index,uint id,uint type)
   return ((EntityObj *)index)->nConfig;
 }
 
-void StageSub_Run(uint id)
+void LocationSub_Run(uint id)
 {
   int iVar1;
   iVar1 = Font_GetDataPtr();
   ((int (*)(int))(*(void **)(iVar1 + 0x48)))(id);
 }
 
-void StageSub_Nop(void)
+void LocationSub_Nop(void)
 {
 }
 
-void StageSub_CheckBuffer(int *index,uint id,uint type)
+void LocationSub_CheckBuffer(int *index,uint id,uint type)
 {
   int iVar1;
   iVar1 = Font_GetDataPtr();
@@ -517,7 +517,7 @@ void StageSub_CheckBuffer(int *index,uint id,uint type)
   }
 }
 
-void StageSub_HandleEvent(int *index, int index_2)
+void LocationSub_HandleEvent(int *index, int index_2)
 {
   int iVar1;
   iVar1 = Font_GetDataPtr();
@@ -528,7 +528,7 @@ void StageSub_HandleEvent(int *index, int index_2)
   }
 }
 
-void StageSub_SetMaxCount(int index,int value)
+void LocationSub_SetMaxCount(int index,int value)
 {
   ((EntityObj *)index)->nVabIdx = value;
   if (-1 < value) {
@@ -536,7 +536,7 @@ void StageSub_SetMaxCount(int index,int value)
   }
 }
 
-void StageSub_SetVolume(int index,uint id)
+void LocationSub_SetVolume(int index,uint id)
 {
   int *piVar1;
   piVar1 = ((EntityObj *)index)->nField_34;
@@ -544,7 +544,7 @@ void StageSub_SetVolume(int index,uint id)
     ((int (*)(int,int,int,int))(*(void **)(*piVar1 + 0x80)))(piVar1,id,SOUND_VOLUME_DEFAULT,SOUND_VOLUME_DEFAULT);
   }
 }
-void * GetStageGridVtable(void)
+void * GetLocationGridVtable(void)
 {
-  return &Stage_StageGridVtable;
+  return &Location_GridVtable;
 }

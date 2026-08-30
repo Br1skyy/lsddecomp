@@ -1,7 +1,7 @@
 #include "common.h"
 extern u32 gShakePalette;        /* 0x80087e80 */
 extern u32 gShakeApplyUnk;       /* 0x80087ea4 */
-extern u32 gLinkStage;           /* 0x8008acc4 */
+extern u32 gLinkLocation;           /* 0x8008acc4 */
 extern u32 gLinkDirIdx;          /* 0x8008acc8 */
 extern u32 gLinkChunkIdx;        /* 0x8008acbc */
 extern u32 gInstantTeleportFlag; /* 0x8008abe4 */
@@ -25,7 +25,7 @@ extern u32 gShakeBoundTbl[];     /* 0x80087e5c */
 extern u32 gEffectOffsetTbl[];   /* 0x80087e68 */
 extern u32 gEffectBoundTbl[];    /* 0x80087e74 */
 extern s16 gShakeValue;          /* 0x80087e84 */
-extern u32 gEffectStageTbl[];    /* 0x80087e20 */
+extern u32 gEffectLocationTbl[];    /* 0x80087e20 */
 extern u32 gEffectParamTbl[];    /* 0x80087e34 */
 extern u32 gEffectFuncTbl[];     /* 0x80087e3c */
 extern u32 gStairColor1;         /* 0x80087efc */
@@ -37,15 +37,15 @@ extern u32 gStairVec4;           /* 0x8008abd8 */
 extern u32 gLinkInnerIdx;        /* 0x8008acc0 */
 extern u32 gLinkDirData;         /* 0x80088758 */
 extern u32 **gTunnelDirPtr;      /* 0x800889b8 */
-extern u32 **gTunnelStagePtr;    /* 0x80088858 */
+extern u32 **gTunnelLocationPtr;    /* 0x80088858 */
 extern u32 **gStairDirPtr;       /* 0x80088c84 */
-extern u32 **gStairStagePtr;     /* 0x80088bdc */
+extern u32 **gStairLocationPtr;     /* 0x80088bdc */
 extern u32 PTR_func_8005AB2C_80087eec[];  /* gStairFuncTbl */
 extern int Test4TunnelLinks();
 extern int Test4InstantTeleporters();
 extern int Test4StaircaseNodes();
 extern bool ExecuteLink();
-extern int GetRandomSpawnFromStage();
+extern int GetRandomSpawnFromLocation();
 extern void StairVecDiff();
 extern void CounterUpdate();
 extern int LocationMatcher();
@@ -433,7 +433,7 @@ int LinkGetAngleFromTable(int index)
 }
 void *LinkGetStairDefaultData(void)
 {
-  if (gLinkStage != 0xc) {
+  if (gLinkLocation != 0xc) {
     return &gStairDefaultData;
   }
   return NULL;
@@ -448,7 +448,7 @@ byte LinkGetInstantTeleportFlagOffset(void)
 }
 int StairGetTypeIndex(void)
 {
-  return (int)(char)(&gStairTypePtr)[gLinkStage][gLinkDirIdx * 6 + 5];
+  return (int)(char)(&gStairTypePtr)[gLinkLocation][gLinkDirIdx * 6 + 5];
 }
 // camera shake / offset update with table lookup
 void CameraShakeUpdate(int obj)
@@ -508,7 +508,7 @@ void ProcessDreamAction(int *obj,int action)
 {
   if (action == 0) { return; }
   char cVar1 = ((char *)&gEffectParamTbl)[action];
-  int iVar2 = *(int *)((int)&gEffectStageTbl + obj[0x2b] * 4);
+  int iVar2 = *(int *)((int)&gEffectLocationTbl + obj[0x2b] * 4);
   (*(code *)(*obj + 300))();                              /* vtable[75] */
   int uVar3 = (*(code *)(*(int *)obj[0x13] + 0x10c))((int *)obj[0x13],0,0);   /* vtable[67] */
   int iVar4 = (*(code *)(*obj + 0x1dc))(obj,uVar3);      /* vtable[119] */
@@ -730,7 +730,7 @@ int LocationMatcher(int *outDir1,int *outDir2,int angle)
     *outDir2 = (u32)&gLinkDirData + (u32)bVar1 * 0xc;
   }
   if (outDir1 != NULL) {
-    *outDir1 = (u32)&gLinkDirData + (u32)(byte)((u32 **)&gTunnelStagePtr)[gLinkStage][gLinkDirIdx] * 0xc;
+    *outDir1 = (u32)&gLinkDirData + (u32)(byte)((u32 **)&gTunnelLocationPtr)[gLinkLocation][gLinkDirIdx] * 0xc;
   }
   return 1;
 }
@@ -761,8 +761,8 @@ int RandomSpawnSelector(int linkCoords,int stage,int *data,u32 flags)
   }
 LAB_check:
   if ((flags & 1) != 0) { stage = -0xc; }
-  gLinkStage = GetRandomSpawnFromStage((PlayerSpawnPoint *)linkCoords,stage,flags);
-  return gLinkStage;
+  gLinkLocation = GetRandomSpawnFromLocation((PlayerSpawnPoint *)linkCoords,stage,flags);
+  return gLinkLocation;
 }
 // staircase location matcher
 int StairLocationMatcher(int *outDir1,int *outDir2,int angle)
@@ -774,7 +774,7 @@ int StairLocationMatcher(int *outDir1,int *outDir2,int angle)
     *outDir2 = (u32)&gLinkDirData + (u32)bVar1 * 0xc;
   }
   if (outDir1 != NULL) {
-    *outDir1 = (u32)&gLinkDirData + (u32)(byte)((u32 **)&gStairStagePtr)[gLinkStage][gLinkDirIdx] * 0xc;
+    *outDir1 = (u32)&gLinkDirData + (u32)(byte)((u32 **)&gStairLocationPtr)[gLinkLocation][gLinkDirIdx] * 0xc;
   }
   return 1;
 }

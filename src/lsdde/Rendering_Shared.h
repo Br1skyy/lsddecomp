@@ -80,11 +80,11 @@ extern u32 Rendering_Unk66841;
 
 
 
-extern u32 Rendering_StageGrid50;
+extern u32 Rendering_LocationGrid50;
 
 
 
-extern u32 Rendering_StageGrid5c;
+extern u32 Rendering_LocationGrid5c;
 
 
 
@@ -388,11 +388,11 @@ extern u32 ParticleModeIndexTable;
 
 
 
-extern u32 MusicVolLineTargetStage2;
+extern u32 MusicVolLineTargetLocation2;
 
 
 
-extern u32 MusicVolLineTargetStage3;
+extern u32 MusicVolLineTargetLocation3;
 
 
 
@@ -452,7 +452,7 @@ extern volatile unsigned int PTR_Ptr_SecondEntity;
 
 
 
-extern volatile unsigned int PTR_PTR_StageSecondaryEntityTablePtr;
+extern volatile unsigned int PTR_PTR_LocationSecondaryEntityTablePtr;
 
 
 
@@ -476,24 +476,24 @@ extern volatile unsigned int CD_VOL_R;
 
 
 
-void * GetStageChunkVtable(void);
+void * GetLocationChunkVtable(void);
 
 
 
-void * GetStageGridVtable(void);
+void * GetLocationGridVtable(void);
 
 
 
-uint StageGrid_GetVisMask(int id,int type,int flags);
+uint LocationGrid_GetVisMask(int id,int type,int flags);
 
 
 
-uint StageGrid_GetChunkEntry(int index,uint *type,int value,int arg2,int arg3,uint id,int arg5);
-int StageGrid_Alloc(uint id,uint type);
-int StageGrid_CountActiveChannels(int index);
-void StageGrid_DrawTiles(void);
-extern int StageGrid_New(void);
-extern int StageGrid_GetDataPtr(void);
+uint LocationGrid_GetChunkEntry(int index,uint *type,int value,int arg2,int arg3,uint id,int arg5);
+int LocationGrid_Alloc(uint id,uint type);
+int LocationGrid_CountActiveChannels(int index);
+void LocationGrid_DrawTiles(void);
+extern int LocationGrid_New(void);
+extern int LocationGrid_GetDataPtr(void);
 extern int Prim_DrawTiles(int *ptr,int count,int arg2);
 
 bool Prim_IsPointInRect(short *id,char *type);
@@ -508,19 +508,19 @@ void Chunk_RenderFadeScreen(uint *id,int *index);
 
 
 
-void * Stage_GetChunkVtable(void);
+void * Location_GetChunkVtable(void);
 
 
 
-void * Stage_GetChunkDataVtable(void);
+void * Location_GetChunkDataVtable(void);
 
 
 
-void * Stage_GetChunkDataTableVtable(void);
+void * Location_GetChunkDataTableVtable(void);
 
 
 
-void StageEntity_SetDreamFlag(int id,int type);
+void LocationEntity_SetDreamFlag(int id,int type);
 
 
 
@@ -564,7 +564,7 @@ uint NavMenu_CardCheckState(int *id);
 
 
 
-void * MemoryCardStage_GetVtable(void);
+void * MemoryCardLocation_GetVtable(void);
 
 
 
@@ -672,11 +672,11 @@ uint RenderUtils_GetDisplay(int *id);
 
 
 
-uint StageArea_NumToPos(int index,int value);
+uint LocationArea_NumToPos(int index,int value);
 
 
 
-void * GetStageAreaVtable(void);
+void * GetLocationAreaVtable(void);
 
 
 

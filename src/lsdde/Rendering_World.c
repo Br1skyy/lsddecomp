@@ -1,20 +1,20 @@
 /* Rendering_World.c -- split from Rendering.c */
 #include "Rendering_Shared.h"
-int StageGrid_Alloc(uint id,uint type)
+int LocationGrid_Alloc(uint id,uint type)
 {
   int iVar1;
   int iVar2;
-  iVar1 = MemAllocImpl(SIZEOF_STAGE_GRID);
+  iVar1 = MemAllocImpl(SIZEOF_LOCATION_GRID);
   iVar2 = 0;
   if (iVar1 != 0) {
-    iVar2 = Stage_GetChunkVtable();
+    iVar2 = Location_GetChunkVtable();
     ((int (*)(int,int,int))(*(void **)(iVar2 + 8)))(iVar1,id,type);
     iVar2 = iVar1;
   }
   return iVar2;
 }
 
-void StageGrid_Init(int *index,int *value,uint id)
+void LocationGrid_Init(int *index,int *value,uint id)
 {
   int iVar1;
   int iVar2;
@@ -27,31 +27,31 @@ void StageGrid_Init(int *index,int *value,uint id)
   int local_38;
   uint local_34;
   int local_30;
-  iVar1 = StageGrid_GetDataPtr();
+  iVar1 = LocationGrid_GetDataPtr();
   ((int (*)(int))(*(void **)(iVar1 + 8)))(index);
-  iVar1 = Stage_GetChunkVtable();
+  iVar1 = Location_GetChunkVtable();
   *index = iVar1;
   if (value == NULL) {
-    ((StageGrid *)index)->nSoundId = 0;
-    ((StageGrid *)index)->pChild = 0;
-    ((StageGrid *)index)->nField_5c = 0;
+    ((LocationGrid *)index)->nSoundId = 0;
+    ((LocationGrid *)index)->pChild = 0;
+    ((LocationGrid *)index)->nField_5c = 0;
   }
   else {
     iVar1 = value[1];
     iVar6 = value[2];
-    ((StageGrid *)index)->nSoundId = *value;
+    ((LocationGrid *)index)->nSoundId = *value;
 ((EntityObj *)index)->pChild = (void *)iVar1;
-    ((StageGrid *)index)->nField_5c = iVar6;
+    ((LocationGrid *)index)->nField_5c = iVar6;
   }
   iVar1 = 0;
   iVar6 = SIZEOF_CHUNK_DATA;
-  ((StageGrid *)index)->sg_0x1B0 = 0;
+  ((LocationGrid *)index)->sg_0x1B0 = 0;
   *(u16 *)(index + 0x6d) = 0;
-  ((StageGrid *)index)->sg_0x1B8 = 0;
-  ((StageGrid *)index)->nChildCount = 0;
-  ((StageGrid *)index)->nSubTypeCount = 0;
-  ((StageGrid *)index)->field_0xe8 = 0;
-  ((StageGrid *)index)->sg_0x1E0 = 0;
+  ((LocationGrid *)index)->sg_0x1B8 = 0;
+  ((LocationGrid *)index)->nChildCount = 0;
+  ((LocationGrid *)index)->nSubTypeCount = 0;
+  ((LocationGrid *)index)->field_0xe8 = 0;
+  ((LocationGrid *)index)->sg_0x1E0 = 0;
   do {
     puVar7 = (u16 *)((int)index + iVar6);
     iVar2 = Snd_New();
@@ -98,7 +98,7 @@ void StageGrid_Init(int *index,int *value,uint id)
   ((int (*)(int))(*(void **)(*index + 0x40)))(index);
 }
 
-void StageGrid_Destroy(int *index)
+void LocationGrid_Destroy(int *index)
 {
   uint uVar1;
   uint *puVar2;
@@ -141,11 +141,11 @@ void StageGrid_Destroy(int *index)
     iVar6 = iVar6 + 1;
     MemFreeImpl(*(uint *)(iVar4 + 0x10));
   } while (iVar6 < 7);
-  iVar6 = StageGrid_GetDataPtr();
+  iVar6 = LocationGrid_GetDataPtr();
   ((int (*)(int))(*(void **)(iVar6 + 0xc)))(index);
 }
 
-void StageGrid_DrawPrimitive(int *index, uint *id, uint id_2)
+void LocationGrid_DrawPrimitive(int *index, uint *id, uint id_2)
 {
   int iVar1;
   iVar1 = GetPrimitiveBaseTable();
@@ -155,19 +155,19 @@ void StageGrid_DrawPrimitive(int *index, uint *id, uint id_2)
   }
 }
 
-void StageGrid_ResetState(int *index)
+void LocationGrid_ResetState(int *index)
 {
-  ((StageGrid *)index)->nObjState = 0;
-  ((StageGrid *)index)->field_0xe8 = 0;
-  ((StageGrid *)index)->pChild2 = 0;
+  ((LocationGrid *)index)->nObjState = 0;
+  ((LocationGrid *)index)->field_0xe8 = 0;
+  ((LocationGrid *)index)->pChild2 = 0;
   ((int (*)(int,int))(*(void **)(*index + 0xdc)))(index,0xa000);
-  ((StageGrid *)index)->sg_0x1CC = -1;
-  ((StageGrid *)index)->sg_0x1D0 = -1;
-  ((StageGrid *)index)->sg_0x1D4 = -1;
-  ((StageGrid *)index)->sg_0x1D8 = -1;
+  ((LocationGrid *)index)->sg_0x1CC = -1;
+  ((LocationGrid *)index)->sg_0x1D0 = -1;
+  ((LocationGrid *)index)->sg_0x1D4 = -1;
+  ((LocationGrid *)index)->sg_0x1D8 = -1;
 }
 
-void StageGrid_HandleChannelEvent(int *index, int index_2, int value)
+void LocationGrid_HandleChannelEvent(int *index, int index_2, int value)
 {
   int iVar1;
   uint uVar2;
@@ -182,26 +182,26 @@ void StageGrid_HandleChannelEvent(int *index, int index_2, int value)
   else if (index_2 != 7) {
     return;
   }
-  ((StageGrid *)index)->sg_0x1BC = value;
+  ((LocationGrid *)index)->sg_0x1BC = value;
   ((int (*)(int,int))(*(void **)(*index + 0x30)))(index,index);
 }
 
-void StageGrid_Submit(int *index)
+void LocationGrid_Submit(int *index)
 {
-  if (((StageGrid *)index)->nChildCount != 0) {
+  if (((LocationGrid *)index)->nChildCount != 0) {
     ((int (*)(void))(*(void **)(*index + 0xf4)))();
     ((int (*)(int))(*(void **)(*index + 0x13c)))(index);
   }
 }
 
-void StageGrid_CheckDrawMode(int *index,uint *id)
+void LocationGrid_CheckDrawMode(int *index,uint *id)
 {
   if (*(char *)*id == '4') {
     ((int (*)(void))(*(void **)(*index + 0xd0)))();
   }
 }
 
-void StageGrid_ResetChannels(int *index)
+void LocationGrid_ResetChannels(int *index)
 {
   uint uVar1;
   int *piVar2;
@@ -227,12 +227,12 @@ void StageGrid_ResetChannels(int *index)
     iVar5 = iVar5 + 1;
     ((int (*)(void))(*(void **)(**(int **)(puVar3 + 2) + 0x84)))();
   } while (iVar5 < 7);
-  ((StageGrid *)index)->sg_0x1B8 = 0;
+  ((LocationGrid *)index)->sg_0x1B8 = 0;
   *(u16 *)(index + 0x6d) = 0;
   ((int (*)(int))(*(void **)(*index + 0x140)))(index);
 }
 
-void StageGrid_SetupChunks(int *index, int index_2, int value, int arg2)
+void LocationGrid_SetupChunks(int *index, int index_2, int value, int arg2)
 {
   int *piVar1;
   int iVar2;
@@ -251,18 +251,18 @@ void StageGrid_SetupChunks(int *index, int index_2, int value, int arg2)
   }
 }
 
-void StageSub_SetPosition(int index,uint id,uint type)
+void LocationSub_SetPosition(int index,uint id,uint type)
 {
   ((EntityObj *)index)->nField_60 = id;
   ((EntityObj *)index)->nField_64 = type;
 }
 
-void StageSub_SetFlag(int index,uint id)
+void LocationSub_SetFlag(int index,uint id)
 {
   ((EntityObj *)index)->field_0xe8 = id;
 }
 
-void StageSub_CheckIdList(int *index, uint *id, int index_2)
+void LocationSub_CheckIdList(int *index, uint *id, int index_2)
 {
   int iVar1;
   int *piVar2;
@@ -281,7 +281,7 @@ void StageSub_CheckIdList(int *index, uint *id, int index_2)
   }
 }
 
-void StageSub_Render(int *index, int index_2, uint id)
+void LocationSub_Render(int *index, int index_2, uint id)
 {
   int iVar1;
   int iVar2;
@@ -442,23 +442,23 @@ void Chunk_RenderIfVisible(int *index)
   }
 }
 
-int StageGrid_GetBufferEnd(int index)
+int LocationGrid_GetBufferEnd(int index)
 {
   return index + 0x1c0;
 }
 
-void StageGrid_Nop(void)
+void LocationGrid_Nop(void)
 {
 }
 
-void StageSub_SetDepthShift(int index,int value)
+void LocationSub_SetDepthShift(int index,int value)
 {
   ((EntityObj *)index)->nConfigVal = value;
   *(short *)(index + 0x7a) = (short)(value >> 0xb);
   ((EntityObj *)index)->nRndVal = (short)(value >> 0xc);
 }
 
-void StageSub_SetMode(int *index, int index_2)
+void LocationSub_SetMode(int *index, int index_2)
 {
   ((int (*)(void))(*(void **)(*index + 0x40)))();
   ((EntityObj *)index)->nObjState = index;
@@ -544,18 +544,18 @@ int Prim_CalcScreenCoord(int *index,int *value,short *val,int *arg2,char *c)
   return iVar5;
 }
 
-void StageSub_SetActive(int index)
+void LocationSub_SetActive(int index)
 {
   ((EntityObj *)index)->nChildCount = 1;
 }
 
-void StageSub_ClearBuffer(int *index)
+void LocationSub_ClearBuffer(int *index)
 {
   ((int (*)(void))(*(void **)(*index + 0xc0)))();
   ((EntityObj *)index)->nChildCount = 0;
 }
 
-int StageSub_RefreshState(int *index)
+int LocationSub_RefreshState(int *index)
 {
   int *piVar1;
   int iVar2;
@@ -607,7 +607,7 @@ int StageSub_RefreshState(int *index)
   return iVar3;
 }
 
-void StageGrid_RenderChannels(int *index, int index_2, int *value, byte *val)
+void LocationGrid_RenderChannels(int *index, int index_2, int *value, byte *val)
 {
   int iVar1;
   int iVar2;
@@ -621,7 +621,7 @@ void StageGrid_RenderChannels(int *index, int index_2, int *value, byte *val)
   u8 auStack_88 [88];
   uint local_30;
   if (val != (byte *)0x0) {
-    iVar8 = (int)*(short *)((StageGrid *)index)->nObjState;
+    iVar8 = (int)*(short *)((LocationGrid *)index)->nObjState;
     if (iVar8 == 0) {
       trap(0x1c00);
     }
@@ -632,14 +632,14 @@ void StageGrid_RenderChannels(int *index, int index_2, int *value, byte *val)
     iVar5 = 0;
     iVar6 = 0;
     uVar9 = (int)index / iVar8 & 1;
-    local_30 = StageGrid_GetVisMask((int)index,(int)index,uVar9);
+    local_30 = LocationGrid_GetVisMask((int)index,(int)index,uVar9);
     do {
       iVar1 = ((int (*)(int,int))(*(void **)(*index + 0x118)))(index,iVar5);
       *(ushort *)(iVar1 + 2) = (ushort)*val;
       if (val[1] != 0) {
         iVar2 = (uint)*val * 0xc;
         iVar3 = *(int *)(*(int *)(iVar1 + 0xc) + 0x14);
-        if (*(int *)(((StageGrid *)index)->nObjState + 4) == 0) {
+        if (*(int *)(((LocationGrid *)index)->nObjState + 4) == 0) {
           *(int *)(iVar3 + 0x18) = *value + *(int *)(&Rendering_Adj38 + iVar2);
           *(int *)(iVar3 + 0x1c) = value[1];
           iVar2 = value[2] + *(int *)(&Rendering_Adj40 + iVar2);
@@ -654,7 +654,7 @@ void StageGrid_RenderChannels(int *index, int index_2, int *value, byte *val)
         iVar6 = iVar6 + 0xc;
         **(uint **)(*(int *)(iVar1 + 0xc) + 0x14) = 0;
         iVar7 = iVar7 + 1;
-        StageGrid_GetChunkEntry((int)index,(uint *)puVar4,iVar8,uVar9,(uint)index,local_30,*val);
+        LocationGrid_GetChunkEntry((int)index,(uint *)puVar4,iVar8,uVar9,(uint)index,local_30,*val);
       }
       iVar5 = iVar5 + 1;
       val = val + 2;
@@ -671,13 +671,13 @@ void StageGrid_RenderChannels(int *index, int index_2, int *value, byte *val)
   }
 }
 
-uint StageGrid_GetVisMask(int index,int value,int arg2)
+uint LocationGrid_GetVisMask(int index,int value,int arg2)
 {
   short *psVar1;
   uint uVar2;
   int iVar3;
   int iVar4;
-  psVar1 = ((StageGrid *)index)->nObjState;
+  psVar1 = ((LocationGrid *)index)->nObjState;
   iVar4 = (int)*psVar1;
   iVar3 = (int)psVar1[1];
   if (*(int *)(psVar1 + 2) == 0) {
@@ -727,21 +727,21 @@ uint StageGrid_GetVisMask(int index,int value,int arg2)
   return ~uVar2;
 }
 uint
-StageGrid_GetChunkEntry(int index,uint *id,int value,int arg2,int arg3,uint id_2,
+LocationGrid_GetChunkEntry(int index,uint *id,int value,int arg2,int arg3,uint id_2,
             int arg5)
 {
   uint uVar1;
   int iVar2;
   int iVar3;
   uVar1 = 0;
-  if ((*id & *(uint *)(&Stage_AdjEdgeFlags + arg5 * 4)) == 0) {
+  if ((*id & *(uint *)(&Location_AdjEdgeFlags + arg5 * 4)) == 0) {
     *id = 0;
   }
   else {
     iVar2 = arg3 + arg5;
     if (*(int *)(*(int *)(index + 0x68) + 4) == 0) {
       iVar2 = arg5 * 0xc;
-      if (*(int *)(&Stage_AdjDirectionOffsets + iVar2) == 0) {
+      if (*(int *)(&Location_AdjDirectionOffsets + iVar2) == 0) {
         iVar2 = arg3 + *(int *)(&Rendering_AdjDirAc + iVar2);
       }
       else {
@@ -751,7 +751,7 @@ StageGrid_GetChunkEntry(int index,uint *id,int value,int arg2,int arg3,uint id_2
         else {
           iVar3 = *(int *)(&Rendering_AdjDirAc + iVar2);
         }
-        iVar2 = arg3 + index * *(int *)(&Stage_AdjDirectionOffsets + iVar2) + iVar3;
+        iVar2 = arg3 + index * *(int *)(&Location_AdjDirectionOffsets + iVar2) + iVar3;
       }
     }
     id[1] = iVar2;
@@ -763,7 +763,7 @@ StageGrid_GetChunkEntry(int index,uint *id,int value,int arg2,int arg3,uint id_2
   return uVar1;
 }
 
-void StageGrid_UpdateChannels(int *index, int *value, int index_2)
+void LocationGrid_UpdateChannels(int *index, int *value, int index_2)
 {
   u16 uVar1;
   u16 *puVar2;
@@ -791,18 +791,18 @@ void StageGrid_UpdateChannels(int *index, int *value, int index_2)
         *(short *)(*(int *)(puVar2 + 2) + 0x30) = (short)*piVar4;
         ((int (*)(int,int))(*(void **)(**(int **)(puVar2 + 2) + 0x78)))(*(int **)(puVar2 + 2),*value);
         *puVar2 = 1;
-        ((StageGrid *)index)->sg_0x1B0 = 1;
+        ((LocationGrid *)index)->sg_0x1B0 = 1;
       }
       piVar4 = piVar4 + 3;
       iVar3 = iVar3 + 1;
       value = value + 3;
     } while (iVar3 < index);
   }
-  uVar1 = StageGrid_CountActiveChannels(index);
+  uVar1 = LocationGrid_CountActiveChannels(index);
   *(u16 *)(index + 0x6d) = uVar1;
 }
 
-int StageGrid_CountActiveChannels(int index)
+int LocationGrid_CountActiveChannels(int index)
 {
   short *psVar1;
   int iVar2;
@@ -820,7 +820,7 @@ int StageGrid_CountActiveChannels(int index)
   return iVar3;
 }
 
-void StageGrid_ProcessChannelState(int *index, uint *id, int index_2)
+void LocationGrid_ProcessChannelState(int *index, uint *id, int index_2)
 {
   short sVar1;
   short *psVar2;
@@ -835,7 +835,7 @@ void StageGrid_ProcessChannelState(int *index, uint *id, int index_2)
         *(u16 *)(*(int *)(psVar2 + 2) + 0x2e) = 0;
         ((int (*)(int,int,int,int))(*(void **)(*index + 0x88)))(index,7,psVar2,iVar3);
       }
-      if ((((StageGrid *)index)->sg_0x1B0 == 1) && (*psVar2 != 0)) {
+      if ((((LocationGrid *)index)->sg_0x1B0 == 1) && (*psVar2 != 0)) {
         if (*(short *)(*(int *)(psVar2 + 2) + 0x2c) == 0) {
           if (*(short *)(*(int *)(psVar2 + 2) + 0x2a) == 0) {
             *psVar2 = 0;
@@ -845,8 +845,8 @@ void StageGrid_ProcessChannelState(int *index, uint *id, int index_2)
           ((int (*)(int,int))(*(void **)(*index + 0x104)))(index,psVar2);
           *(u16 *)(*(int *)(psVar2 + 2) + 0x2c) = 2;
           *psVar2 = 0;
-          sVar1 = (short)((StageGrid *)index)->sg_0x1B4 + -1;
-          ((StageGrid *)index)->sg_0x1B4 = sVar1;
+          sVar1 = (short)((LocationGrid *)index)->sg_0x1B4 + -1;
+          ((LocationGrid *)index)->sg_0x1B4 = sVar1;
           if (sVar1 == 0) {
             *(u16 *)(id + 0x6d) = 0;
             id[0x6c] = 0;
@@ -938,7 +938,7 @@ void Tmd_LoadModel(uint id,int index)
   }
 }
 
-void StageGrid_ResetPrimitives(uint id,int index)
+void LocationGrid_ResetPrimitives(uint id,int index)
 {
   int *piVar1;
   int *piVar2;
@@ -954,10 +954,10 @@ void StageGrid_ResetPrimitives(uint id,int index)
   }
 }
 
-int StageGrid_GetRenderBuffer(int *index, int index_2, int *value)
+int LocationGrid_GetRenderBuffer(int *index, int index_2, int *value)
 {
   int iVar1;
-  iVar1 = *(int *)(((StageGrid *)index)->nSubTypeCount + 0x14) + 0x18;
+  iVar1 = *(int *)(((LocationGrid *)index)->nSubTypeCount + 0x14) + 0x18;
   if (value != NULL) {
     *value = iVar1;
   }
@@ -968,7 +968,7 @@ int StageGrid_GetRenderBuffer(int *index, int index_2, int *value)
   return index + 0x2f;
 }
 
-uint StageGrid_WorldToTile(int *index, int index_2, int *value)
+uint LocationGrid_WorldToTile(int *index, int index_2, int *value)
 {
   short sVar1;
   int iVar2;
@@ -980,17 +980,17 @@ uint StageGrid_WorldToTile(int *index, int index_2, int *value)
     uVar4 = 1;
   }
   else {
-    ((StageGrid *)index)->field_0xa0 = (int)*(short *)(*(int *)(iVar2 + 4) + 0x30);
+    ((LocationGrid *)index)->field_0xa0 = (int)*(short *)(*(int *)(iVar2 + 4) + 0x30);
     Prim_WriteModDiv(index,index);
     iVar3 = ((int (*)(int,int))(*(void **)(*index + 0x118)))(index,(int)*(short *)(*(int *)(iVar2 + 4) + 0x32));
     iVar3 = *(int *)(*(int *)(iVar3 + 0xc) + 0x14);
-    ((StageGrid *)index)->nField_30 = *(int *)(iVar3 + 0x18) + 0x5000;
-    ((StageGrid *)index)->pSomePtr = *(uint *)(iVar3 + 0x1c);
-    ((StageGrid *)index)->nField_50 = *(int *)(iVar3 + 0x20) + 0x5000;
+    ((LocationGrid *)index)->nField_30 = *(int *)(iVar3 + 0x18) + 0x5000;
+    ((LocationGrid *)index)->pSomePtr = *(uint *)(iVar3 + 0x1c);
+    ((LocationGrid *)index)->nField_50 = *(int *)(iVar3 + 0x20) + 0x5000;
     iVar5 = *(int *)(*(int *)(iVar2 + 0xc) + 0x14);
-    ((StageGrid *)index)->nField_60 = *value - ((StageGrid *)index)->nField_30;
-    ((StageGrid *)index)->nChildCount = value[1];
-    ((StageGrid *)index)->nCondition = value[2] - ((StageGrid *)index)->nField_50;
+    ((LocationGrid *)index)->nField_60 = *value - ((LocationGrid *)index)->nField_30;
+    ((LocationGrid *)index)->nChildCount = value[1];
+    ((LocationGrid *)index)->nCondition = value[2] - ((LocationGrid *)index)->nField_50;
     iVar3 = *value - *(int *)(iVar5 + 0x18);
     if (iVar3 < 0) {
       iVar3 = iVar3 + 0x7ff;
@@ -1001,14 +1001,14 @@ uint StageGrid_WorldToTile(int *index, int index_2, int *value)
       iVar3 = iVar3 + 0x7ff;
     }
     *(char *)(index + 3) = (char)(iVar3 >> 0xb);
-    ((StageGrid *)index)->nDist =
+    ((LocationGrid *)index)->nDist =
          ((short)*value + -0x400) - (*(short *)(iVar5 + 0x18) + *(char *)(index + 2) * 0x800);
-    ((StageGrid *)index)->pWorld = (short)value[1];
+    ((LocationGrid *)index)->pWorld = (short)value[1];
     uVar4 = 0;
     iVar3 = value[2];
     sVar1 = *(short *)(iVar5 + 0x20);
-    ((StageGrid *)index)->nParam2 = iVar2;
-    ((StageGrid *)index)->nField_20 = ((short)iVar3 + -0x400) - (sVar1 + *(char *)(index + 3) * 0x800);
+    ((LocationGrid *)index)->nParam2 = iVar2;
+    ((LocationGrid *)index)->nField_20 = ((short)iVar3 + -0x400) - (sVar1 + *(char *)(index + 3) * 0x800);
   }
   return uVar4;
 }

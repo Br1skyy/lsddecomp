@@ -133,7 +133,7 @@ void EntityHandleMessage(int *obj, int arg2, int arg3)
     s8 cVar1;
     int iVar2;
     int uVar3;
-    cVar1 = *(s8 *)((int)&EntityLinkStage + obj[0x26] * 0x10);
+    cVar1 = *(s8 *)((int)&EntityLinkLocation + obj[0x26] * 0x10);
     if ((arg3 - 2 > 6) || (cVar1 > 0)) {
         iVar2 = Get_vtable_EntitySub();
         (*(code *)(iVar2 + 0xdc))(obj, arg2, arg3);
@@ -227,10 +227,10 @@ int Entity__GetUnlockEffect(int obj)
 {
     return (s8)*(s8 *)((int)&EntityMoodEffectWeight + *(int *)(obj + 0x98) * 0x10) * 1000;
 }
-int Entity__GetLinkStage(int obj)
+int Entity__GetLinkLocation(int obj)
 {
     uint uVar1;
-    uVar1 = (uint)(s8)*(s8 *)((int)&EntityLinkStage + *(int *)(obj + 0x98) * 0x10);
+    uVar1 = (uint)(s8)*(s8 *)((int)&EntityLinkLocation + *(int *)(obj + 0x98) * 0x10);
     if ((int)uVar1 < 0) {
         uVar1 = ~uVar1;
     } else {
@@ -251,15 +251,15 @@ int GameStateCheck(int obj)
         CdModeSubE(0, 0, 0);
         iVar1 = (*(code *)(**(int **)(obj + 0x28) + 0x1a0))(*(int **)(obj + 0x28), 0);
         if (((iVar1 != 1) && (*(int *)(obj + 0x24) == 0)) &&
-            (            iVar1 = NopSub_26518(NewStageArea, *(int *)(obj + 0x28),
+            (            iVar1 = NopSub_26518(NewLocationArea, *(int *)(obj + 0x28),
                                   *(int *)(obj + 0x1c)), iVar1 == 2)) {
             NopSub_2658c(obj);
         }
         while (1) {
-            iVar1 = NopSub_26518(StageEntity_Alloc, *(int *)(obj + 0x28),
+            iVar1 = NopSub_26518(LocationEntity_Alloc, *(int *)(obj + 0x28),
                                   *(int *)(obj + 0x1c));
             if (iVar1 != 2) break;
-            NopSub_26518(NewStageArea, *(int *)(obj + 0x28), *(int *)(obj + 0x1c));
+            NopSub_26518(NewLocationArea, *(int *)(obj + 0x28), *(int *)(obj + 0x1c));
         }
         *(int *)(obj + 0x24) = 0;
         iVar1 = (iVar1 == 0) ? 2 : 0;
@@ -291,7 +291,7 @@ void NopSub_2658c(int obj)
     }
 }
 void NopSub_26690(void) { }
-int EntityProcessStageAlloc(int obj)
+int EntityProcessLocationAlloc(int obj)
 {
     int *vobj;
     int result;
